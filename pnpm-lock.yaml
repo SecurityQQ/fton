@@ -64,7 +64,7 @@ importers:
         specifier: 18.0.6
         version: 18.0.6
       autoprefixer:
-        specifier: ^10.4.12
+        specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.38)
       eslint:
         specifier: 8.26.0
@@ -91,7 +91,7 @@ importers:
         specifier: ^13.0.3
         version: 13.3.0
       postcss:
-        specifier: ^8.4.18
+        specifier: ^8.4.38
         version: 8.4.38
       prettier:
         specifier: ^2.8.7
@@ -100,7 +100,7 @@ importers:
         specifier: ^5.15.0
         version: 5.15.0
       tailwindcss:
-        specifier: ^3.2.1
+        specifier: ^3.4.3
         version: 3.4.3
       telegram-webapps-types:
         specifier: ^1.0.5
