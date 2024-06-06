@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Or your preferred database
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(cuid())
+  name            String
+  walletAddress   String    @unique
+  telegramHandle  String    @unique
+  birthdate       DateTime
+  tokenBalance    Float     @default(0)
+  menstruations   Menstruation[]
+  invitationsSent Invitation[] @relation("Inviter")
+  invitationsReceived Invitation[] @relation("Invitee")
+  socialMedia     SocialMedia[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Menstruation {
+  id        String   @id @default(cuid())
+  date      DateTime
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Invitation {
+  id         String   @id @default(cuid())
+  inviter    User     @relation("Inviter", fields: [inviterId], references: [id])
+  inviterId  String
+  invitee    User?    @relation("Invitee", fields: [inviteeId], references: [id])
+  inviteeId  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model SocialMedia {
+  id         String   @id @default(cuid())
+  platform   String
+  handle     String
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

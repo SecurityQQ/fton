@@ -16,8 +16,14 @@
     "incremental": true,
     "typeRoots": [
       "./src/types",
-      "./node_modules/@types",
-    ]
+      "./node_modules/@types"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/lib/*": ["src/lib/*"],
+      "@/pages/*": ["src/pages/*"],
+      "@/components/*": ["src/components/*"]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "./src/@types"]
