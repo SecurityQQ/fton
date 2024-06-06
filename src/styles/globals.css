@@ -5,13 +5,13 @@
 :root {
   --font-roboto: 'Roboto', sans-serif;
   --font-roboto-mono: 'Roboto Mono', monospace;
-  --telegram-bg-color: var(--tg-theme-bg-color, #ffffff);
-  --telegram-text-color: var(--tg-theme-text-color, #333);
-  --telegram-hint-color: var(--tg-theme-hint-color, #707579);
-  --telegram-link-color: var(--tg-theme-link-color, #3390ec);
-  --telegram-button-color: var(--tg-theme-button-color, #3390ec);
-  --telegram-button-text-color: var(--tg-theme-button-text-color, #ffffff);
-  --telegram-secondary-bg-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
+  --telegram-bg-color: #ffffff;
+  --telegram-text-color: #333333;
+  --telegram-hint-color: #707579;
+  --telegram-link-color: #3390ec;
+  --telegram-button-color: #3390ec;
+  --telegram-button-text-color: #ffffff;
+  --telegram-secondary-bg-color: #f4f4f5;
 }
 
 @layer base {
