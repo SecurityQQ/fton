@@ -7,7 +7,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const users = await prisma.user.findMany({
         include: {
-          menstruations: true,
           invitationsSent: true,
           invitationsReceived: true,
           socialMedia: true,
@@ -18,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else if (req.method === 'POST') {
-    const { name, walletAddress, telegramHandle, birthdate } = req.body;
+    const { name, walletAddress, telegramHandle, birthdate, lastPeriodDate } = req.body;
     try {
       const newUser = await prisma.user.create({
         data: {
@@ -26,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           walletAddress,
           telegramHandle,
           birthdate: new Date(birthdate),
+          lastPeriodDate: new Date(lastPeriodDate),
         },
       });
       res.status(201).json(newUser);

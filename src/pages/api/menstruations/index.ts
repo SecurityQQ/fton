@@ -23,6 +23,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           userId,
         },
       });
+
+      // Update the user's lastPeriodDate
+      await prisma.user.update({
+        where: { id: userId },
+        data: { lastPeriodDate: new Date(date) },
+      });
+
       res.status(201).json(newMenstruation);
     } catch (error) {
       res.status(500).json({ error: 'Internal Server Error' });
