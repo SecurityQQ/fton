@@ -23,6 +23,15 @@ importers:
       '@tma.js/sdk-react':
         specifier: ^2.2.3
         version: 2.2.3(@types/react@18.0.21)(react@18.2.0)
+      '@ton/core':
+        specifier: ~0
+        version: 0.56.3(@ton/crypto@3.2.0)
+      '@ton/crypto':
+        specifier: ^3.2.0
+        version: 3.2.0
+      '@ton/ton':
+        specifier: ^13.11.1
+        version: 13.11.2(@ton/core@0.56.3(@ton/crypto@3.2.0))(@ton/crypto@3.2.0)
       '@tonconnect/protocol':
         specifier: ^2.2.6
         version: 2.2.6
@@ -44,12 +53,6 @@ importers:
       styled-components:
         specifier: ^6.1.11
         version: 6.1.11(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      ton:
-        specifier: ^13.9.0
-        version: 13.9.0(ton-core@0.53.0(ton-crypto@3.2.0))(ton-crypto@3.2.0)
-      ton-core:
-        specifier: ^0.53.0
-        version: 0.53.0(ton-crypto@3.2.0)
     devDependencies:
       '@next/bundle-analyzer':
         specifier: ^13.0.2
@@ -502,6 +505,23 @@ packages:
   '@tma.js/sdk@2.5.0':
     resolution: {integrity: sha512-9cccHzNADaIwAJwK8yL4WeTdx9JO7kAHvjN9Q6T3CQMx07bw5M2RNCaZ1+UGrQz9IWNa+GrnXkN/eIZEW+oHUw==}
 
+  '@ton/core@0.56.3':
+    resolution: {integrity: sha512-HVkalfqw8zqLLPehtq0CNhu5KjVzc7IrbDwDHPjGoOSXmnqSobiWj8a5F+YuWnZnEbQKtrnMGNOOjVw4LG37rg==}
+    peerDependencies:
+      '@ton/crypto': '>=3.2.0'
+
+  '@ton/crypto-primitives@2.0.0':
+    resolution: {integrity: sha512-wttiNClmGbI6Dfy/8oyNnsIV0b/qYkCJz4Gn4eP62lJZzMtVQ94Ko7nikDX1EfYHkLI1xpOitWpW+8ZuG6XtDg==}
+
+  '@ton/crypto@3.2.0':
+    resolution: {integrity: sha512-50RkwReEuV2FkxSZ8ht/x9+n0ZGtwRKGsJ0ay4I/HFhkYVG/awIIBQeH0W4j8d5lADdO5h01UtX8PJ8AjiejjA==}
+
+  '@ton/ton@13.11.2':
+    resolution: {integrity: sha512-EPqW+ZTe0MmfqguJEIGMuAqTAFRKMEce95HlDx8h6CGn2y3jiMgV1/oO+WpDIOiX+1wnTu+xtajk8JTWr8nKRQ==}
+    peerDependencies:
+      '@ton/core': '>=0.56.0'
+      '@ton/crypto': '>=3.2.0'
+
   '@tonconnect/isomorphic-eventsource@0.0.2':
     resolution: {integrity: sha512-B4UoIjPi0QkvIzZH5fV3BQLWrqSYABdrzZQSI9sJA9aA+iC0ohOzFwVVGXanlxeDAy1bcvPbb29f6sVUk0UnnQ==}
 
@@ -733,9 +753,6 @@ packages:
   axe-core@4.7.0:
     resolution: {integrity: sha512-M0JtH+hlOL5pLQwHOLNYZaXuhqmvS8oExsqB1SBYgA4Dk7u/xx+YdGHXaK5pyUfed5mYXdlYiphWq3G8cRi5JQ==}
     engines: {node: '>=4'}
-
-  axios@0.25.0:
-    resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
 
   axios@1.7.2:
     resolution: {integrity: sha512-2A8QhOMrbomlDuiLeK9XibIBzuHeRcqqNOHp0Cyp5EoJ1IFDh+XZH3A6BkXtv0K4gFGCI0Y4BM7B1wOEi0Rmgw==}
@@ -2201,23 +2218,6 @@ packages:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
 
-  ton-core@0.53.0:
-    resolution: {integrity: sha512-uO/U1oVLdEliWWbwfNQQK+61C+KM0ehcTdHQ6cN0WSEH2UzGfdVFpC4Wb0ph+wUYe/5njl7TA0uL9nif9Q6qwA==}
-    peerDependencies:
-      ton-crypto: '>=3.2.0'
-
-  ton-crypto-primitives@2.0.0:
-    resolution: {integrity: sha512-K+qKjpS0h9sPW6oExcpxnzuQ7nEgHEiDKwIqE/jWD25o8iFGe3FWj1gKxFNbKE9wwYKc5IV8FwrU+raF0KO5nQ==}
-
-  ton-crypto@3.2.0:
-    resolution: {integrity: sha512-fltdBNQ45gARMuGMEOjPZWPJ5eSql8p3CA0Dj7tPv5lhU5ziT8SxXLAzDraR9HJ8YpjBHLVvYyhMLRiEwxgtMQ==}
-
-  ton@13.9.0:
-    resolution: {integrity: sha512-IjZa4vFsyYHzQFY3kMSK/vw8T9b4zSJlSkZOgD8qeP4AFVxcD6pZ7TxfATwLJnA/4MCbaM9DY0V076oMjluDQg==}
-    peerDependencies:
-      ton-core: '>=0.53.0'
-      ton-crypto: '>=3.2.0'
-
   totalist@1.1.0:
     resolution: {integrity: sha512-gduQwd1rOdDMGxFG1gEvhV88Oirdo2p+KjoYFU7k2g+i7n6AFFbDQ5kMPUsW0pNbfQsB/cwXvT1i4Bue0s9g5g==}
     engines: {node: '>=6'}
@@ -2768,6 +2768,33 @@ snapshots:
 
   '@tma.js/sdk@2.5.0': {}
 
+  '@ton/core@0.56.3(@ton/crypto@3.2.0)':
+    dependencies:
+      '@ton/crypto': 3.2.0
+      symbol.inspect: 1.0.1
+
+  '@ton/crypto-primitives@2.0.0':
+    dependencies:
+      jssha: 3.2.0
+
+  '@ton/crypto@3.2.0':
+    dependencies:
+      '@ton/crypto-primitives': 2.0.0
+      jssha: 3.2.0
+      tweetnacl: 1.0.3
+
+  '@ton/ton@13.11.2(@ton/core@0.56.3(@ton/crypto@3.2.0))(@ton/crypto@3.2.0)':
+    dependencies:
+      '@ton/core': 0.56.3(@ton/crypto@3.2.0)
+      '@ton/crypto': 3.2.0
+      axios: 1.7.2
+      dataloader: 2.2.2
+      symbol.inspect: 1.0.1
+      teslabot: 1.5.0
+      zod: 3.23.8
+    transitivePeerDependencies:
+      - debug
+
   '@tonconnect/isomorphic-eventsource@0.0.2':
     dependencies:
       eventsource: 2.0.2
@@ -3068,12 +3095,6 @@ snapshots:
       possible-typed-array-names: 1.0.0
 
   axe-core@4.7.0: {}
-
-  axios@0.25.0:
-    dependencies:
-      follow-redirects: 1.15.6
-    transitivePeerDependencies:
-      - debug
 
   axios@1.7.2:
     dependencies:
@@ -4681,33 +4702,6 @@ snapshots:
   to-regex-range@5.0.1:
     dependencies:
       is-number: 7.0.0
-
-  ton-core@0.53.0(ton-crypto@3.2.0):
-    dependencies:
-      symbol.inspect: 1.0.1
-      ton-crypto: 3.2.0
-
-  ton-crypto-primitives@2.0.0:
-    dependencies:
-      jssha: 3.2.0
-
-  ton-crypto@3.2.0:
-    dependencies:
-      jssha: 3.2.0
-      ton-crypto-primitives: 2.0.0
-      tweetnacl: 1.0.3
-
-  ton@13.9.0(ton-core@0.53.0(ton-crypto@3.2.0))(ton-crypto@3.2.0):
-    dependencies:
-      axios: 0.25.0
-      dataloader: 2.2.2
-      symbol.inspect: 1.0.1
-      teslabot: 1.5.0
-      ton-core: 0.53.0(ton-crypto@3.2.0)
-      ton-crypto: 3.2.0
-      zod: 3.23.8
-    transitivePeerDependencies:
-      - debug
 
   totalist@1.1.0: {}
 

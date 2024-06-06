@@ -14,6 +14,7 @@ model User {
   telegramHandle  String    @unique
   birthdate       DateTime
   tokenBalance    Float     @default(0)
+  lastPeriodDate    DateTime @default(now())
   menstruations   Menstruation[]
   invitationsSent Invitation[] @relation("Inviter")
   invitationsReceived Invitation[] @relation("Invitee")
