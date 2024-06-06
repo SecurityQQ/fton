@@ -1,4 +1,5 @@
 import '../styles/globals.css';
+import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import axios from 'axios';
 import type { AppProps } from 'next/app';
 import { Roboto, Roboto_Mono } from 'next/font/google';
@@ -21,14 +22,23 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [isHashValid, setIsHashValid] = useState(false);
 
   useEffect(() => {
-    axios
-      .post('/api/validate-hash', { hash: window.Telegram.WebApp.initData })
-      .then((response) => setIsHashValid(response.status === 200));
+    if (process.env.NODE_ENV === 'production') {
+      // telegram hook for production
+      axios
+        .post('/api/validate-hash', { hash: window.Telegram.WebApp.initData })
+        .then((response) => setIsHashValid(response.status === 200))
+        .catch(() => setIsHashValid(false));
+    } else {
+      // For development, set hash as valid to debug locally
+      setIsHashValid(true);
+    }
   }, []);
 
   if (!isHashValid) {
     return null;
   }
+
+  const manifestUrl = 'https://fton.vercel.app/tonconnect-manifest.json';
 
   return (
     <>
@@ -36,7 +46,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <style>{`body { font-family: var(${ROBOTO_TTF.variable}), var(${ROBOTO_MONO_TTF.variable}); }`}</style>
       </Head>
       <body className={`${ROBOTO_TTF.variable} ${ROBOTO_MONO_TTF.variable}`}>
-        <Component {...pageProps} />
+        <TonConnectUIProvider manifestUrl={manifestUrl}>
+          <Component {...pageProps} />
+        </TonConnectUIProvider>
       </body>
     </>
   );
