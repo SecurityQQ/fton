@@ -94,8 +94,8 @@ const Calendar: React.FC<CalendarProps> = ({
     <div className="flex h-full flex-col items-center gap-2 overflow-y-scroll">
       {months.map((month, index) => (
         <div key={index} className="w-full px-4">
-          <header className="flex w-full items-center justify-center bg-white py-2">
-            <h1 className="text-lg font-semibold">
+          <header className="bg-telegram-secondary flex w-full items-center justify-center py-2">
+            <h1 className="text-telegram-text text-lg font-semibold">
               {month.toLocaleString('default', { month: 'long', year: 'numeric' })}
             </h1>
           </header>
@@ -130,9 +130,9 @@ const Calendar: React.FC<CalendarProps> = ({
                           ? 'border-2 border-dashed border-[#3290F8]'
                           : 'bg-gradient-to-b from-[#A3CFFF] to-[#3290F8]'
                         : isToday
-                        ? 'bg-[#DCF2FF] font-bold'
+                        ? 'bg-[#DCF2FF] font-bold text-[#007AFF]'
                         : 'bg-transparent'
-                    } ${!isCurrentMonth ? 'text-gray-400' : 'text-black'}`}
+                    } ${!isCurrentMonth ? 'text-gray-400' : 'text-telegram-text'}`}
                     onClick={() => handleDateClick(date)}>
                     {date.getDate()}
                   </div>
@@ -144,7 +144,7 @@ const Calendar: React.FC<CalendarProps> = ({
       ))}
       <div className="fixed bottom-16 mb-4 flex w-full justify-center">
         <button
-          className="flex h-9 w-64 items-center justify-center rounded-full bg-[#007AFF] p-0 text-sm font-semibold text-white"
+          className="text-telegram-button-text flex h-9 w-64 items-center justify-center rounded-full bg-[#007AFF] p-0 text-sm font-semibold"
           onClick={isEditing ? () => onSave(currentPeriodDate) : onEdit}>
           {isEditing ? 'СОХРАНИТЬ' : 'ИЗМЕНИТЬ ДАТЫ МЕСЯЧНЫХ'}
         </button>

@@ -24,16 +24,18 @@ const Home: NextPage = () => {
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-telegram-white">
+    <div className="bg-telegram-bg flex min-h-screen flex-col items-center justify-center">
       <Head>
         <title>Welcome to the App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-4 text-center">
+      <main className="text-telegram-text flex w-full flex-1 flex-col items-center justify-center px-4 text-center">
         <h1 className="text-4xl font-bold">Welcome, {userName}</h1>
         <p className="mt-4 text-xl">Get started with our app by clicking the button below.</p>
-        <Link href="/period-tracker">Go to Period Tracker</Link>
+        <Link href="/period-tracker" className="text-telegram-link">
+          Go to Period Tracker
+        </Link>
       </main>
     </div>
   );
