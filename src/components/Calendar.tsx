@@ -91,7 +91,7 @@ const Calendar: React.FC<CalendarProps> = ({
   }
 
   return (
-    <div className="flex h-full flex-col items-center gap-2 overflow-y-scroll">
+    <div className="bg-telegram-bg flex h-full flex-col items-center gap-2 overflow-y-scroll">
       {months.map((month, index) => (
         <div key={index} className="w-full px-4">
           <header className="bg-telegram-secondary flex w-full items-center justify-center py-2">

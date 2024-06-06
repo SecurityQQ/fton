@@ -56,14 +56,9 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
       setEventMessage('Месячные будут');
       setBgColor('bg-ffd3c6');
       setTextColor('text-f77047');
-    } else if (daysSinceLastPeriod >= 5 && daysSinceLastPeriod < 12) {
-      setDaysUntilNextEvent(12 - daysSinceLastPeriod);
+    } else if (daysSinceLastPeriod >= 5 && daysSinceLastPeriod < 14) {
+      setDaysUntilNextEvent(14 - daysSinceLastPeriod);
       setEventMessage('Овуляция через');
-      setBgColor('bg-blue-100');
-      setTextColor('text-blue-500');
-    } else if (daysSinceLastPeriod >= 12 && daysSinceLastPeriod < 17) {
-      setDaysUntilNextEvent(17 - daysSinceLastPeriod);
-      setEventMessage('Овуляция будет');
       setBgColor('bg-blue-100');
       setTextColor('text-blue-500');
     } else {
