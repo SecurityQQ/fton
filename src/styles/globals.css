@@ -5,23 +5,41 @@
 :root {
   --font-roboto: 'Roboto', sans-serif;
   --font-roboto-mono: 'Roboto Mono', monospace;
+  --telegram-bg-color: var(--tg-theme-bg-color, #ffffff);
+  --telegram-text-color: var(--tg-theme-text-color, #333);
+  --telegram-hint-color: var(--tg-theme-hint-color, #707579);
+  --telegram-link-color: var(--tg-theme-link-color, #3390ec);
+  --telegram-button-color: var(--tg-theme-button-color, #3390ec);
+  --telegram-button-text-color: var(--tg-theme-button-text-color, #ffffff);
+  --telegram-secondary-bg-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
 }
-
 
 @layer base {
-  :root {
-    --telegram-bg-color: var(--tg-theme-bg-color, #ffffff);
-    --telegram-text-color: var(--tg-theme-text-color, #000000);
-    --telegram-hint-color: var(--tg-theme-hint-color, #707579);
-    --telegram-link-color: var(--tg-theme-link-color, #3390ec);
-    --telegram-button-color: var(--tg-theme-button-color, #3390ec);
-    --telegram-button-text-color: var(--tg-theme-button-text-color, #ffffff);
-    --telegram-secondary-bg-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
+  body {
+    font-family: var(--font-roboto);
+    background-color: var(--telegram-bg-color);
+    color: var(--telegram-text-color);
   }
 
-  html {
-    @apply font-sans;
+  .bg-telegram-bg {
+    background-color: var(--telegram-bg-color);
+  }
+  .text-telegram-text {
+    color: var(--telegram-text-color);
+  }
+  .text-telegram-hint {
+    color: var(--telegram-hint-color);
+  }
+  .text-telegram-link {
+    color: var(--telegram-link-color);
+  }
+  .bg-telegram-button {
+    background-color: var(--telegram-button-color);
+  }
+  .text-telegram-button-text {
+    color: var(--telegram-button-text-color);
+  }
+  .bg-telegram-secondary {
+    background-color: var(--telegram-secondary-bg-color);
   }
 }
-
-

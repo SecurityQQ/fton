@@ -6,6 +6,8 @@ import { Roboto, Roboto_Mono } from 'next/font/google';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
+import { UserProvider } from '../contexts/UserContext';
+
 const ROBOTO_TTF = Roboto({
   weight: ['100', '300', '400', '500', '700', '900'],
   variable: '--font-roboto',
@@ -47,7 +49,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <body className={`${ROBOTO_TTF.variable} ${ROBOTO_MONO_TTF.variable}`}>
         <TonConnectUIProvider manifestUrl={manifestUrl}>
-          <Component {...pageProps} />
+          <UserProvider>
+            <Component {...pageProps} />
+          </UserProvider>
         </TonConnectUIProvider>
       </body>
     </>
