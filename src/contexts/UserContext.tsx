@@ -1,36 +1,50 @@
-import { Prisma } from '@prisma/client';
-import React, { createContext, useContext, useEffect, useState } from 'react';
-
-type User = Prisma.UserGetPayload<object>;
+import { User } from '@prisma/client';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type UserContextType = {
   user: User | null;
   loading: boolean;
+  refetch: () => void;
 };
 
-const UserContext = createContext<UserContextType>({ user: null, loading: true });
+type UserProviderProps = {
+  children: ReactNode;
+};
 
-export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const UserContext = createContext<UserContextType | undefined>(undefined);
+
+export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch('/api/users/clx25i2rm0000zf1o1ao1wof7'); // Replace with actual user ID
-        const data: User = await response.json();
-        setUser(data);
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchUser = async () => {
+    try {
+      const response = await fetch('/api/user/clx25i2rm0000zf1o1ao1wof7'); // Replace with actual user ID
+      const userData = await response.json();
+      setUser(userData);
+    } catch (error) {
+      console.error('Failed to fetch user data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchUser();
   }, []);
 
-  return <UserContext.Provider value={{ user, loading }}>{children}</UserContext.Provider>;
+  const refetch = () => {
+    setLoading(true);
+    fetchUser();
+  };
+
+  return <UserContext.Provider value={{ user, loading, refetch }}>{children}</UserContext.Provider>;
 };
 
-export const useUser = () => useContext(UserContext);
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
+};

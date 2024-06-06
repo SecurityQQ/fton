@@ -1,73 +1,153 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
+import MiniCalendar from './MiniCalendar';
 
 type CalendarProps = {
   lastMenstruationDate: Date;
   cycleLength: number;
   mode: 'mini' | 'full';
+  isEditing: boolean;
+  onEdit: () => void;
+  onSave: (date: Date) => Promise<void>;
 };
 
-const Calendar: React.FC<CalendarProps> = ({ lastMenstruationDate, cycleLength, mode }) => {
-  const daysSinceLastPeriod = Math.floor(
-    (new Date().getTime() - new Date(lastMenstruationDate).getTime()) / (1000 * 60 * 60 * 24)
-  );
+const Calendar: React.FC<CalendarProps> = ({
+  lastMenstruationDate,
+  cycleLength,
+  mode,
+  isEditing,
+  onEdit,
+  onSave,
+}) => {
+  const [months, setMonths] = useState<Date[]>([]);
+  const [currentPeriodDate, setCurrentPeriodDate] = useState(lastMenstruationDate);
+
+  useEffect(() => {
+    const initialMonths = [];
+    for (let i = -1; i <= 1; i++) {
+      initialMonths.push(new Date(new Date().getFullYear(), new Date().getMonth() + i, 1));
+    }
+    setMonths(initialMonths);
+  }, []);
+
+  const loadPreviousMonth = () => {
+    setMonths((prev) => [new Date(prev[0].getFullYear(), prev[0].getMonth() - 1, 1), ...prev]);
+  };
+
+  const loadNextMonth = () => {
+    setMonths((prev) => [
+      ...prev,
+      new Date(prev[prev.length - 1].getFullYear(), prev[prev.length - 1].getMonth() + 1, 1),
+    ]);
+  };
+
+  const daysInMonth = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+
+  const generateDates = (month: Date) => {
+    const startOfMonth = new Date(month.getFullYear(), month.getMonth(), 1);
+    const endOfMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+    const daysInPrevMonth = daysInMonth(new Date(month.getFullYear(), month.getMonth() - 1));
+    const startDay = startOfMonth.getDay();
+    const daysInCurrentMonth = daysInMonth(month);
+
+    const dates = [];
+
+    // Fill dates from previous month
+    for (let i = startDay - 1; i >= 0; i--) {
+      dates.push(new Date(month.getFullYear(), month.getMonth() - 1, daysInPrevMonth - i));
+    }
+
+    // Fill dates from current month
+    for (let i = 1; i <= daysInCurrentMonth; i++) {
+      dates.push(new Date(month.getFullYear(), month.getMonth(), i));
+    }
+
+    // Fill dates from next month
+    const nextMonthDays = 42 - dates.length; // 42 to fill the calendar grid
+    for (let i = 1; i <= nextMonthDays; i++) {
+      dates.push(new Date(month.getFullYear(), month.getMonth() + 1, i));
+    }
+
+    return dates;
+  };
 
   const today = new Date();
-  let dates = [];
+  const daysSinceLastPeriod = Math.floor(
+    (today.getTime() - new Date(currentPeriodDate).getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  const isFutureDate = (date: Date) => date > today;
+
+  const handleDateClick = async (date: Date) => {
+    if (isEditing) {
+      setCurrentPeriodDate(date);
+      await onSave(date);
+    }
+  };
 
   if (mode === 'mini') {
-    dates = Array.from({ length: 7 }, (_, index) => {
-      const date = new Date(today);
-      date.setDate(today.getDate() + index);
-      return date;
-    });
-  } else {
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    const daysInMonth = endOfMonth.getDate();
-
-    dates = Array.from({ length: daysInMonth }, (_, index) => {
-      const date = new Date(startOfMonth);
-      date.setDate(startOfMonth.getDate() + index);
-      return date;
-    });
+    return <MiniCalendar lastMenstruationDate={currentPeriodDate} cycleLength={cycleLength} />;
   }
 
-  const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
   return (
-    <div className="mt-4 flex flex-col items-center gap-2">
-      <div className="flex items-center gap-2">
-        {dayNames.map((day, index) => (
-          <span key={index} className="w-8 text-center text-gray-400">
-            {day}
-          </span>
-        ))}
-      </div>
-      <div className={`grid ${mode === 'mini' ? 'grid-cols-7' : 'grid-cols-7 gap-1'}`}>
-        {dates.map((date, index) => {
-          const cycleDay =
-            (daysSinceLastPeriod + (mode === 'mini' ? index : date.getDate() - 1)) % cycleLength;
-          const isOvulation = cycleDay >= 12 && cycleDay <= 17;
-          const isPeriod = cycleDay >= 1 && cycleDay <= 5;
-          const isToday = date.toDateString() === today.toDateString();
+    <div className="flex h-full flex-col items-center gap-2 overflow-y-scroll">
+      {months.map((month, index) => (
+        <div key={index} className="w-full px-4">
+          <header className="flex w-full items-center justify-center bg-white py-2">
+            <h1 className="text-lg font-semibold">
+              {month.toLocaleString('default', { month: 'long', year: 'numeric' })}
+            </h1>
+          </header>
 
-          return (
-            <div key={index} className="flex flex-col items-center">
-              <div
-                className={`flex size-8 items-center justify-center rounded-full ${
-                  isToday
-                    ? 'bg-gradient-to-b from-[#A3CFFF] to-[#3290F8] text-white'
-                    : isPeriod
-                    ? 'bg-gradient-to-b from-[#FFA3A3] to-[#F83232] text-white'
-                    : isOvulation
-                    ? 'bg-gradient-to-b from-[#A3FFA3] to-[#32F832] text-white'
-                    : 'bg-transparent'
-                } ${isToday ? 'text-white' : isOvulation ? 'text-white' : 'text-gray-400'}`}>
-                {date.getDate()}
-              </div>
-            </div>
-          );
-        })}
+          <div className="grid w-full grid-cols-7 gap-1">
+            {generateDates(month).map((date, index) => {
+              const isCurrentMonth = date.getMonth() === month.getMonth();
+              const daysFromStartOfCycle =
+                Math.floor(
+                  (date.getTime() - new Date(currentPeriodDate).getTime()) / (1000 * 60 * 60 * 24)
+                ) % cycleLength;
+              const isPeriod = daysFromStartOfCycle >= 0 && daysFromStartOfCycle < 5;
+              const isOvulation = daysFromStartOfCycle >= 12 && daysFromStartOfCycle < 17;
+              const isToday = date.toDateString() === today.toDateString();
+              const futurePeriod = isPeriod && isFutureDate(date);
+              const futureOvulation = isOvulation && isFutureDate(date);
+              const showPeriod = isPeriod && date >= currentPeriodDate;
+              const showOvulation = isOvulation && date >= currentPeriodDate;
+
+              return (
+                <div key={index} className="flex flex-col items-center">
+                  <div
+                    className={`flex size-10 items-center justify-center rounded-full ${
+                      isEditing
+                        ? 'border-2 border-gray-300'
+                        : showPeriod
+                        ? futurePeriod
+                          ? 'border-2 border-dashed border-[#F67DBE]'
+                          : 'bg-gradient-to-b from-[#E494BF4D] to-[#F67DBE]'
+                        : showOvulation
+                        ? futureOvulation
+                          ? 'border-2 border-dashed border-[#3290F8]'
+                          : 'bg-gradient-to-b from-[#A3CFFF] to-[#3290F8]'
+                        : isToday
+                        ? 'bg-[#DCF2FF] font-bold'
+                        : 'bg-transparent'
+                    } ${!isCurrentMonth ? 'text-gray-400' : 'text-black'}`}
+                    onClick={() => handleDateClick(date)}>
+                    {date.getDate()}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+      <div className="fixed bottom-16 mb-4 flex w-full justify-center">
+        <button
+          className="flex h-9 w-64 items-center justify-center rounded-full bg-[#007AFF] p-0 text-sm font-semibold text-white"
+          onClick={isEditing ? () => onSave(currentPeriodDate) : onEdit}>
+          {isEditing ? 'СОХРАНИТЬ' : 'ИЗМЕНИТЬ ДАТЫ МЕСЯЧНЫХ'}
+        </button>
       </div>
     </div>
   );

@@ -1,16 +1,19 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
+import Loader from '../components/Loader';
 import Navigation from '../components/Navigation';
 import PeriodTracking from '../components/PeriodTracking';
 import { useUser } from '../contexts/UserContext';
 
 const PeriodTracker: NextPage = () => {
   const { user, loading } = useUser();
+  const router = useRouter();
 
   const handlePeriodDateChange = () => {
     console.log('Period date change clicked');
-    // Implement the date change logic here
+    router.push('/calendar');
   };
 
   const handleStartFarming = () => {
@@ -39,18 +42,7 @@ const PeriodTracker: NextPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-white">
-        <Head>
-          <title>Period Tracker</title>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        <div className="flex flex-col items-center">
-          <img src="/logo.png" alt="Loading" className="size-24 animate-spin" />
-          <p className="mt-4 text-blue-500">Loading...</p>
-        </div>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
