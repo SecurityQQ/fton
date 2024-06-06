@@ -13,7 +13,8 @@ type User = Prisma.UserGetPayload<object>;
 
 const Home: NextPage = () => {
   const [alice, setAlice] = useState<User | null>(null);
-  const { network } = useTonConnect();
+  const { network, wallet, address } = useTonConnect();
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     const fetchAlice = async () => {
@@ -23,6 +24,20 @@ const Home: NextPage = () => {
     };
 
     fetchAlice();
+  }, []);
+
+  useEffect(() => {
+    // Check if Telegram Web App SDK is available
+    if (window.Telegram?.WebApp) {
+      const tg = window.Telegram.WebApp;
+      tg.ready(); // Tell Telegram that the web app is ready
+
+      // Get user's name from Telegram
+      const user = tg.initDataUnsafe?.user;
+      if (user) {
+        setUserName(user.first_name + ' ' + (user.last_name || ''));
+      }
+    }
   }, []);
 
   return (
@@ -35,6 +50,13 @@ const Home: NextPage = () => {
       <main className="flex w-full flex-1 flex-col items-center justify-center px-4 text-center">
         <TonConnectButton />
         <Button>{network ? (network === CHAIN.MAINNET ? 'mainnet' : 'testnet') : 'N/A'}</Button>
+
+        <p>
+          <strong>Wallet:</strong> {wallet} <br />
+          <strong>Address:</strong> {address} <br />
+          <strong>Username:</strong> {userName}
+        </p>
+
         <span className="text-2xl font-bold text-telegram-black">
           This is a starter template using Next.js and Tailwind CSS for Telegram&apos;s Web Apps.
         </span>
