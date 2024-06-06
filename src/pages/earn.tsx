@@ -7,13 +7,14 @@ import {
   addHealthData,
   createAccount,
   getHealthDataAddress,
+  getPublicKey,
   getRecordsCount,
 } from './api/contracts';
 import Navigation from '../components/Navigation';
 import { Button } from '../components/styled/styled';
 import { useTonConnect } from '../hooks/useTonConnect';
 
-const mockUserAddress = 'test4';
+const mockUserAddress = 'test7';
 const mockPublicKey = 'test_key';
 
 const EarnPage: React.FC = () => {
@@ -32,14 +33,14 @@ const EarnPage: React.FC = () => {
           <strong>Wallet:</strong> {wallet} <br />
           <strong>Address:</strong> {address} <br />
         </p>
-        <button onClick={() => createAccount(tonConnectUI, mockUserAddress, mockPublicKey)}>
+        <button onClick={() => createAccount(mockUserAddress, mockPublicKey)}>
           Create Account
         </button>
+        <button onClick={() => getPublicKey(mockUserAddress)}>Check publicKey</button>
         <button onClick={() => getRecordsCount(mockUserAddress)}>Get Records Count</button>
         <button
           onClick={async () =>
             addHealthData(
-              tonConnectUI,
               mockUserAddress,
               'This is data ' + (await getRecordsCount(mockUserAddress)).toString()
             )
@@ -48,11 +49,7 @@ const EarnPage: React.FC = () => {
         </button>
         <button
           onClick={async () =>
-            getHealthDataAddress(
-              tonConnectUI,
-              mockUserAddress,
-              await getRecordsCount(mockUserAddress)
-            )
+            getHealthDataAddress(mockUserAddress, await getRecordsCount(mockUserAddress))
           }>
           Get Last Health Data
         </button>
