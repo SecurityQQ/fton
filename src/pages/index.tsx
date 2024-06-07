@@ -9,7 +9,7 @@ import { useUser } from '../contexts/UserContext';
 import { useTonConnect } from '../hooks/useTonConnect'; // Import your custom hook
 
 const Home: NextPage = () => {
-  const { user, loading, setUserId } = useUser();
+  const { user, loading, refetch, setUserId } = useUser();
   const [userName, setUserName] = useState('');
   const { connected, wallet } = useTonConnect();
 
@@ -77,6 +77,7 @@ const Home: NextPage = () => {
             setUserId(data.id); // Store user ID
             localStorage.setItem('userId', data.id);
             localStorage.setItem('telegramId', user.telegramId);
+            refetch();
           } else {
             console.error('Failed to get user ID from response:', data);
           }
