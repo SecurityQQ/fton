@@ -17,12 +17,14 @@ import {
 } from './api/contracts';
 import Navigation from '../components/Navigation';
 import { Button } from '../components/styled/styled';
+import { useUser } from '../contexts/UserContext';
 import { useTonConnect } from '../hooks/useTonConnect';
 
 const mockPublicKey = 'test_key';
 
 const EarnPage: React.FC = () => {
   const { network, wallet, address } = useTonConnect();
+  const { user } = useUser();
   const [isBlockchainInited, setIsBlockchainInited] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(0);
@@ -40,12 +42,35 @@ const EarnPage: React.FC = () => {
     checkBlockchainInited();
   }, [address]);
 
+  const updateTokenBalance = async (amount: number) => {
+    if (user && user.id) {
+      try {
+        const response = await fetch(`/api/user/${user.id}/balance`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ amount }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setTokenBalance(data.tokenBalance);
+        } else {
+          console.error('Failed to update token balance:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error updating token balance:', error);
+      }
+    }
+  };
+
   const handleInitBlockchain = async () => {
     setLoading(true);
     try {
       await initBlockchainLogic(address!, mockPublicKey);
       setIsBlockchainInited(true);
-      setTokenBalance((prevBalance) => prevBalance + 1000); // Award 1000 tokens
+      await updateTokenBalance(1000); // Award 1000 tokens
     } catch (error) {
       console.error('Failed to initialize blockchain logic:', error);
     } finally {
