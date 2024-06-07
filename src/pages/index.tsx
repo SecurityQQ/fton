@@ -31,57 +31,63 @@ const Home: NextPage = () => {
 
     const mockUser = () => {
       return {
-        name: 'Ann',
-        telegramHandle: '',
-        telegramId: '6107566463',
+        name: 'New',
+        telegramHandle: '14233',
+        telegramId: 'New3',
       };
     };
 
     const isLocalhost = window.location.hostname === 'localhost';
     const user = isLocalhost ? mockUser() : fetchUserFromTelegram();
 
-    if (user) {
+    const storeUserData = async (user: {
+      name: string;
+      telegramHandle: string;
+      telegramId: string;
+    }) => {
       setUserName(user.name);
-      let storedUserId = localStorage.getItem('userId');
+      const storedUserId = localStorage.getItem('userId');
+      const storedTelegramId = localStorage.getItem('telegramId');
       console.log('Stored user ID:', storedUserId);
+      console.log('Stored telegram ID:', storedTelegramId);
 
-      if (storedUserId === 'undefined' || storedUserId === 'null' || !storedUserId) {
-        storedUserId = null;
-      }
-
-      if (storedUserId) {
-        console.log('Setting user id:', storedUserId);
+      if (storedUserId && storedTelegramId === user.telegramId) {
+        console.log('Setting user ID from local storage:', storedUserId);
         setUserId(storedUserId);
       } else {
         console.log('No valid stored user ID, creating a new user...');
-        // Create or fetch user in the database
-        fetch('/api/user', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: user.name,
-            telegramHandle: user.telegramHandle,
-            telegramId: user.telegramId,
-            walletAddress: '', // You can collect this later
-          }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log('Response from creating user:', data);
-            if (data.id) {
-              console.log('New user ID from response:', data.id);
-              setUserId(data.id); // Store user ID
-              localStorage.setItem('userId', data.id);
-            } else {
-              console.error('Failed to get user ID from response:', data);
-            }
-          })
-          .catch((error) => {
-            console.error('Failed to create or fetch user:', error);
+        try {
+          const response = await fetch('/api/user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: user.name,
+              telegramHandle: user.telegramHandle,
+              telegramId: user.telegramId,
+              walletAddress: '', // You can collect this later
+            }),
           });
+
+          const data = await response.json();
+          console.log('Response from creating user:', data);
+          if (data.id) {
+            console.log('New user ID from response:', data.id);
+            setUserId(data.id); // Store user ID
+            localStorage.setItem('userId', data.id);
+            localStorage.setItem('telegramId', user.telegramId);
+          } else {
+            console.error('Failed to get user ID from response:', data);
+          }
+        } catch (error) {
+          console.error('Failed to create or fetch user:', error);
+        }
       }
+    };
+
+    if (user) {
+      storeUserData(user);
     }
   }, [setUserId]);
 
