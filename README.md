@@ -3,6 +3,12 @@
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/SecurityQQ/fton/releases)
 
+## Vote for us on DoraHacks
+Help us to win TON Hackathon for a cookie :)
+
+<a target="_blank" href="https://dorahacks.io/buidl/13265"><img src="https://cdn.dorahacks.io/images/buidl-embed/colored-full.png" height="50" width="170" /></a>
+
+
 ![Preview](/demo/preview.png)
 
 
