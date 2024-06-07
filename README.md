@@ -140,3 +140,9 @@ We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING
 
 ## License
 This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
+
+## Vote for us on DoraHacks
+Help us to win TON Hackathon for a cookie :)
+
+<a target="_blank" href="https://dorahacks.io/buidl/13265"><img src="https://cdn.dorahacks.io/images/buidl-embed/colored-full.png" height="50" width="170" /></a>
+
