@@ -31,9 +31,9 @@ const Home: NextPage = () => {
 
     const mockUser = () => {
       return {
-        name: 'Alex M',
-        telegramHandle: 'aleksandr_malyshev',
-        telegramId: '3с',
+        name: 'Ann',
+        telegramHandle: '',
+        telegramId: '6107566463',
       };
     };
 
@@ -42,11 +42,18 @@ const Home: NextPage = () => {
 
     if (user) {
       setUserName(user.name);
-      const storedUserId = localStorage.getItem('userId');
+      let storedUserId = localStorage.getItem('userId');
+      console.log('Stored user ID:', storedUserId);
+
+      if (storedUserId === 'undefined' || storedUserId === 'null' || !storedUserId) {
+        storedUserId = null;
+      }
 
       if (storedUserId) {
+        console.log('Setting user id:', storedUserId);
         setUserId(storedUserId);
       } else {
+        console.log('No valid stored user ID, creating a new user...');
         // Create or fetch user in the database
         fetch('/api/user', {
           method: 'POST',
@@ -62,18 +69,28 @@ const Home: NextPage = () => {
         })
           .then((res) => res.json())
           .then((data) => {
-            setUserId(data.id); // Store user ID
-            localStorage.setItem('userId', data.id);
+            console.log('Response from creating user:', data);
+            if (data.id) {
+              console.log('New user ID from response:', data.id);
+              setUserId(data.id); // Store user ID
+              localStorage.setItem('userId', data.id);
+            } else {
+              console.error('Failed to get user ID from response:', data);
+            }
+          })
+          .catch((error) => {
+            console.error('Failed to create or fetch user:', error);
           });
       }
     }
   }, [setUserId]);
 
   useEffect(() => {
-    if (connected && wallet) {
+    if (connected && wallet && wallet.trim() !== '') {
       const storedUserId = localStorage.getItem('userId');
+      console.log('Updating wallet for user ID:', storedUserId);
 
-      if (storedUserId && wallet.trim() !== '') {
+      if (storedUserId && storedUserId !== 'undefined' && storedUserId !== 'null') {
         fetch(`/api/user/${storedUserId}`, {
           method: 'PATCH',
           headers: {
@@ -86,6 +103,9 @@ const Home: NextPage = () => {
           .then((res) => res.json())
           .then((data) => {
             console.log('Wallet address updated:', data);
+          })
+          .catch((error) => {
+            console.error('Failed to update wallet address:', error);
           });
       }
     }
@@ -104,9 +124,6 @@ const Home: NextPage = () => {
           Трекер женского здоровья, где данные зашифрованы смартконтрактом, и ты получишь
           персональные рекомендации по well-being на основе цикла через бота
         </p>
-        {/*<Link href="/period-tracker" className="text-telegram-link mt-4">
-          Перейти к трекеру цикла
-        </Link>*/}
         <TonConnectButton className="pt-4" />
         <WelcomeBonus />
       </main>

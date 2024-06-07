@@ -20,12 +20,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { name, walletAddress, telegramHandle, telegramId } = req.body;
 
     try {
-      // Check if the user already exists
+      // Check if the user already exists, prioritizing telegramId
       let user = await prisma.user.findFirst({
         where: {
-          OR: [{ walletAddress }, { telegramId }],
+          telegramId,
         },
       });
+
+      // If not found by telegramId, try finding by walletAddress
+      if (!user && walletAddress) {
+        user = await prisma.user.findFirst({
+          where: {
+            walletAddress,
+          },
+        });
+      }
 
       if (!user) {
         // Create a new user if not found
