@@ -25,6 +25,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (error) {
       res.status(500).json({ error: 'Internal Server Error' });
     }
+  } else if (req.method === 'PATCH') {
+    const { walletAddress } = req.body;
+
+    try {
+      const updatedUser = await prisma.user.update({
+        where: { id: String(id) },
+        data: { walletAddress },
+      });
+
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   } else {
     res.status(405).end(); // Method Not Allowed
   }
