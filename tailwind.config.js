@@ -19,6 +19,8 @@ module.exports = {
         'telegram-primary': 'var(--telegram-button-color)',
         'telegram-primary-text': 'var(--telegram-button-text-color)',
         'telegram-secondary-white': 'var(--telegram-secondary-bg-color)',
+        'blue-bright': '#007AFF',
+        'bright-orange': '#F77047',
       },
     },
   },

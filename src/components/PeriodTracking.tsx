@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import MiniCalendar from './MiniCalendar';
 import recommendationsData from '../assets/recommendations.json';
@@ -71,14 +71,6 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 text-center">
-      <header className="relative flex h-24 w-full items-center justify-between bg-white px-4 shadow-sm">
-        <div className="flex items-center gap-4">
-          <button className="text-blue-500">Cancel</button>
-          <h1 className="pl-8 text-xl text-blue-500">Female TON</h1>
-        </div>
-        <button className="text-blue-500">...</button>
-      </header>
-
       <main className="flex w-full flex-1 flex-col items-center">
         <MiniCalendar lastMenstruationDate={lastMenstruationDate} cycleLength={cycleLength} />
 
