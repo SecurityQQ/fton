@@ -43,31 +43,31 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ lastMenstruationDate, cycle
         const isToday = date.toDateString() === today.toDateString();
 
         return (
-          <div className="mt-7 flex flex-col gap-2" key={index}>
+          <div className="mt-7 flex flex-col gap-1.5" key={index}>
             <span
               key={index}
-              className={`w-10 text-center text-sm ${
+              className={`w-10 text-center text-calendarDays ${
                 isPeriod
                   ? isToday
                     ? 'text-bright-orange'
                     : 'text-bright-orange opacity-60'
                   : isToday
-                  ? 'text-blue-bright'
-                  : 'text-blue-bright opacity-60'
+                  ? 'text-bright-blue'
+                  : 'text-bright-blue opacity-60'
               }`}>
               {isToday ? 'СЕГОДНЯ' : day}
             </span>
-            <div className={`${isToday ? 'pl-3' : ''}`}>
+            <div className={`${isToday ? 'pl-2' : ''}`}>
               <div
                 className={`pad flex size-10 items-center justify-center rounded-full ${
                   isPeriod
                     ? 'border border-dashed border-bright-orange bg-transparent'
                     : isOvulation
-                    ? 'border border-dashed border-blue-bright bg-transparent'
+                    ? 'border border-dashed border-bright-blue bg-transparent'
                     : 'bg-transparent'
                 } ${
-                  isPeriod ? 'text-bright-orange' : isOvulation ? 'text-blue-bright' : 'text-black'
-                }`}>
+                  isPeriod ? 'text-bright-orange' : isOvulation ? 'text-bright-blue' : 'text-black'
+                } text-calendarNumbers`}>
                 {date.getDate()}
               </div>
             </div>

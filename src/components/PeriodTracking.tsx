@@ -38,8 +38,8 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
   const [recommendation, setRecommendation] = useState('');
   const [daysUntilNextEvent, setDaysUntilNextEvent] = useState(0);
   const [eventMessage, setEventMessage] = useState('');
-  const [bgColor, setBgColor] = useState('bg-blue-100');
-  const [textColor, setTextColor] = useState('text-blue-500');
+  const [bgColor, setBgColor] = useState('blue-light');
+  const [textColor, setTextColor] = useState('bright-blue');
 
   const cycleLength = 28;
   const daysSinceLastPeriod = Math.floor(
@@ -54,39 +54,40 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
     if (daysSinceLastPeriod < 5) {
       setDaysUntilNextEvent(5 - daysSinceLastPeriod);
       setEventMessage('Месячные будут');
-      setBgColor('bg-ffd3c6');
-      setTextColor('text-f77047');
+      setBgColor('orange-light');
+      setTextColor('bright-orange');
     } else if (daysSinceLastPeriod >= 5 && daysSinceLastPeriod < 14) {
       setDaysUntilNextEvent(14 - daysSinceLastPeriod);
       setEventMessage('Овуляция через');
-      setBgColor('bg-blue-100');
-      setTextColor('text-blue-500');
+      setBgColor('blue-light');
+      setTextColor('bright-blue');
     } else {
       setDaysUntilNextEvent(daysUntilNextPeriod);
       setEventMessage('Месячные через');
-      setBgColor('bg-blue-100');
-      setTextColor('text-blue-500');
+      setBgColor('blue-light');
+      setTextColor('bright-blue');
     }
   }, [daysSinceLastPeriod]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 text-center">
       <main className="flex w-full flex-1 flex-col items-center">
-        <MiniCalendar lastMenstruationDate={lastMenstruationDate} cycleLength={cycleLength} />
-
-        <div
-          className={`mt-8 w-full max-w-md rounded-2xl p-4 ${bgColor}`}
-          style={{ backgroundColor: daysSinceLastPeriod < 5 ? '#FFD3C6' : undefined }}>
-          <p className={`text-lg ${textColor}`}>{eventMessage}</p>
-          <h2 className={`mt-2 text-5xl font-bold ${textColor}`}>
-            {daysUntilNextEvent} {getDayLabel(daysUntilNextEvent)}
-          </h2>
-          <p className={`mt-2 ${textColor}`}>{recommendation}</p>
-          <button
-            onClick={onPeriodDateChange}
-            className="mt-4 rounded-full bg-white px-6 py-2 text-blue-500">
-            ИЗМЕНИТЬ ДАТЫ МЕСЯЧНЫХ
-          </button>
+        <div className={`bg- w-full${bgColor} rounded-b-3xl`}>
+          <div className="flex flex-col items-center">
+            <MiniCalendar lastMenstruationDate={lastMenstruationDate} cycleLength={cycleLength} />
+            <div className="mt-8 w-full max-w-md p-4">
+              <p className="text-header2 text-text-dark">{eventMessage}</p>
+              <h2 className={`text- mt-2 text-header1 font-bold${textColor}`}>
+                {daysUntilNextEvent} {getDayLabel(daysUntilNextEvent)}
+              </h2>
+              <p className={`text- mt-2 text-header2${textColor}`}>{recommendation}</p>
+              <button
+                onClick={onPeriodDateChange}
+                className="my-4 rounded-full bg-bright-blue px-6 py-2 text-white">
+                ОБНОВИТЬ ДАТУ
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="mt-8 w-full max-w-md rounded-2xl bg-blue-500 p-4 text-white">
