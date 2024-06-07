@@ -14,6 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
       res.status(200).json(users);
     } catch (error) {
+      console.error('GET /api/user error:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else if (req.method === 'POST') {
@@ -27,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
 
-      // If not found by telegramId, try finding by walletAddress
+      // If not found by telegramId, try finding by walletAddress (only if walletAddress is provided)
       if (!user && walletAddress) {
         user = await prisma.user.findFirst({
           where: {
@@ -38,20 +39,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       if (!user) {
         // Create a new user if not found
+        const userData = {
+          name,
+          telegramHandle,
+          telegramId,
+          birthdate: new Date(), // Placeholder for now, replace with actual data if available
+          lastPeriodDate: new Date(), // Placeholder for now, replace with actual data if available
+          walletAddress: walletAddress || null,
+        };
+
         user = await prisma.user.create({
-          data: {
-            name,
-            walletAddress,
-            telegramHandle,
-            telegramId,
-            birthdate: new Date(), // Placeholder for now, replace with actual data if available
-            lastPeriodDate: new Date(), // Placeholder for now, replace with actual data if available
-          },
+          data: userData,
         });
       }
 
       res.status(201).json(user);
     } catch (error) {
+      console.error('POST /api/user error:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else {
