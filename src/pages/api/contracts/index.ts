@@ -1,7 +1,6 @@
 import { KeyPair, mnemonicToPrivateKey } from '@ton/crypto';
 import { Address, Sender, TonClient, WalletContractV3R2, toNano } from '@ton/ton';
 import assert from 'assert';
-import { block } from 'marked';
 
 import { Account } from 'src/ton_client/tact_Account';
 import { HealthDataRecord } from 'src/ton_client/tact_HealthDataRecord';
