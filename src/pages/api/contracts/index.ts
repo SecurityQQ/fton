@@ -1,5 +1,6 @@
 import { KeyPair, mnemonicToPrivateKey } from '@ton/crypto';
 import { Address, Sender, TonClient, WalletContractV3R2, toNano } from '@ton/ton';
+import assert from 'assert';
 
 import { Account } from 'src/contracts/build/Account/tact_Account';
 import { HealthDataRecord } from 'src/contracts/build/Account/tact_HealthDataRecord';
@@ -67,7 +68,29 @@ async function waitForAction(
   throw new Error("Contract was not deployed. Check your wallet's transactions");
 }
 
-export async function createAccount(userAddress: string, publicKey: string) {
+export let blockchainLogicInited = false;
+let initing = false;
+
+export async function initBlockchainLogic(userAddress: string, publicKey: string) {
+  if (!blockchainLogicInited) {
+    if (initing) return;
+    initing = true;
+    try {
+      const sender = await getBotSender();
+      const contract = await Account.fromInit(userAddress);
+      const openedContract = tonClient.open(contract);
+      const deployed = await tonClient.isContractDeployed(contract.address);
+      if (!deployed) {
+        await createAccount(userAddress, publicKey);
+      }
+      blockchainLogicInited = true;
+    } finally {
+      initing = false;
+    }
+  }
+}
+
+async function createAccount(userAddress: string, publicKey: string) {
   const sender = await getBotSender();
   const contract = await Account.fromInit(userAddress);
   const openedContract = tonClient.open(contract);
@@ -83,6 +106,7 @@ export async function createAccount(userAddress: string, publicKey: string) {
   await waitForAction(() => tonClient.isContractDeployed(contract.address));
   console.log('Contract deployed');
   console.log('Address:', contract.address.toString());
+  console.log('Setting public key...');
   await openedContract.send(
     sender,
     { value: toNano('0.004') },
@@ -96,7 +120,10 @@ export async function createAccount(userAddress: string, publicKey: string) {
 }
 
 export async function getPublicKey(userAddress: string): Promise<string> {
-  const sender = await getBotSender();
+  assert(
+    blockchainLogicInited,
+    'Blockchain logic is not initialized. Run initBlockchainLogic first'
+  );
   const contract = await Account.fromInit(userAddress);
   const openedContract = tonClient.open(contract);
   const publicKey = await openedContract.getPublicKey();
@@ -105,6 +132,10 @@ export async function getPublicKey(userAddress: string): Promise<string> {
 }
 
 export async function addHealthData(userAddress: string, encryptedData: string) {
+  assert(
+    blockchainLogicInited,
+    'Blockchain logic is not initialized. Run initBlockchainLogic first'
+  );
   const dataOwnerAddress = Address.parse(userAddress);
   // const dataOwnerAddress = Address.parse('UQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPuwA');
   console.log('Saving users health data');
@@ -137,6 +168,10 @@ export async function addHealthData(userAddress: string, encryptedData: string) 
 }
 
 export async function getRecordsCount(userAddress: string): Promise<bigint> {
+  assert(
+    blockchainLogicInited,
+    'Blockchain logic is not initialized. Run initBlockchainLogic first'
+  );
   const contract = await Account.fromInit(userAddress);
   const openedContract = tonClient.open(contract);
   const recordsCount = await openedContract.getNumHealthDataRecords();
@@ -145,6 +180,10 @@ export async function getRecordsCount(userAddress: string): Promise<bigint> {
 }
 
 export async function getHealthDataAddress(userAddress: string, seqno: bigint): Promise<string> {
+  assert(
+    blockchainLogicInited,
+    'Blockchain logic is not initialized. Run initBlockchainLogic first'
+  );
   const dataOwnerAddress = Address.parse(userAddress);
   // const dataOwnerAddress = Address.parse('UQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPuwA');
   const contract = await Account.fromInit(userAddress);

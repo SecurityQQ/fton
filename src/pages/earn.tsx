@@ -1,25 +1,23 @@
 import { CHAIN } from '@tonconnect/protocol';
-import { TonConnectButton, useTonConnectUI } from '@tonconnect/ui-react';
+import { TonConnectButton } from '@tonconnect/ui-react';
 import Head from 'next/head';
 import React from 'react';
 
 import {
   addHealthData,
-  createAccount,
   getHealthDataAddress,
   getPublicKey,
   getRecordsCount,
+  initBlockchainLogic,
 } from './api/contracts';
 import Navigation from '../components/Navigation';
 import { Button } from '../components/styled/styled';
 import { useTonConnect } from '../hooks/useTonConnect';
 
-const mockUserAddress = 'test7';
 const mockPublicKey = 'test_key';
 
 const EarnPage: React.FC = () => {
-  const { sender, network, wallet, walletObject, address } = useTonConnect();
-  const [tonConnectUI] = useTonConnectUI();
+  const { network, wallet, address } = useTonConnect();
 
   return (
     <div className="flex h-screen flex-col">
@@ -33,24 +31,19 @@ const EarnPage: React.FC = () => {
           <strong>Wallet:</strong> {wallet} <br />
           <strong>Address:</strong> {address} <br />
         </p>
-        <button onClick={() => createAccount(mockUserAddress, mockPublicKey)}>
-          Create Account
+        <button onClick={() => initBlockchainLogic(address!, mockPublicKey)}>
+          Init Blockchain Logic
         </button>
-        <button onClick={() => getPublicKey(mockUserAddress)}>Check publicKey</button>
-        <button onClick={() => getRecordsCount(mockUserAddress)}>Get Records Count</button>
+        <button onClick={() => getPublicKey(address!)}>Check publicKey</button>
+        <button onClick={() => getRecordsCount(address!)}>Get Records Count</button>
         <button
           onClick={async () =>
-            addHealthData(
-              mockUserAddress,
-              'This is data ' + (await getRecordsCount(mockUserAddress)).toString()
-            )
+            addHealthData(address!, 'This is data ' + (await getRecordsCount(address!)).toString())
           }>
           Add Health Data
         </button>
         <button
-          onClick={async () =>
-            getHealthDataAddress(mockUserAddress, await getRecordsCount(mockUserAddress))
-          }>
+          onClick={async () => getHealthDataAddress(address!, await getRecordsCount(address!))}>
           Get Last Health Data
         </button>
       </main>
