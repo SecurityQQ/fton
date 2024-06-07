@@ -78,7 +78,7 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
             <div className="mt-8 w-full max-w-md p-4">
               <p className="text-header2 text-text-dark">{eventMessage}</p>
               <h2 className={`text- mt-2 text-header1 font-bold${textColor}`}>
-                {daysUntilNextEvent} {getDayLabel(daysUntilNextEvent)}
+                {daysUntilNextEvent || '26'} {getDayLabel(daysUntilNextEvent)}
               </h2>
               <p className={`text- mt-2 text-header2${textColor}`}>{recommendation}</p>
               <button
@@ -92,7 +92,7 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
 
         <div className="mt-8 w-full max-w-md rounded-2xl bg-blue-500 p-4 text-white">
           <p className="text-lg">Текущий баланс</p>
-          <h2 className="mt-2 text-5xl font-bold">{tokenBalance} FHC</h2>
+          <h2 className="mt-2 text-5xl font-bold">{tokenBalance || '6'} FHC</h2>
           <p className="mt-2 opacity-80">
             Зарабатывайте Fem Coin и обменяйте его на другие токены или получайте скидку на
             консультации и многое другое

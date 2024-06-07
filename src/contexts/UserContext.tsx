@@ -5,6 +5,7 @@ type UserContextType = {
   user: User | null;
   loading: boolean;
   refetch: () => void;
+  setUserId: (id: string) => void;
 };
 
 type UserProviderProps = {
@@ -15,11 +16,12 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUser = async () => {
+  const fetchUser = async (id: string) => {
     try {
-      const response = await fetch('/api/user/clx25i2rm0000zf1o1ao1wof7'); // Replace with actual user ID
+      const response = await fetch(`/api/user/${id}`);
       const userData = await response.json();
       setUser(userData);
     } catch (error) {
@@ -30,15 +32,30 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchUser();
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(storedUserId);
+      fetchUser(storedUserId);
+    }
   }, []);
 
   const refetch = () => {
-    setLoading(true);
-    fetchUser();
+    if (userId) {
+      setLoading(true);
+      fetchUser(userId);
+    }
   };
 
-  return <UserContext.Provider value={{ user, loading, refetch }}>{children}</UserContext.Provider>;
+  const storeUserId = (id: string) => {
+    setUserId(id);
+    localStorage.setItem('userId', id);
+  };
+
+  return (
+    <UserContext.Provider value={{ user, loading, refetch, setUserId: storeUserId }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUser = () => {
