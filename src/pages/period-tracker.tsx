@@ -1,6 +1,7 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 import Loader from '../components/Loader';
 import Navigation from '../components/Navigation';
@@ -8,7 +9,7 @@ import PeriodTracking from '../components/PeriodTracking';
 import { useUser } from '../contexts/UserContext';
 
 const PeriodTracker: NextPage = () => {
-  const { user, loading } = useUser();
+  const { user, loading, refetch } = useUser();
   const router = useRouter();
 
   const handlePeriodDateChange = () => {
@@ -40,6 +41,16 @@ const PeriodTracker: NextPage = () => {
     console.log('Subscribe to channels clicked');
     // Implement the subscribe channels logic here
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (loading) {
+        refetch();
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [loading, refetch]);
 
   if (loading) {
     return <Loader />;
