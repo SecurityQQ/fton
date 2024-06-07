@@ -12,24 +12,24 @@ const Navigation: React.FC = () => {
         className={`flex flex-col items-center ${
           router.pathname === '/period-tracker' ? 'text-blue-500' : 'text-gray-500'
         }`}>
-        <Image src="/icon-home.svg" alt="Home" width={24} height={24} />
-        <span className="text-sm">Главная</span>
+        <Image src="/icon-home.svg" alt="Home" width={40} height={40} />
+        <span className="text-bottomBar">Главная</span>
       </button>
       <button
         onClick={() => router.push('/earn')}
         className={`flex flex-col items-center ${
           router.pathname === '/earn' ? 'text-blue-500' : 'text-gray-500'
         }`}>
-        <Image src="/icon-earn.svg" alt="Earn" width={24} height={24} />
-        <span className="text-sm">Заработать</span>
+        <Image src="/icon-earn.svg" alt="Earn" width={40} height={40} />
+        <span className="text-bottomBar">Заработать</span>
       </button>
       <button
         onClick={() => router.push('/calendar')}
         className={`flex flex-col items-center ${
           router.pathname === '/calendar' ? 'text-blue-500' : 'text-gray-500'
         }`}>
-        <Image src="/icon-calendar.svg" alt="Calendar" width={24} height={24} />
-        <span className="text-sm">Календарь</span>
+        <Image src="/icon-calendar.svg" alt="Calendar" width={40} height={40} />
+        <span className="text-bottomBar">Календарь</span>
       </button>
     </footer>
   );
