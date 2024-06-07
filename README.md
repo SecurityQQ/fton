@@ -1,8 +1,11 @@
-
-
 # Female Ton – Telegram Mini-App Fertility Tracker in Web3
+[![Build Status](https://img.shields.io/github/actions/workflow/status/gicha/female-ton-contract/CI.yml)](https://github.com/gicha/female-ton-contract/actions)
+[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/gicha/female-ton-contract/releases)
 
 ![Preview](/demo/preview.png)
+
+
 
 ## Project Overview
 Female Ton is a Web3-based fertility tracker designed to be a convenient, secure, and smart solution for tracking menstrual cycles through a Telegram mini-app. The tracker ensures the privacy and encryption of user data using smart contracts, providing personalized well-being recommendations through a bot.
