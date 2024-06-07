@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 import MiniCalendar from './MiniCalendar';
@@ -120,18 +121,18 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
           <div
             onClick={onShareData}
             className="mb-1 flex cursor-pointer flex-row content-between rounded-3xl bg-orange-light p-4">
-            <div className="flex flex-1 flex-row items-stretch">
+            <Link href="/earn" className="flex flex-1 flex-row items-stretch">
               <Image src="/star.svg" alt="Star" width={32} height={32} />
               <div className="ml-2 flex flex-col items-stretch">
-                <p className="self-start text-header2 text-sunny-dark">Пригласить пользователя</p>
+                <p className="self-start text-header2 text-sunny-dark">Погрузись на блокчейн</p>
                 <div className="flex flex-row">
-                  <p className="self-start text-body1 font-medium text-sunny-dark">+ 600 FHC </p>
+                  <p className="self-start text-body1 font-medium text-sunny-dark">+ 1 000 FHC </p>
                   <p className="ml-1 mt-1 self-start text-body2B font-medium text-sunny-dark">
-                    / пользователь
+                    / 1 раз
                   </p>
                 </div>
               </div>
-            </div>
+            </Link>
             <div className="self-center">
               <Image src="/chevron-right.svg" alt="Chevron" width={32} height={32} />
             </div>
@@ -139,7 +140,7 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
           <div
             onClick={onInviteUser}
             className="mb-1 flex cursor-pointer flex-row content-between rounded-3xl bg-violet-light/30 p-4">
-            <div className="flex flex-1 flex-row items-stretch">
+            <Link href="https://t.me/femaleton" className="flex flex-1 flex-row items-stretch">
               <Image src="/star-violet.svg" alt="Star" width={32} height={32} />
               <div className="ml-2 flex flex-col items-stretch">
                 <p className="self-start text-header2 text-violet-dark">Подписаться на каналы</p>
@@ -150,18 +151,21 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
                   </p>
                 </div>
               </div>
-            </div>
+            </Link>
             <div className="self-center">
               <Image src="/chevron-right-violet.svg" alt="Chevron" width={32} height={32} />
             </div>
           </div>
+
           <div
             onClick={onSubscribeChannels}
             className="mb-24 flex cursor-pointer flex-row content-between rounded-3xl bg-deep-light/30 p-4">
             <div className="flex flex-1 flex-row items-stretch">
               <Image src="/star-blue.svg" alt="Star" width={32} height={32} />
               <div className="ml-2 flex flex-col items-stretch">
-                <p className="self-start text-header2 text-deep-dark">Поделиться данными</p>
+                <p className="self-start text-header2 text-deep-dark">
+                  Поделиться данными (скоро!)
+                </p>
                 <div className="flex flex-row">
                   <p className="self-start text-body1 font-medium text-deep-dark">+ 4 600 FHC </p>
                   <p className="ml-1 mt-1 self-start text-body2B font-medium text-deep-dark">
