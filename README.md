@@ -6,7 +6,6 @@
 ![Preview](/demo/preview.png)
 
 
-
 ## Project Overview
 Female Ton is a Web3-based fertility tracker designed to be a convenient, secure, and smart solution for tracking menstrual cycles through a Telegram mini-app. The tracker ensures the privacy and encryption of user data using smart contracts, providing personalized well-being recommendations through a bot.
 
@@ -22,10 +21,16 @@ Female Ton is a Web3-based fertility tracker designed to be a convenient, secure
    - Provides access to the data only to the user (currently).
 4. **Retrieve the Latest Data Card**
 
-### Demo
+## Demo
+
+### Recorded Demo
 Watch the demo video below to see the app in action:
 
 [![Demo Video](https://img.youtube.com/vi/Vq7hZ9f3o1s/0.jpg)](https://youtu.be/Vq7hZ9f3o1s)
+
+### Live Demo
+
+Join [@femaleton](https://t.me/femaleton) and get a quick access to our bot
 
 ### Smart Contract
 ![SmartContract](/demo/smart-contract.png)
@@ -55,18 +60,22 @@ Built from scratch during the Hackathon in Tbilisi organized by TON Ecosystem.
 - **Anna Nazarova (Founder, CPO)**
   - Previously worked with VP Flo (#1 Female Tracking App).
   - Launched Soula – Pregnancy Tracker (Investors: Berkeley SkyDeck, Natalya Vodianova).
+  - Contact: [LinkedIn](https://www.linkedin.com/in/anna-n-a214b9122/)
 
 - **Alex Malyshev (CTO)**
   - Technical founder.
   - Top 50 Hacker by MLH.
-  - TechStars Startup Awards Winner.
+  - TechStars Startup Awards Winner
+  - Contact: [GitHub](https://github.com/SecurityQQ)
 
 - **Vlad Kalashnikov (Lead Designer)**
   - Designed products for VK, VTB, MTS for millions of users.
+  - Contact: [Telegram: @vldklsnkv](https://t.me/vldklsnkv)
 
 - **Michael Kolchanov (Head of Engineering)**
   - Writes TON smart contracts.
-  - Leads development teams of up to 50 people.
+  - Leads development teams of up to 50 people
+  - Contact: [GitHub](https://github.com/gicha)
 
 ## Design & UI Kit
 
