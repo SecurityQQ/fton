@@ -55,7 +55,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       res.status(201).json(user);
     } catch (error) {
-      console.error('POST /api/user error:', error);
+      console.error(
+        'POST /api/user error:',
+        error,
+        name,
+        walletAddress,
+        telegramHandle,
+        telegramId
+      );
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else {

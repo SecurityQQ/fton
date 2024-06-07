@@ -11,7 +11,7 @@ model User {
   id                  String         @id @default(cuid())
   name                String
   walletAddress       String?        @unique
-  telegramHandle      String?        @unique
+  telegramHandle      String?        
   telegramId          String        @unique
   birthdate           DateTime
   tokenBalance        Float          @default(0)
