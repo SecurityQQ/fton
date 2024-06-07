@@ -1,5 +1,5 @@
 # Female Ton – Telegram Mini-App Fertility Tracker in Web3
-[![Build Status](https://img.shields.io/github/actions/workflow/status/SecurityQQ/fton/CI.yml)](https://github.com/SecurityQQ/fton/actions)
+![Vercel](http://therealsujitk-vercel-badge.vercel.app/?app=therealsujitk-vercel-badge)
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/SecurityQQ/fton/releases)
 
