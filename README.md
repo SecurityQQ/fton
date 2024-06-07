@@ -65,6 +65,29 @@ Built from scratch during the Hackathon in Tbilisi organized by TON Ecosystem.
   - Writes TON smart contracts.
   - Leads development teams of up to 50 people.
 
+## Design & UI Kit
+
+Our Design & UI Kit is meticulously crafted to provide a seamless and engaging user experience. Developed during the hackathon, the design encompasses various aspects to ensure adaptability, usability, and visual appeal.
+
+### Unique Features
+- **Adaptive Design:** Our design adapts seamlessly to different screen sizes and orientations, providing a consistent experience across devices.
+
+![adaptive.png](/demo/adaptive.png)
+
+- **Dark Theme:** A dark theme is available, reducing eye strain and enhancing readability in low-light environments.
+
+- **Platform-Specific Design:** Tailored designs for iOS and Android ensure that the app feels native to each platform, adhering to their respective design guidelines.
+
+
+### UI Components
+The UI Kit includes a comprehensive set of components such as buttons, forms, icons, and more, allowing for easy customization and scalability.
+
+### Full UI Kit Preview
+![ui-kit](/demo/ui-kit.gif)
+
+### Request the Full Design Kit
+For access to the full Design & UI Kit, including detailed assets and design files, please contact us. We are happy to share our resources to help you understand and contribute to the project.
+
 ## Project Structure
 - `/src/pages/api/contracts` – Interaction with smart contracts.
 - `/src/pages/api/` – RESTful API.
