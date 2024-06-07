@@ -20,7 +20,11 @@ Female Ton is a Web3-based fertility tracker designed to be a convenient, secure
 ### Demo
 Watch the demo video below to see the app in action:
 
-![Demo Video](/demo/life-demo-femaleton.mp4)
+
+<video width="320" height="240" controls>
+  <source src="demo/life-demo-femaleton.mp4" type="video/mp4">
+  Demo should be here, but your browser does not support it find it in /demo/ folder
+</video>
 
 ### Smart Contract
 Explore the working smart contract with the features described above: [Smart Contract on GitHub](https://github.com/gicha/female-ton-contract).
