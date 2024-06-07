@@ -1,6 +1,7 @@
 import { KeyPair, mnemonicToPrivateKey } from '@ton/crypto';
 import { Address, Sender, TonClient, WalletContractV3R2, toNano } from '@ton/ton';
 import assert from 'assert';
+import { block } from 'marked';
 
 import { Account } from 'src/ton_client/tact_Account';
 import { HealthDataRecord } from 'src/ton_client/tact_HealthDataRecord';
@@ -68,8 +69,12 @@ async function waitForAction(
   throw new Error("Contract was not deployed. Check your wallet's transactions");
 }
 
-export let blockchainLogicInited = false;
+let blockchainLogicInited = false;
 let initing = false;
+
+export function isBlockchainLogicInited() {
+  return blockchainLogicInited;
+}
 
 export async function initBlockchainLogic(userAddress: string, publicKey: string) {
   if (!blockchainLogicInited) {

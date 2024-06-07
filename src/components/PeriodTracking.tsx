@@ -39,8 +39,8 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
   const [recommendation, setRecommendation] = useState('');
   const [daysUntilNextEvent, setDaysUntilNextEvent] = useState(0);
   const [eventMessage, setEventMessage] = useState('');
-  const [bgColor, setBgColor] = useState('blue-light');
-  const [textColor, setTextColor] = useState('bright-blue');
+  const [bgColor, setBgColor] = useState('bg-blue-100');
+  const [textColor, setTextColor] = useState('text-blue-500');
 
   const cycleLength = 28;
   const daysSinceLastPeriod = Math.floor(
@@ -54,25 +54,25 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
     if (daysSinceLastPeriod < 5) {
       setDaysUntilNextEvent(5 - daysSinceLastPeriod);
       setEventMessage('Месячные будут');
-      setBgColor('orange-light');
-      setTextColor('bright-orange');
+      setBgColor('bg-orange-100');
+      setTextColor('text-orange-500');
     } else if (daysSinceLastPeriod >= 5 && daysSinceLastPeriod < 14) {
       setDaysUntilNextEvent(14 - daysSinceLastPeriod);
       setEventMessage('Овуляция через');
-      setBgColor('blue-light');
-      setTextColor('bright-blue');
+      setBgColor('bg-blue-100');
+      setTextColor('text-blue-500');
     } else {
       setDaysUntilNextEvent(daysUntilNextPeriod);
       setEventMessage('Месячные через');
-      setBgColor('blue-light');
-      setTextColor('bright-blue');
+      setBgColor('bg-blue-100');
+      setTextColor('text-blue-500');
     }
   }, [daysSinceLastPeriod]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 text-center">
       <main className="flex w-full flex-1 flex-col items-center">
-        <div className={`bg-${bgColor} w-full rounded-b-3xl`}>
+        <div className={`${bgColor} w-full rounded-b-3xl`}>
           <div className="flex flex-col items-center">
             <MiniCalendar lastMenstruationDate={lastMenstruationDate} cycleLength={cycleLength} />
             <div className="mt-8 w-full max-w-md p-4">
@@ -157,7 +157,7 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
           </div>
           <div
             onClick={onSubscribeChannels}
-            className="mb-1 flex cursor-pointer flex-row content-between rounded-3xl bg-deep-light/30 p-4">
+            className="mb-24 flex cursor-pointer flex-row content-between rounded-3xl bg-deep-light/30 p-4">
             <div className="flex flex-1 flex-row items-stretch">
               <Image src="/star-blue.svg" alt="Star" width={32} height={32} />
               <div className="ml-2 flex flex-col items-stretch">
