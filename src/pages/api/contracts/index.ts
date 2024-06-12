@@ -11,32 +11,8 @@ const tonClient = new TonClient({
 });
 
 async function getBotKeyPair(): Promise<KeyPair> {
-  const mnemonics = [
-    'conduct',
-    'insect',
-    'era',
-    'zebra',
-    'dignity',
-    'gauge',
-    'unaware',
-    'road',
-    'hockey',
-    'error',
-    'rail',
-    'easy',
-    'need',
-    'cry',
-    'tired',
-    'cloth',
-    'satisfy',
-    'muffin',
-    'myth',
-    'win',
-    'couple',
-    'task',
-    'faint',
-    'tail',
-  ];
+  const mnemonics = process.env.WALLET_MNEMONIC?.split(' ');
+  assert(mnemonics, 'Mnemonic is not provided');
   return await mnemonicToPrivateKey(mnemonics);
 }
 

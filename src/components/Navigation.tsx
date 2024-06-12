@@ -16,20 +16,20 @@ const Navigation: React.FC = () => {
         <span className="text-bottomBar">Главная</span>
       </button>
       <button
-        onClick={() => router.push('/earn')}
-        className={`flex flex-col items-center ${
-          router.pathname === '/earn' ? 'text-blue-500' : 'text-gray-500'
-        }`}>
-        <Image src="/icon-earn.svg" alt="Earn" width={40} height={40} />
-        <span className="text-bottomBar">Заработать</span>
-      </button>
-      <button
         onClick={() => router.push('/calendar')}
         className={`flex flex-col items-center ${
           router.pathname === '/calendar' ? 'text-blue-500' : 'text-gray-500'
         }`}>
         <Image src="/icon-calendar.svg" alt="Calendar" width={40} height={40} />
         <span className="text-bottomBar">Календарь</span>
+      </button>
+      <button
+        onClick={() => router.push('/earn')}
+        className={`flex flex-col items-center ${
+          router.pathname === '/earn' ? 'text-blue-500' : 'text-gray-500'
+        }`}>
+        <Image src="/toncoin.svg" alt="Earn" width={30} height={30} />
+        <span className="mt-0.5 text-bottomBar">TON</span>
       </button>
     </footer>
   );
