@@ -20,6 +20,9 @@ importers:
       '@tma.js/react-router-integration':
         specifier: ^4.0.2
         version: 4.0.2(@tma.js/sdk@2.5.0)(@types/react@18.2.6)(react@18.2.0)
+      '@tma.js/sdk':
+        specifier: ^2.5.0
+        version: 2.5.0
       '@tma.js/sdk-react':
         specifier: ^2.2.3
         version: 2.2.3(@types/react@18.2.6)(react@18.2.0)

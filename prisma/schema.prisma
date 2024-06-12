@@ -10,18 +10,29 @@ datasource db {
 model User {
   id                  String         @id @default(cuid())
   name                String
+  firstName           String?        // Added to handle properties from Telegram
+  lastName            String?        // Added to handle properties from Telegram
+  username            String?        // Added to handle properties from Telegram
+  photoUrl            String?        // Added to handle properties from Telegram
+  isBot               Boolean?       @default(false) // Added to handle properties from Telegram
+  isPremium           Boolean?       @default(false) // Added to handle properties from Telegram
+  languageCode        String?        // Added to handle properties from Telegram
+  allowsWriteToPm     Boolean?       @default(false) // Added to handle properties from Telegram
+  addedToAttachmentMenu Boolean?     @default(false) // Added to handle properties from Telegram
   walletAddress       String?        @unique
-  telegramHandle      String?        
-  telegramId          String        @unique
-  birthdate           DateTime
+  telegramHandle      String?
+  telegramId          String         @unique
+  birthdate           DateTime?
   tokenBalance        Float          @default(0)
-  lastPeriodDate      DateTime       @default(now())
+  lastPeriodDate      DateTime?
   menstruations       Menstruation[]
   invitationsSent     Invitation[]   @relation("Inviter")
   invitationsReceived Invitation[]   @relation("Invitee")
   socialMedia         SocialMedia[]
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
+
+  @@index([telegramId], name: "telegramId_index")
 }
 
 model Menstruation {

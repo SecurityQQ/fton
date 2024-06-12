@@ -18,17 +18,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else if (req.method === 'POST') {
-    const { name, walletAddress, telegramHandle, telegramId } = req.body;
+    const {
+      name,
+      firstName,
+      lastName,
+      username,
+      photoUrl,
+      isBot,
+      isPremium,
+      languageCode,
+      allowsWriteToPm,
+      addedToAttachmentMenu,
+      walletAddress,
+      telegramHandle,
+      telegramId,
+      birthdate,
+      lastPeriodDate,
+    } = req.body;
 
     try {
-      // Check if the user already exists, prioritizing telegramId
       let user = await prisma.user.findFirst({
         where: {
           telegramId,
         },
       });
 
-      // If not found by telegramId, try finding by walletAddress (only if walletAddress is provided)
       if (!user && walletAddress) {
         user = await prisma.user.findFirst({
           where: {
@@ -38,14 +52,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       if (!user) {
-        // Create a new user if not found
         const userData = {
           name,
+          firstName, // Added to handle properties from Telegram
+          lastName, // Added to handle properties from Telegram
+          username, // Added to handle properties from Telegram
+          photoUrl, // Added to handle properties from Telegram
+          isBot, // Added to handle properties from Telegram
+          isPremium, // Added to handle properties from Telegram
+          languageCode, // Added to handle properties from Telegram
+          allowsWriteToPm, // Added to handle properties from Telegram
+          addedToAttachmentMenu, // Added to handle properties from Telegram
+          walletAddress: walletAddress || null,
           telegramHandle,
           telegramId,
-          birthdate: new Date(), // Placeholder for now, replace with actual data if available
-          lastPeriodDate: new Date(), // Placeholder for now, replace with actual data if available
-          walletAddress: walletAddress || null,
+          birthdate: birthdate ? new Date(birthdate) : null,
+          lastPeriodDate: lastPeriodDate ? new Date(lastPeriodDate) : null,
         };
 
         user = await prisma.user.create({
@@ -59,9 +81,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'POST /api/user error:',
         error,
         name,
+        firstName,
+        lastName,
+        username,
+        photoUrl,
+        isBot,
+        isPremium,
+        languageCode,
+        allowsWriteToPm,
+        addedToAttachmentMenu,
         walletAddress,
         telegramHandle,
-        telegramId
+        telegramId,
+        birthdate,
+        lastPeriodDate
       );
       res.status(500).json({ error: 'Internal Server Error' });
     }
