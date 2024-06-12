@@ -1,26 +1,15 @@
-import { CHAIN } from '@tonconnect/protocol';
 import { TonConnectButton } from '@tonconnect/ui-react';
-import { Check, Star, Wallet, ToggleRight as SwitchIcon, ChevronRight } from 'lucide-react';
+import { Check, ChevronRight, Star, ToggleRight as SwitchIcon, Wallet } from 'lucide-react';
 import Head from 'next/head';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Switch from 'react-switch';
 
-import {
-  isBlockchainLogicInited,
-  addHealthData,
-  getHealthDataAddress,
-  getPublicKey,
-  getRecordsCount,
-  initBlockchainLogic,
-} from './api/contracts';
+import { getFromTelegramStorage, saveToTelegramStorage } from 'src/hooks/useTelegramStorage';
+
+import { initBlockchainLogic, isBlockchainLogicInited } from './api/contracts';
 import Navigation from '../components/Navigation';
-import { Button } from '../components/styled/styled';
 import { useUser } from '../contexts/UserContext';
 import { useTonConnect } from '../hooks/useTonConnect';
-
-const mockPublicKey = 'test_key';
 
 const EarnPage: React.FC = () => {
   const { network, wallet, address } = useTonConnect();
@@ -28,8 +17,12 @@ const EarnPage: React.FC = () => {
   const [isBlockchainInited, setIsBlockchainInited] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(0);
-  const [useBlockchain, setUseBlockchain] = useState(false);
-  const router = useRouter();
+  const [useBlockchain, setUseBlockchain] = useState(
+    getFromTelegramStorage(window, 'useBlockchain') === 'true'
+  );
+  const [publicKey, setPublicKey] = useState(
+    getFromTelegramStorage(window, 'publicKey') ?? 'publicKey'
+  );
 
   useEffect(() => {
     const checkBlockchainInited = async () => {
@@ -68,7 +61,7 @@ const EarnPage: React.FC = () => {
   const handleInitBlockchain = async () => {
     setLoading(true);
     try {
-      await initBlockchainLogic(address!, mockPublicKey);
+      await initBlockchainLogic(address!, publicKey);
       setIsBlockchainInited(true);
       await updateTokenBalance(1000); // Award 1000 tokens
     } catch (error) {
@@ -80,6 +73,7 @@ const EarnPage: React.FC = () => {
 
   const handleToggleUseBlockchain = () => {
     setUseBlockchain((prev) => !prev);
+    saveToTelegramStorage(window, 'useBlockchain', (!useBlockchain).toString());
   };
 
   return (
@@ -92,7 +86,6 @@ const EarnPage: React.FC = () => {
           <Wallet className="text-pink-500" size={32} />
           <p className="mx-4 flex-1 text-header2 text-deep-dark">Подключи свой кошелек</p>
           <TonConnectButton />
-          <ChevronRight className="text-pink-500" size={24} />
         </div>
 
         {isBlockchainInited ? (
@@ -136,7 +129,6 @@ const EarnPage: React.FC = () => {
             uncheckedIcon={false}
             className="react-switch"
           />
-          <ChevronRight className="text-purple-500" size={24} />
         </div>
       </main>
       <Navigation />
