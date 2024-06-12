@@ -1,4 +1,5 @@
 import '../styles/globals.css';
+import { SDKProvider } from '@tma.js/sdk-react';
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import axios from 'axios';
 import type { AppProps } from 'next/app';
@@ -7,6 +8,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 import { UserProvider } from '../contexts/UserContext';
+import { setupMockTelegramEnv } from '../lib/mockEnv'; // Ensure the path is correct
 
 const ROBOTO_TTF = Roboto({
   weight: ['100', '300', '400', '500', '700', '900'],
@@ -24,6 +26,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [isHashValid, setIsHashValid] = useState(false);
 
   useEffect(() => {
+    if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+      setupMockTelegramEnv();
+    }
+
     if (process.env.NODE_ENV === 'production') {
       // telegram hook for production
       axios
@@ -49,9 +55,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <body className={`${ROBOTO_TTF.variable} ${ROBOTO_MONO_TTF.variable}`}>
         <TonConnectUIProvider manifestUrl={manifestUrl}>
-          <UserProvider>
-            <Component {...pageProps} />
-          </UserProvider>
+          <SDKProvider acceptCustomStyles>
+            <UserProvider>
+              <Component {...pageProps} />
+            </UserProvider>
+          </SDKProvider>
         </TonConnectUIProvider>
       </body>
     </>

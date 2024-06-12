@@ -62,7 +62,9 @@ const PeriodTracker: NextPage = () => {
         <title>Period Tracker</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {user && (
+
+      {/*todo: add popup for first session if no lastPeriodDate*/}
+      {user && user.lastPeriodDate && (
         <PeriodTracking
           userName={user.name}
           lastMenstruationDate={new Date(user.lastPeriodDate)}

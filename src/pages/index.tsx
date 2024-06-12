@@ -1,57 +1,37 @@
-import { TonConnectButton } from '@tonconnect/ui-react'; // Import the TonConnectButton
+import { useInitData, type User } from '@tma.js/sdk-react';
+import { TonConnectButton } from '@tonconnect/ui-react';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import WelcomeBonus from '../components/WelcomeBonus';
 import { useUser } from '../contexts/UserContext';
-import { useTonConnect } from '../hooks/useTonConnect'; // Import your custom hook
+import { useTonConnect } from '../hooks/useTonConnect';
+import { setupMockTelegramEnv } from '../lib/mockEnv'; // Adjust the path accordingly
 
 const Home: NextPage = () => {
-  const { user, loading, refetch, setUserId } = useUser();
+  const { setUserId, refetch } = useUser();
   const [userName, setUserName] = useState('');
   const { connected, wallet } = useTonConnect();
+  const initData = useInitData();
+
+  const fetchUserFromTelegram = (): User | null => {
+    if (initData && initData.user) {
+      return initData.user;
+    }
+    return null;
+  };
 
   useEffect(() => {
-    const fetchUserFromTelegram = () => {
-      const tg = window.Telegram.WebApp;
-      tg.ready(); // Tell Telegram that the web app is ready
-
-      const tgUser = tg.initDataUnsafe?.user;
-      if (tgUser) {
-        return {
-          name: tgUser.first_name + ' ' + (tgUser.last_name || ''),
-          telegramHandle: tgUser.usernames || '',
-          telegramId: tgUser.id ? tgUser.id.toString() : '',
-        };
-      }
-      return null;
-    };
-
-    const mockUser = () => {
-      return {
-        name: 'New',
-        telegramHandle: '14233',
-        telegramId: 'New3',
-      };
-    };
-
     const isLocalhost = window.location.hostname === 'localhost';
-    const user = isLocalhost ? mockUser() : fetchUserFromTelegram();
+    const user = fetchUserFromTelegram();
 
-    const storeUserData = async (user: {
-      name: string;
-      telegramHandle: string;
-      telegramId: string;
-    }) => {
-      setUserName(user.name);
+    const storeUserData = async (user: User) => {
+      setUserName(user.firstName || '');
       const storedUserId = localStorage.getItem('userId');
       const storedTelegramId = localStorage.getItem('telegramId');
-      console.log('Stored user ID:', storedUserId);
-      console.log('Stored telegram ID:', storedTelegramId);
 
-      if (storedUserId && storedTelegramId === user.telegramId) {
+      if (storedUserId && storedTelegramId === user.id.toString()) {
         console.log('Setting user ID from local storage:', storedUserId);
         setUserId(storedUserId);
       } else {
@@ -63,9 +43,7 @@ const Home: NextPage = () => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              name: user.name,
-              telegramHandle: user.telegramHandle,
-              telegramId: user.telegramId,
+              ...user,
               walletAddress: '', // You can collect this later
             }),
           });
@@ -74,9 +52,9 @@ const Home: NextPage = () => {
           console.log('Response from creating user:', data);
           if (data.id) {
             console.log('New user ID from response:', data.id);
-            setUserId(data.id); // Store user ID
+            setUserId(data.id);
             localStorage.setItem('userId', data.id);
-            localStorage.setItem('telegramId', user.telegramId);
+            localStorage.setItem('telegramId', user.id.toString());
             refetch();
           } else {
             console.error('Failed to get user ID from response:', data);
