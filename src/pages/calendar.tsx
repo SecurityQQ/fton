@@ -7,7 +7,7 @@ import Navigation from '../components/Navigation';
 import { useUser } from '../contexts/UserContext';
 
 const CalendarPage: React.FC = () => {
-  const { user, loading, refetch } = useUser();
+  const { user, lastPeriodDate, loading, refetch, saveLastPeriod } = useUser();
   const [isEditing, setIsEditing] = useState(false);
 
   if (loading) {
@@ -16,18 +16,7 @@ const CalendarPage: React.FC = () => {
 
   const handleSave = async (date: Date) => {
     try {
-      const response = await fetch('/api/menstruation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ date, userId: user?.id }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update the period date');
-      }
-
+      await saveLastPeriod(date);
       setIsEditing(false);
       refetch(); // Re-fetch the user data to get the updated lastPeriodDate
     } catch (error) {
@@ -41,9 +30,9 @@ const CalendarPage: React.FC = () => {
         <title>Calendar</title>
       </Head>
       {/*todo: add popup for first session if no lastPeriodDate*/}
-      {user && user.lastPeriodDate && (
+      {user && lastPeriodDate && (
         <Calendar
-          lastMenstruationDate={new Date(user.lastPeriodDate)}
+          lastMenstruationDate={lastPeriodDate}
           cycleLength={28}
           mode="full"
           isEditing={isEditing}

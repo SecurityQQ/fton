@@ -35,3 +35,17 @@ export function getFromTelegramStorage(window: Window, key: string): string | nu
   }
   return localStorage.getItem(key);
 }
+
+export function isUseApi(): boolean {
+  const type = getFromTelegramStorage(window, 'dataStorageType');
+  return type == 'backend+ton' || type == 'backend';
+}
+
+export function isUseTon(): boolean {
+  const type = getFromTelegramStorage(window, 'dataStorageType');
+  return type == 'backend+ton' || type == 'ton';
+}
+
+export function getUserTonPrivateKey(): string | null {
+  return getFromTelegramStorage(window, 'privateKey');
+}

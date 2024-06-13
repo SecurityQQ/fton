@@ -87,9 +87,7 @@ export async function initBlockchainLogic(userAddress: string, publicKey: string
     if (initing) return;
     initing = true;
     try {
-      const sender = await getBotSender();
       const contract = await Account.fromInit(userAddress);
-      const openedContract = tonClient.open(contract);
       const deployed = await tonClient.isContractDeployed(contract.address);
       if (!deployed) {
         await createAccount(userAddress, publicKey);
@@ -186,7 +184,6 @@ export async function getRecordsCount(userAddress: string): Promise<bigint> {
   const contract = await Account.fromInit(userAddress);
   const openedContract = tonClient.open(contract);
   const recordsCount = await openedContract.getNumHealthDataRecords();
-  console.log(recordsCount);
   return recordsCount;
 }
 
@@ -203,6 +200,5 @@ export async function getHealthDataEncrypted(userAddress: string, seqno: bigint)
   const recordContract = HealthDataRecord.fromAddress(recordContractAddress);
   const openedRecordContract = tonClient.open(recordContract);
   const encryptedData = await openedRecordContract.getEncryptedData();
-  console.log(encryptedData);
   return encryptedData;
 }

@@ -9,7 +9,7 @@ import PeriodTracking from '../components/PeriodTracking';
 import { useUser } from '../contexts/UserContext';
 
 const PeriodTracker: NextPage = () => {
-  const { user, loading, refetch } = useUser();
+  const { user, lastPeriodDate, loading, refetch } = useUser();
   const router = useRouter();
 
   const handlePeriodDateChange = () => {
@@ -64,10 +64,10 @@ const PeriodTracker: NextPage = () => {
       </Head>
 
       {/*todo: add popup for first session if no lastPeriodDate*/}
-      {user && user.lastPeriodDate && (
+      {user && lastPeriodDate && (
         <PeriodTracking
           userName={user.name}
-          lastMenstruationDate={new Date(user.lastPeriodDate)}
+          lastMenstruationDate={lastPeriodDate}
           tokenBalance={user.tokenBalance}
           onPeriodDateChange={handlePeriodDateChange}
           onStartFarming={handleStartFarming}
