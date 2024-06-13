@@ -24,6 +24,8 @@ function versionCompare(v1: string, v2: string): number {
 export function saveToTelegramStorage(window: Window, key: string, value: string) {
   if (canUseStorage(window.Telegram.WebApp.version)) {
     window.Telegram.WebApp.CloudStorage.setItem(key, value);
+  } else {
+    localStorage.setItem(key, value);
   }
 }
 
@@ -31,5 +33,5 @@ export function getFromTelegramStorage(window: Window, key: string): string | nu
   if (canUseStorage(window.Telegram.WebApp.version)) {
     return window.Telegram.WebApp.CloudStorage.getItem(key);
   }
-  return null;
+  return localStorage.getItem(key);
 }

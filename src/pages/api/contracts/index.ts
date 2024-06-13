@@ -11,7 +11,33 @@ const tonClient = new TonClient({
 });
 
 async function getBotKeyPair(): Promise<KeyPair> {
-  const mnemonics = process.env.WALLET_MNEMONIC?.split(' ');
+  // const mnemonics = process.env.REACT_APP_WALLET_MNEMONIC?.split(' ');
+  const mnemonics = [
+    'conduct',
+    'insect',
+    'era',
+    'zebra',
+    'dignity',
+    'gauge',
+    'unaware',
+    'road',
+    'hockey',
+    'error',
+    'rail',
+    'easy',
+    'need',
+    'cry',
+    'tired',
+    'cloth',
+    'satisfy',
+    'muffin',
+    'myth',
+    'win',
+    'couple',
+    'task',
+    'faint',
+    'tail',
+  ];
   assert(mnemonics, 'Mnemonic is not provided');
   return await mnemonicToPrivateKey(mnemonics);
 }
@@ -49,6 +75,11 @@ let initing = false;
 
 export function isBlockchainLogicInited() {
   return blockchainLogicInited;
+}
+
+export async function isContractDeployed(userAddress: string) {
+  const contract = await Account.fromInit(userAddress);
+  return await tonClient.isContractDeployed(contract.address);
 }
 
 export async function initBlockchainLogic(userAddress: string, publicKey: string) {
