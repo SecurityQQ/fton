@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import MiniCalendar from './MiniCalendar';
 
 type CalendarProps = {
-  lastMenstruationDate: Date;
+  lastMenstruationDate?: Date; // Made optional
   cycleLength: number;
   mode: 'mini' | 'full';
   isEditing: boolean;
@@ -20,7 +20,9 @@ const Calendar: React.FC<CalendarProps> = ({
   onSave,
 }) => {
   const [months, setMonths] = useState<Date[]>([]);
-  const [currentPeriodDate, setCurrentPeriodDate] = useState(lastMenstruationDate);
+  const [currentPeriodDate, setCurrentPeriodDate] = useState<Date | undefined>(
+    lastMenstruationDate
+  );
 
   useEffect(() => {
     const initialMonths = [];
@@ -73,9 +75,9 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const today = new Date();
-  const daysSinceLastPeriod = Math.floor(
-    (today.getTime() - new Date(currentPeriodDate).getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const daysSinceLastPeriod = currentPeriodDate
+    ? Math.floor((today.getTime() - new Date(currentPeriodDate).getTime()) / (1000 * 60 * 60 * 24))
+    : 0;
 
   const isFutureDate = (date: Date) => date > today;
 
@@ -87,7 +89,12 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   if (mode === 'mini') {
-    return <MiniCalendar lastMenstruationDate={currentPeriodDate} cycleLength={cycleLength} />;
+    return (
+      <MiniCalendar
+        lastMenstruationDate={currentPeriodDate || new Date()} // Default to current date if not set
+        cycleLength={cycleLength}
+      />
+    );
   }
 
   return (
@@ -103,17 +110,24 @@ const Calendar: React.FC<CalendarProps> = ({
           <div className="grid w-full grid-cols-7 gap-1">
             {generateDates(month).map((date, index) => {
               const isCurrentMonth = date.getMonth() === month.getMonth();
-              const daysFromStartOfCycle =
-                Math.floor(
-                  (date.getTime() - new Date(currentPeriodDate).getTime()) / (1000 * 60 * 60 * 24)
-                ) % cycleLength;
-              const isPeriod = daysFromStartOfCycle >= 0 && daysFromStartOfCycle < 5;
-              const isOvulation = daysFromStartOfCycle >= 12 && daysFromStartOfCycle < 17;
+              const daysFromStartOfCycle = currentPeriodDate
+                ? Math.floor(
+                    (date.getTime() - new Date(currentPeriodDate).getTime()) / (1000 * 60 * 60 * 24)
+                  ) % cycleLength
+                : undefined;
+              const isPeriod =
+                daysFromStartOfCycle !== undefined &&
+                daysFromStartOfCycle >= 0 &&
+                daysFromStartOfCycle < 5;
+              const isOvulation =
+                daysFromStartOfCycle !== undefined &&
+                daysFromStartOfCycle >= 12 &&
+                daysFromStartOfCycle < 17;
               const isToday = date.toDateString() === today.toDateString();
               const futurePeriod = isPeriod && isFutureDate(date);
               const futureOvulation = isOvulation && isFutureDate(date);
-              const showPeriod = isPeriod && date >= currentPeriodDate;
-              const showOvulation = isOvulation && date >= currentPeriodDate;
+              const showPeriod = isPeriod && date >= (currentPeriodDate || date);
+              const showOvulation = isOvulation && date >= (currentPeriodDate || date);
 
               return (
                 <div key={index} className="flex flex-col items-center">
@@ -130,7 +144,7 @@ const Calendar: React.FC<CalendarProps> = ({
                           ? 'border-2 border-dashed border-[#3290F8]'
                           : 'bg-gradient-to-b from-[#A3CFFF] to-[#3290F8]'
                         : isToday
-                        ? 'bg-[#DCF2FF] font-bold text-[#007AFF]'
+                        ? 'bg-[#DCF2FF] font-bold text-bright-blue'
                         : 'bg-transparent'
                     } ${!isCurrentMonth ? 'text-gray-400' : 'text-telegram-text'}`}
                     onClick={() => handleDateClick(date)}>
@@ -144,8 +158,8 @@ const Calendar: React.FC<CalendarProps> = ({
       ))}
       <div className="fixed bottom-16 mb-4 flex w-full justify-center">
         <button
-          className="text-telegram-button-text flex h-9 w-64 items-center justify-center rounded-full bg-[#007AFF] p-0 text-sm font-semibold"
-          onClick={isEditing ? () => onSave(currentPeriodDate) : onEdit}>
+          className="text-telegram-button-text flex h-9 w-64 items-center justify-center rounded-full bg-bright-blue p-0 text-sm font-semibold"
+          onClick={isEditing ? () => onSave(currentPeriodDate || new Date()) : onEdit}>
           {isEditing ? 'СОХРАНИТЬ' : 'ИЗМЕНИТЬ ДАТЫ МЕСЯЧНЫХ'}
         </button>
       </div>

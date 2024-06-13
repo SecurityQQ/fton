@@ -41,9 +41,9 @@ const CalendarPage: React.FC = () => {
         <title>Calendar</title>
       </Head>
       {/*todo: add popup for first session if no lastPeriodDate*/}
-      {user && user.lastPeriodDate && (
+      {user && (
         <Calendar
-          lastMenstruationDate={new Date(user.lastPeriodDate)}
+          lastMenstruationDate={user.lastPeriodDate ? new Date(user.lastPeriodDate) : undefined}
           cycleLength={28}
           mode="full"
           isEditing={isEditing}

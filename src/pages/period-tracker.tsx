@@ -12,6 +12,8 @@ const PeriodTracker: NextPage = () => {
   const { user, loading, refetch } = useUser();
   const router = useRouter();
 
+  console.log('USER: ', user);
+
   const handlePeriodDateChange = () => {
     console.log('Period date change clicked');
     router.push('/calendar');
@@ -64,10 +66,9 @@ const PeriodTracker: NextPage = () => {
       </Head>
 
       {/*todo: add popup for first session if no lastPeriodDate*/}
-      {user && user.lastPeriodDate && (
+      {user && (
         <PeriodTracking
-          userName={user.name}
-          lastMenstruationDate={new Date(user.lastPeriodDate)}
+          lastMenstruationDate={user.lastPeriodDate ? new Date(user.lastPeriodDate) : undefined}
           tokenBalance={user.tokenBalance}
           onPeriodDateChange={handlePeriodDateChange}
           onStartFarming={handleStartFarming}

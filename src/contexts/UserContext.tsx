@@ -1,11 +1,13 @@
 import { User } from '@prisma/client';
+import { useInitData } from '@tma.js/sdk-react';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
+import { useTonConnect } from '../hooks/useTonConnect';
 
 type UserContextType = {
   user: User | null;
   loading: boolean;
   refetch: () => void;
-  setUserId: (id: string) => void;
 };
 
 type UserProviderProps = {
@@ -16,44 +18,114 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const initData = useInitData();
+  const { connected, wallet } = useTonConnect();
 
-  const fetchUser = async (id: string) => {
+  const fetchUser = async (telegramId: string): Promise<User | null> => {
     try {
-      const response = await fetch(`/api/user/${id}`);
-      const userData = await response.json();
-      setUser(userData);
+      const response = await fetch(`/api/userByTg/${telegramId}`);
+      if (response.ok) {
+        const userData = await response.json();
+        return userData;
+      }
+      return null;
     } catch (error) {
       console.error('Failed to fetch user data:', error);
-    } finally {
-      setLoading(false);
+      return null;
+    }
+  };
+
+  const createUser = async (telegramUser: any) => {
+    try {
+      const response = await fetch(`/api/userByTg`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(telegramUser),
+      });
+      const newUser = await response.json();
+      return newUser;
+    } catch (error) {
+      console.error('Failed to create user:', error);
+      return null;
+    }
+  };
+
+  const updateUserWallet = async (telegramId: string, walletAddress: string) => {
+    try {
+      const response = await fetch(`/api/userByTg/${telegramId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ walletAddress }),
+      });
+      const updatedUser = await response.json();
+      setUser(updatedUser);
+    } catch (error) {
+      console.error('Failed to update wallet address:', error);
     }
   };
 
   useEffect(() => {
-    const storedUserId = localStorage.getItem('userId');
-    if (storedUserId) {
-      setUserId(storedUserId);
-      fetchUser(storedUserId);
-    }
-  }, []);
+    const initializeUser = async () => {
+      if (user) {
+        setLoading(false);
+        return;
+      }
 
-  const refetch = () => {
-    if (userId) {
+      if (initData?.user) {
+        const telegramId = initData.user.id.toString();
+        let existingUser = await fetchUser(telegramId);
+
+        if (!existingUser) {
+          const telegramUser = {
+            telegramId: initData.user.id.toString(),
+            firstName: initData.user.firstName,
+            lastName: initData.user.lastName,
+            username: initData.user.username,
+            photoUrl: initData.user.photoUrl,
+            languageCode: initData.user.languageCode,
+            isBot: initData.user.isBot,
+            isPremium: initData.user.isPremium,
+            allowsWriteToPm: initData.user.allowsWriteToPm,
+            addedToAttachmentMenu: initData.user.addedToAttachmentMenu,
+          };
+          existingUser = await createUser(telegramUser);
+        }
+
+        setUser(existingUser);
+        setLoading(false);
+      }
+    };
+
+    initializeUser();
+  }, [initData]);
+
+  useEffect(() => {
+    if (user && connected && wallet && wallet.trim() !== '' && user.walletAddress !== wallet) {
+      const telegramId = initData?.user?.id.toString();
+      if (telegramId) {
+        updateUserWallet(telegramId, wallet);
+      }
+    }
+  }, [connected, wallet, user, initData]);
+
+  const refetch = async () => {
+    if (initData?.user) {
       setLoading(true);
-      fetchUser(userId);
+      const telegramId = initData.user.id.toString();
+      const userData = await fetchUser(telegramId);
+      setUser(userData);
+      setLoading(false);
     }
-  };
-
-  const storeUserId = (id: string) => {
-    setUserId(id);
-    localStorage.setItem('userId', id);
   };
 
   return (
-    <UserContext.Provider value={{ user, loading, refetch, setUserId: storeUserId }}>
-      {children}
+    <UserContext.Provider value={{ user, loading, refetch }}>
+      {!loading && children}
     </UserContext.Provider>
   );
 };
