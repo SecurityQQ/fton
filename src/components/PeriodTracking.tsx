@@ -7,8 +7,7 @@ import recommendationsData from '../assets/recommendations.json';
 import { useTonConnect } from '../hooks/useTonConnect';
 
 type PeriodTrackingProps = {
-  userName: string;
-  lastMenstruationDate: Date;
+  lastMenstruationDate?: Date; // Made optional
   tokenBalance: number;
   onPeriodDateChange: () => void;
   onStartFarming: () => void;
@@ -25,7 +24,6 @@ const getDayLabel = (days: number) => {
 };
 
 const PeriodTracking: React.FC<PeriodTrackingProps> = ({
-  userName,
   lastMenstruationDate,
   tokenBalance,
   onPeriodDateChange,
@@ -44,14 +42,24 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
   const [textColor, setTextColor] = useState('text-blue-500');
 
   const cycleLength = 28;
-  const daysSinceLastPeriod = Math.floor(
-    (new Date().getTime() - new Date(lastMenstruationDate).getTime()) / (1000 * 60 * 60 * 24)
-  );
-  const daysUntilNextPeriod = cycleLength - (daysSinceLastPeriod % cycleLength);
 
   useEffect(() => {
+    if (!lastMenstruationDate) {
+      setRecommendation('Чтобы воспользоваться трекером, обновите дату последних месячных');
+      setEventMessage('Дата последних месячных не указана');
+      setBgColor('bg-red-100');
+      setTextColor('text-red-500');
+      return;
+    }
+
+    const daysSinceLastPeriod = Math.floor(
+      (new Date().getTime() - new Date(lastMenstruationDate).getTime()) / (1000 * 60 * 60 * 24)
+    );
+    const daysUntilNextPeriod = cycleLength - (daysSinceLastPeriod % cycleLength);
+
     const phaseIndex = daysSinceLastPeriod % recommendationsData.recommendations.length;
     setRecommendation(recommendationsData.recommendations[phaseIndex]);
+
     if (daysSinceLastPeriod < 5) {
       setDaysUntilNextEvent(5 - daysSinceLastPeriod);
       setEventMessage('Месячные будут');
@@ -68,20 +76,24 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
       setBgColor('bg-blue-100');
       setTextColor('text-blue-500');
     }
-  }, [daysSinceLastPeriod]);
+  }, [lastMenstruationDate]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 text-center">
       <main className="flex w-full flex-1 flex-col items-center">
         <div className={`${bgColor} w-full rounded-b-3xl`}>
           <div className="flex flex-col items-center">
-            <MiniCalendar lastMenstruationDate={lastMenstruationDate} cycleLength={cycleLength} />
+            {lastMenstruationDate ? (
+              <MiniCalendar lastMenstruationDate={lastMenstruationDate} cycleLength={cycleLength} />
+            ) : null}
             <div className="mt-8 w-full max-w-md p-4">
               <p className="text-header2 text-text-dark">{eventMessage}</p>
-              <h2 className={`text- mt-2 text-header1 font-bold${textColor}`}>
-                {daysUntilNextEvent || '26'} {getDayLabel(daysUntilNextEvent)}
-              </h2>
-              <p className={`text- mt-2 text-header2${textColor}`}>{recommendation}</p>
+              {lastMenstruationDate && (
+                <h2 className={`text- mt-2 text-header1 font-bold ${textColor}`}>
+                  {daysUntilNextEvent} {getDayLabel(daysUntilNextEvent)}
+                </h2>
+              )}
+              <p className={`text- mt-2 text-header2 ${textColor}`}>{recommendation}</p>
               <button
                 onClick={onPeriodDateChange}
                 className="my-4 rounded-full bg-bright-blue px-6 py-2 text-white">
