@@ -12,8 +12,6 @@ const PeriodTracker: NextPage = () => {
   const { user, loading, refetch } = useUser();
   const router = useRouter();
 
-  console.log('USER: ', user);
-
   const handlePeriodDateChange = () => {
     console.log('Period date change clicked');
     router.push('/calendar');
