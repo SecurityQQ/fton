@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { getFromTelegramStorage, saveToTelegramStorage } from 'src/hooks/useTelegramStorage';
 
 import { initBlockchainLogic, isBlockchainLogicInited } from './api/contracts';
+import { generatePrivateKey } from './api/contracts/encryption';
 import Navigation from '../components/Navigation';
 import { useUser } from '../contexts/UserContext';
 import { useTonConnect } from '../hooks/useTonConnect';
@@ -17,9 +18,7 @@ const EarnPage: React.FC = () => {
   const [isBlockchainInited, setIsBlockchainInited] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(0);
-  const [publicKey, setPublicKey] = useState(
-    getFromTelegramStorage(window, 'publicKey') ?? 'publicKey'
-  );
+  const [privateKey, setPrivateKey] = useState(getInitPrivateKey());
   const [selected, setSelected] = useState(getSaveStorageType());
 
   useEffect(() => {
@@ -59,7 +58,7 @@ const EarnPage: React.FC = () => {
   const handleInitBlockchain = async () => {
     setLoading(true);
     try {
-      await initBlockchainLogic(address!, publicKey);
+      await initBlockchainLogic(address!, 'publicKey');
       setIsBlockchainInited(true);
       await updateTokenBalance(1000); // Award 1000 tokens
     } catch (error) {
@@ -79,6 +78,19 @@ const EarnPage: React.FC = () => {
       default:
         return 0;
     }
+  }
+
+  function getInitPrivateKey(): string | null {
+    const privateKey = getFromTelegramStorage(window, 'privateKey');
+    if (privateKey == null) {
+      generateAndSaveNewPrivateKey();
+    }
+    return privateKey;
+  }
+
+  async function generateAndSaveNewPrivateKey() {
+    const privateKey = await generatePrivateKey();
+    saveToTelegramStorage(window, 'privateKey', privateKey);
   }
 
   const handleSelect = (index: number) => {

@@ -23,6 +23,8 @@
     "@tonconnect/ui-react": "^2.0.3",
     "@types/telegram-web-app": "^7.2.1",
     "axios": "^1.1.3",
+    "jsrsasign": "10.8.2",
+    "jsrsasign-util": "^1.0.5",
     "lucide-react": "^0.390.0",
     "next": "latest",
     "react": "18.2.0",
@@ -33,6 +35,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^13.0.2",
+    "@types/jsrsasign": "^10.5.14",
     "@types/node": "18.11.3",
     "@types/react": "18.2.6",
     "@types/react-dom": "18.0.6",

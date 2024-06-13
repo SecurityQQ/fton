@@ -159,7 +159,7 @@ export async function getRecordsCount(userAddress: string): Promise<bigint> {
   return recordsCount;
 }
 
-export async function getHealthDataAddress(userAddress: string, seqno: bigint): Promise<string> {
+export async function getHealthDataEncrypted(userAddress: string, seqno: bigint): Promise<string> {
   assert(
     blockchainLogicInited,
     'Blockchain logic is not initialized. Run initBlockchainLogic first'
