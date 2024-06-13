@@ -6,6 +6,7 @@ type CalendarProps = {
   isEditing: boolean;
   onEdit: () => void;
   onSave: (changes: { date: Date; action: 'add' | 'delete' }[]) => Promise<void>;
+  onCancel: () => void;
 };
 
 const Calendar: React.FC<CalendarProps> = ({
@@ -14,6 +15,7 @@ const Calendar: React.FC<CalendarProps> = ({
   isEditing,
   onEdit,
   onSave,
+  onCancel,
 }) => {
   const [months, setMonths] = useState<Date[]>([]);
   const [changes, setChanges] = useState<{ date: Date; action: 'add' | 'delete' }[]>([]);
@@ -42,7 +44,6 @@ const Calendar: React.FC<CalendarProps> = ({
 
   const generateDates = (month: Date) => {
     const daysInCurrentMonth = daysInMonth(month);
-
     const dates = [];
 
     // Fill dates from current month
@@ -97,15 +98,25 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const renderCalendar = () => {
+    const weekDays = ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'];
+
     return months.map((month, index) => (
       <div key={index} className="w-full px-4">
-        <header className="bg-telegram-secondary flex w-full items-center justify-center py-2">
+        <header className="bg-telegram-bg flex w-full items-center justify-center py-2">
           <h1 className="text-telegram-text text-lg font-semibold">
-            {month.toLocaleString('default', { month: 'long', year: 'numeric' })}
+            {month.toLocaleString('default', { month: 'long' })}
           </h1>
         </header>
 
         <div className="grid w-full grid-cols-7 gap-1">
+          {/*{weekDays.map((day, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <span className="text-[#0C2F55] text-[12px] font-semibold opacity-60">
+                {day}
+              </span>
+            </div>
+          ))}*/}
+
           {generateDates(month).map((date, index) => {
             const isCurrentMonth = date.getMonth() === month.getMonth();
             const isPeriodDay = periodDays.some(
@@ -174,7 +185,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   }`}
                   onClick={() => handleDateClick(date)}>
                   <span
-                    className={`absolute left-1/2 top-1/2 flex h-6 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center text-lg font-medium${getTextColor()}`}>
+                    className={`absolute left-1/2 top-1/2 flex h-6 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center text-lg font-medium ${getTextColor()}`}>
                     {date.getDate()}
                   </span>
                 </div>
@@ -191,15 +202,50 @@ const Calendar: React.FC<CalendarProps> = ({
     setChanges([]);
   };
 
+  const handleCancelChanges = () => {
+    setChanges([]);
+    onCancel();
+  };
+
   return (
-    <div className="bg-telegram-bg flex h-full flex-col items-center gap-2 overflow-y-scroll">
-      {renderCalendar()}
-      <div className="fixed bottom-16 mb-4 flex w-full justify-center">
-        <button
-          className="text-telegram-button-text flex h-9 w-64 items-center justify-center rounded-full bg-bright-blue p-0 text-sm font-semibold"
-          onClick={isEditing ? handleSaveChanges : onEdit}>
-          {isEditing ? 'СОХРАНИТЬ' : 'ИЗМЕНИТЬ ДАТЫ МЕСЯЧНЫХ'}
-        </button>
+    <div className="relative h-screen w-full">
+      <div className="fixed left-0 top-0 z-10 h-[56px] w-full bg-gradient-to-b from-white to-[#EEF6F8]" />
+      <div className="fixed top-0 z-20 flex h-[56px] w-full items-center justify-between px-4">
+        <div className="grid w-full grid-cols-7 gap-1">
+          {['П', 'В', 'С', 'Ч', 'П', 'С', 'В'].map((day, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <span className="text-[12px] font-semibold text-text-dark opacity-60">{day}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-telegram-bg mt-[56px] flex h-full flex-col items-center gap-2 overflow-y-scroll">
+        {renderCalendar()}
+        {isEditing ? (
+          <div className="absolute bottom-[91px] left-1/2 flex h-[33px] w-[259px] -translate-x-1/2 flex-row items-start gap-2">
+            <button
+              className="flex h-[33px] w-[128.5px] items-center justify-center gap-1.5 rounded-l-[30px] rounded-r-[4px] bg-[#DCF2FF] px-5 py-2 text-[14px] font-semibold uppercase"
+              onClick={handleCancelChanges}>
+              <span className="bg-gradient-to-b from-[#007AFF] to-[#32B3EA] bg-clip-text text-transparent">
+                Отмена
+              </span>
+            </button>
+            <button
+              className="flex h-[33px] w-[128.5px] items-center justify-center gap-1.5 rounded-l-[4px] rounded-r-[30px] bg-gradient-to-b from-[#007AFF] to-[#32B3EA] px-5 py-2 text-[14px] font-semibold uppercase text-white"
+              onClick={handleSaveChanges}>
+              Сохранить
+            </button>
+          </div>
+        ) : (
+          <div className="fixed bottom-[91px] flex w-full justify-center">
+            <button
+              className="flex h-[33px] w-[243px] items-center justify-center gap-1.5 rounded-[30px] bg-gradient-to-b from-[#007AFF] to-[#32B3EA] px-5 py-2 text-[14px] font-semibold uppercase text-white"
+              onClick={onEdit}>
+              ИЗМЕНИТЬ ДАТЫ МЕСЯЧНЫХ
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

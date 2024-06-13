@@ -74,6 +74,7 @@ const CalendarPage: React.FC = () => {
           isEditing={isEditing}
           onEdit={() => setIsEditing(true)}
           onSave={handleSave}
+          onCancel={() => setIsEditing(false)}
         />
       )}
       <Navigation />
