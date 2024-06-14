@@ -31,6 +31,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  //todo: add lastPeriodDate and menstruations for user storage
   const [loading, setLoading] = useState(true);
   const initData = useInitData();
   const { connected, wallet } = useTonConnect();
