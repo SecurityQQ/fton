@@ -46,7 +46,6 @@ const Calendar: React.FC<CalendarProps> = ({
     const daysInCurrentMonth = daysInMonth(month);
     const dates = [];
 
-    // Fill dates from current month
     for (let i = 1; i <= daysInCurrentMonth; i++) {
       dates.push(new Date(month.getFullYear(), month.getMonth(), i));
     }
@@ -82,19 +81,20 @@ const Calendar: React.FC<CalendarProps> = ({
 
   const predictOvulationAndPeriod = (date: Date) => {
     if (!isFutureDate(date)) {
-      return { isPeriod: false, isOvulation: false };
+      return { isPeriod: false, isOvulation: false, isMaybePeriod: false };
     }
 
-    const lastPeriodDate = periodDays[periodDays.length - 1];
-    const daysSinceLastPeriod = Math.floor(
-      (date.getTime() - new Date(lastPeriodDate).getTime()) / (1000 * 60 * 60 * 24)
+    const firstDayOfLastPeriod = periodDays[0]; // Assuming periodDays are sorted and the first date is the first day of the last period
+    const daysSinceFirstPeriod = Math.floor(
+      (date.getTime() - new Date(firstDayOfLastPeriod).getTime()) / (1000 * 60 * 60 * 24)
     );
 
-    const cycleDay = daysSinceLastPeriod % cycleLength;
+    const cycleDay = daysSinceFirstPeriod % cycleLength;
     const isPeriod = cycleDay >= 0 && cycleDay < 5;
+    const isMaybePeriod = cycleDay === 5;
     const isOvulation = cycleDay >= 12 && cycleDay < 17;
 
-    return { isPeriod, isOvulation };
+    return { isPeriod, isOvulation, isMaybePeriod };
   };
 
   const renderCalendar = () => {
@@ -109,25 +109,19 @@ const Calendar: React.FC<CalendarProps> = ({
         </header>
 
         <div className="grid w-full grid-cols-7 gap-1">
-          {/*{weekDays.map((day, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <span className="text-[#0C2F55] text-[12px] font-semibold opacity-60">
-                {day}
-              </span>
-            </div>
-          ))}*/}
-
           {generateDates(month).map((date, index) => {
             const isCurrentMonth = date.getMonth() === month.getMonth();
             const isPeriodDay = periodDays.some(
               (periodDate) => periodDate.toDateString() === date.toDateString()
             );
-            const { isPeriod, isOvulation } = predictOvulationAndPeriod(date);
+            const { isPeriod, isOvulation, isMaybePeriod } = predictOvulationAndPeriod(date);
             const isToday = date.toDateString() === today.toDateString();
             const futurePeriod = isPeriod && isFutureDate(date);
             const futureOvulation = isOvulation && isFutureDate(date);
+            const futureMaybePeriod = isMaybePeriod && isFutureDate(date);
             const showPeriod = isPeriodDay || isPeriod;
             const showOvulation = isOvulation;
+            const showMaybePeriod = isMaybePeriod;
             const isInChanges = changes.some(
               (change) => change.date.toDateString() === date.toDateString()
             );
@@ -147,6 +141,9 @@ const Calendar: React.FC<CalendarProps> = ({
                 return futurePeriod
                   ? 'border-2 border-dashed border-[#FF4EB8]'
                   : 'bg-gradient-to-b from-[#FF668A] to-[#FF4EB8]';
+              }
+              if (showMaybePeriod) {
+                return 'border-2 border-dashed border-grey-700';
               }
               if (showOvulation) {
                 return futureOvulation
@@ -169,7 +166,7 @@ const Calendar: React.FC<CalendarProps> = ({
                 }
               }
               if (showPeriod && !futurePeriod) {
-                return 'text-white';
+                return 'text-black';
               }
               if (isToday) {
                 return 'text-[#0C2F55]';

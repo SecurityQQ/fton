@@ -4,58 +4,70 @@ import prisma from '@/lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
+    const { userId, months } = req.query;
+
+    if (!userId || !months) {
+      return res.status(400).json({ error: 'UserId and months are required' });
+    }
+
     try {
+      const monthsAgo = new Date();
+      monthsAgo.setMonth(monthsAgo.getMonth() - parseInt(months as string));
+
       const menstruations = await prisma.menstruation.findMany({
-        include: {
-          user: true,
+        where: {
+          userId: userId as string,
+          date: {
+            gte: monthsAgo,
+          },
+        },
+        orderBy: {
+          date: 'asc',
         },
       });
+
       res.status(200).json(menstruations);
     } catch (error) {
       console.error('Error fetching menstruations:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else if (req.method === 'POST') {
-    const { date, userId } = req.body;
+    const { changes, userId } = req.body;
 
-    if (!date || !userId) {
-      return res.status(400).json({ error: 'Date and userId are required' });
+    if (!changes || !userId) {
+      return res.status(400).json({ error: 'Changes and userId are required' });
     }
 
     try {
-      const newDate = new Date(date);
-
-      // Check if the new date is different from the current last period date
       const user = await prisma.user.findUnique({ where: { id: userId } });
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
 
-      if (user.lastPeriodDate && new Date(user.lastPeriodDate).getTime() === newDate.getTime()) {
-        return res
-          .status(200)
-          .json({ message: 'Date is the same as the current last period date' });
+      for (const change of changes) {
+        if (change.action === 'add') {
+          await prisma.menstruation.create({
+            data: {
+              date: new Date(change.date),
+              userId,
+            },
+          });
+        } else if (change.action === 'delete') {
+          await prisma.menstruation.deleteMany({
+            where: {
+              date: new Date(change.date),
+              userId,
+            },
+          });
+        }
       }
 
-      const newMenstruation = await prisma.menstruation.create({
-        data: {
-          date: newDate,
-          userId,
-        },
-      });
-
-      // Update the user's lastPeriodDate
-      await prisma.user.update({
-        where: { id: userId },
-        data: { lastPeriodDate: newDate },
-      });
-
-      res.status(201).json(newMenstruation);
+      res.status(200).json({ message: 'Menstruation dates updated successfully' });
     } catch (error) {
-      console.error('Error creating menstruation:', error);
+      console.error('Error updating menstruation dates:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else {
-    res.status(405).json({ error: 'Method Not Allowed' }); // Method Not Allowed
+    res.status(405).json({ error: 'Method Not Allowed' });
   }
 }

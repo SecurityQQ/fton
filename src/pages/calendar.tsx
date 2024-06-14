@@ -10,30 +10,45 @@ const CalendarPage: React.FC = () => {
   const { user, loading, refetch } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [periodDays, setPeriodDays] = useState<Date[]>([]);
+  const [months, setMonths] = useState(3); // Default to 3 months
 
   useEffect(() => {
-    if (user?.lastPeriodDate) {
-      setPeriodDays([new Date(user.lastPeriodDate)]);
-    }
-  }, [user]);
+    const fetchMenstruations = async () => {
+      if (user?.id) {
+        try {
+          const response = await fetch(`/api/menstruation?userId=${user.id}&months=${months}`);
+          if (response.ok) {
+            const data = await response.json();
+            setPeriodDays(data.map((m: any) => new Date(m.date)));
+          } else {
+            console.error('Failed to fetch menstruation dates');
+          }
+        } catch (error) {
+          console.error('Error fetching menstruation dates:', error);
+        }
+      }
+    };
+
+    fetchMenstruations();
+  }, [user, months]);
 
   if (loading) {
-    return <Loader text="saving" />;
+    return <Loader text="loading" />;
   }
 
   const handleSave = async (changes: { date: Date; action: 'add' | 'delete' }[]) => {
     try {
-      // const response = await fetch('/api/menstruation', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ changes, userId: user?.id }),
-      // });
+      const response = await fetch('/api/menstruation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ changes, userId: user?.id }),
+      });
 
-      // if (!response.ok) {
-      //   throw new Error('Failed to update the period dates');
-      // }
+      if (!response.ok) {
+        throw new Error('Failed to update the period dates');
+      }
 
       // Update local periodDays state based on changes
       const updatedPeriodDays = [...periodDays];
@@ -59,14 +74,11 @@ const CalendarPage: React.FC = () => {
     }
   };
 
-  console.log('periods ', periodDays);
-
   return (
     <div className="flex h-screen flex-col">
       <Head>
         <title>Calendar</title>
       </Head>
-      {/*todo: add popup for first session if no lastPeriodDate*/}
       {user && (
         <Calendar
           periodDays={periodDays}
