@@ -15,11 +15,11 @@ const FeatureSection: React.FC<FeatureSectionProps> = ({
   bgColor,
 }) => {
   return (
-    <div className="flex w-full flex-row items-center gap-2 rounded-xl bg-blue-50 p-4">
-      <div className={`size-6 ${bgColor} relative flex items-center justify-center rounded-full`}>
-        <Icon className="text-white" size={12} />
+    <div className="flex w-full flex-row items-center gap-4 rounded-xl bg-blue-50 p-4">
+      <div className={`size-6 ${bgColor} flex shrink-0 items-center justify-center rounded-full`}>
+        <Icon className="text-white" size={16} />
       </div>
-      <div className="flex flex-col items-start">
+      <div className="flex grow flex-col items-start">
         <span className="text-lg font-medium text-blue-900">{title}</span>
         <span className="text-sm font-medium text-blue-600 opacity-80">{description}</span>
       </div>
