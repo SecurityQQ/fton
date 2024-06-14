@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 type CalendarProps = {
-  periodDays: Date[]; // Array of period days
+  periodDays: Date[];
   cycleLength: number;
   isEditing: boolean;
   onEdit: () => void;
@@ -19,6 +19,7 @@ const Calendar: React.FC<CalendarProps> = ({
 }) => {
   const [months, setMonths] = useState<Date[]>([]);
   const [changes, setChanges] = useState<{ date: Date; action: 'add' | 'delete' }[]>([]);
+  const [firstDayOfLastPeriod, setFirstDayOfLastPeriod] = useState<Date | null>(null);
 
   useEffect(() => {
     const initialMonths = [];
@@ -27,6 +28,10 @@ const Calendar: React.FC<CalendarProps> = ({
     }
     setMonths(initialMonths);
   }, []);
+
+  useEffect(() => {
+    setFirstDayOfLastPeriod(getFirstDayOfLastPeriod());
+  }, [periodDays]);
 
   const loadPreviousMonth = () => {
     setMonths((prev) => [new Date(prev[0].getFullYear(), prev[0].getMonth() - 1, 1), ...prev]);
@@ -79,12 +84,33 @@ const Calendar: React.FC<CalendarProps> = ({
     }
   };
 
+  const getFirstDayOfLastPeriod = () => {
+    if (periodDays.length === 0) return null;
+
+    const sortedPeriodDays = [...periodDays].sort((a, b) => a.getTime() - b.getTime());
+    let firstDayOfLastPeriod = sortedPeriodDays[sortedPeriodDays.length - 1];
+
+    const maxCheckDays = Math.min(5, sortedPeriodDays.length);
+
+    for (let i = 1; i < maxCheckDays; i++) {
+      const currentDay = sortedPeriodDays[sortedPeriodDays.length - i];
+      const previousDay = sortedPeriodDays[sortedPeriodDays.length - i - 1];
+
+      if ((currentDay.getTime() - previousDay.getTime()) / (1000 * 60 * 60 * 24) >= 2) {
+        break;
+      }
+
+      firstDayOfLastPeriod = previousDay;
+    }
+
+    return firstDayOfLastPeriod;
+  };
+
   const predictOvulationAndPeriod = (date: Date) => {
-    if (!isFutureDate(date)) {
+    if (!isFutureDate(date) || !firstDayOfLastPeriod) {
       return { isPeriod: false, isOvulation: false, isMaybePeriod: false };
     }
 
-    const firstDayOfLastPeriod = periodDays[0]; // Assuming periodDays are sorted and the first date is the first day of the last period
     const daysSinceFirstPeriod = Math.floor(
       (date.getTime() - new Date(firstDayOfLastPeriod).getTime()) / (1000 * 60 * 60 * 24)
     );

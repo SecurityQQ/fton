@@ -52,12 +52,13 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
       return;
     }
 
+    const today = new Date();
     const daysSinceLastPeriod = Math.floor(
-      (new Date().getTime() - new Date(lastMenstruationDate).getTime()) / (1000 * 60 * 60 * 24)
+      (today.getTime() - new Date(lastMenstruationDate).getTime()) / (1000 * 60 * 60 * 24)
     );
     const daysUntilNextPeriod = cycleLength - (daysSinceLastPeriod % cycleLength);
 
-    const phaseIndex = daysSinceLastPeriod % recommendationsData.recommendations.length;
+    const phaseIndex = (daysSinceLastPeriod + 24) % recommendationsData.recommendations.length; // 24 is a legacy because we stored lastPeriodDay, now it is first day of last period (28 - 4 days)
     setRecommendation(recommendationsData.recommendations[phaseIndex]);
 
     if (daysSinceLastPeriod < 5) {
@@ -65,11 +66,16 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
       setEventMessage('Месячные будут');
       setBgColor('bg-orange-100');
       setTextColor('text-orange-500');
-    } else if (daysSinceLastPeriod >= 5 && daysSinceLastPeriod < 14) {
-      setDaysUntilNextEvent(14 - daysSinceLastPeriod);
+    } else if (daysSinceLastPeriod >= 12 && daysSinceLastPeriod < 17) {
+      setDaysUntilNextEvent(17 - daysSinceLastPeriod);
       setEventMessage('Овуляция через');
       setBgColor('bg-blue-100');
       setTextColor('text-blue-500');
+    } else if (daysUntilNextPeriod <= 5) {
+      setDaysUntilNextEvent(daysUntilNextPeriod);
+      setEventMessage('Месячные через');
+      setBgColor('bg-orange-100');
+      setTextColor('text-orange-500');
     } else {
       setDaysUntilNextEvent(daysUntilNextPeriod);
       setEventMessage('Месячные через');
@@ -86,7 +92,7 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
             {lastMenstruationDate ? (
               <MiniCalendar lastMenstruationDate={lastMenstruationDate} cycleLength={cycleLength} />
             ) : null}
-            <div className="mt-8 w-full max-w-md p-4">
+            <div className="mt-0 w-full max-w-md p-4">
               <p className="text-header2 text-text-dark">{eventMessage}</p>
               {lastMenstruationDate && (
                 <h2 className={`text- mt-2 text-header1 font-bold ${textColor}`}>
