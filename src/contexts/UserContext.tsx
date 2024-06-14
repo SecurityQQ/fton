@@ -31,7 +31,6 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  //todo: add lastPeriodDate and menstruations for user storage
   const [loading, setLoading] = useState(true);
   const initData = useInitData();
   const { connected, wallet } = useTonConnect();
@@ -104,7 +103,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
     for (const key in newUser) {
       if (!newUser[key as keyof TelegramUser]) {
-        // it may have undefined fields, we skip them
         continue;
       }
 
@@ -112,7 +110,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         const existingValue = existingUser[key as keyof User];
         const newValue = newUser[key as keyof TelegramUser];
 
-        // Check if the existing value is different or undefined
         if (existingValue === undefined || existingValue !== newValue) {
           missingFields.push(key);
         }
@@ -139,24 +136,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const initializeUser = async () => {
-      if (user) {
-        // local cache of db user exists
-        const initUser = initData?.user;
-        if (initUser) {
-          //  check that they are not different
-          const telegramUser = convertInitDataToTelegramUser(initUser);
-          const nullOrMissingFields = getNullOrMissingFields(user, telegramUser);
-
-          if (Object.keys(nullOrMissingFields).length === 0) {
-            setLoading(false);
-            return;
-          }
-        } else {
-          setLoading(false);
-          return;
-        }
-      }
-
       if (initData?.user) {
         const telegramId = initData.user.id.toString();
 
@@ -164,14 +143,18 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
         if (existingUser) {
           const telegramUser = convertInitDataToTelegramUser(initData.user);
-          await updateUser(telegramId, telegramUser);
+          const nullOrMissingFields = getNullOrMissingFields(existingUser, telegramUser);
+
+          if (nullOrMissingFields.length > 0) {
+            await updateUser(telegramId, telegramUser);
+          }
         } else {
           existingUser = await createUser(convertInitDataToTelegramUser(initData.user));
         }
 
         setUser(existingUser);
-        setLoading(false);
       }
+      setLoading(false);
     };
 
     initializeUser();
@@ -196,11 +179,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
-  return (
-    <UserContext.Provider value={{ user, loading, refetch }}>
-      {!loading && children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={{ user, loading, refetch }}>{children}</UserContext.Provider>;
 };
 
 export const useUser = () => {
