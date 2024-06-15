@@ -18,8 +18,8 @@ const EarnPage: React.FC = () => {
   const [isBlockchainInited, setIsBlockchainInited] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(0);
-  const [privateKey, setPrivateKey] = useState(getInitPrivateKey());
-  const [selected, setSelected] = useState(getSaveStorageType());
+  const [privateKey, setPrivateKey] = useState<string | null>(null);
+  const [selected, setSelected] = useState(0);
   const [copySuccess, setCopySuccess] = useState('Copy');
 
   useEffect(() => {
@@ -35,6 +35,12 @@ const EarnPage: React.FC = () => {
         }
       }
     };
+    getInitPrivateKey().then((key) => {
+      setPrivateKey(key);
+    });
+    getSaveStorageType().then((type) => {
+      setSelected(type);
+    });
 
     checkBlockchainInited();
   }, [address]);
@@ -79,8 +85,8 @@ const EarnPage: React.FC = () => {
     }
   };
 
-  function getSaveStorageType(): number {
-    const type = getFromTelegramStorage(window, 'dataStorageType');
+  async function getSaveStorageType(): Promise<number> {
+    const type = await getFromTelegramStorage(window, 'dataStorageType');
     switch (type) {
       case 'backend+ton':
         return 1;
@@ -91,10 +97,11 @@ const EarnPage: React.FC = () => {
     }
   }
 
-  function getInitPrivateKey(): string | null {
-    const privateKey = getFromTelegramStorage(window, 'privateKey');
+  async function getInitPrivateKey(): Promise<string | null> {
+    const privateKey = await getFromTelegramStorage(window, 'privateKey');
     if (privateKey == null) {
-      generateAndSaveNewPrivateKey();
+      await generateAndSaveNewPrivateKey();
+      return getInitPrivateKey();
     }
     return privateKey;
   }
