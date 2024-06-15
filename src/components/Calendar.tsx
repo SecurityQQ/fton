@@ -18,6 +18,7 @@ const Calendar: React.FC<CalendarProps> = ({
   onCancel,
 }) => {
   const [months, setMonths] = useState<Date[]>([]);
+
   const [changes, setChanges] = useState<{ date: Date; action: 'add' | 'delete' }[]>([]);
   const [firstDayOfLastPeriod, setFirstDayOfLastPeriod] = useState<Date | null>(null);
 
@@ -59,6 +60,7 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const today = new Date();
+
 
   const isFutureDate = (date: Date) => date > today;
 

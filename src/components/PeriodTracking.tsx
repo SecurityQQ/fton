@@ -27,7 +27,6 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
   onSubscribeChannels,
 }) => {
   const { network, wallet, address } = useTonConnect();
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 text-center">
       <main className="flex w-full flex-1 flex-col items-center">
@@ -35,7 +34,6 @@ const PeriodTracking: React.FC<PeriodTrackingProps> = ({
           lastMenstruationDate={lastMenstruationDate}
           onPeriodDateChange={onPeriodDateChange}
         />
-
         <BalanceSection
           tokenBalance={tokenBalance}
           onStartFarming={onStartFarming}

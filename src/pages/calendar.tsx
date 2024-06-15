@@ -41,6 +41,7 @@ const CalendarPage: React.FC = () => {
       <Head>
         <title>Calendar</title>
       </Head>
+      {/*todo: add popup for first session if no lastPeriodDate*/}
       {user && (
         <Calendar
           periodDays={periodDays}
