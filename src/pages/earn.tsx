@@ -20,6 +20,7 @@ const EarnPage: React.FC = () => {
   const [tokenBalance, setTokenBalance] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [copySuccess, setCopySuccess] = useState('Copy');
+  const selectedLoadingStarted = useRef(false);
   const privateLoadingStarted = useRef(false);
   const privateKey = useRef<string | null>(null);
 
@@ -39,15 +40,11 @@ const EarnPage: React.FC = () => {
 
     if (privateKey.current == null && privateLoadingStarted.current === false) {
       privateLoadingStarted.current = true;
-      getInitPrivateKey().then((key) => {
-        privateKey.current = key;
-      });
+      getInitPrivateKey().then((key) => (privateKey.current = key));
     }
-    console.log('selected', selected);
-    if (selected == null) {
-      getSaveStorageType().then((type) => {
-        setSelected(type);
-      });
+    if (selected == null && selectedLoadingStarted.current === false) {
+      selectedLoadingStarted.current = true;
+      getSaveStorageType().then((type) => setSelected(type));
     }
 
     checkBlockchainInited();
@@ -156,7 +153,7 @@ const EarnPage: React.FC = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center justify-center space-y-4 px-4 text-center">
-        <span className="text-xs text-gray-500">4</span>
+        <span className="text-xs text-gray-500">5</span>
         <div className="flex w-full max-w-lg items-center justify-between rounded-3xl bg-pink-100 p-4">
           <Wallet className="text-pink-500" size={32} />
           <p className="mx-4 flex-1 text-header2 text-deep-dark">Подключи свой кошелек</p>
@@ -264,11 +261,6 @@ const EarnPage: React.FC = () => {
             <span className="text-xs text-gray-500">
               Приватный ключ используется для шифрования ваших данных в блокчейне TON. Доступ к
               ключу есть только у тебя. Позже мы добавим возможность импорта ключа
-            </span>
-            <span className="text-xs text-gray-500">
-              {privateKey.current && privateKey.current.length > 0
-                ? privateKey.current
-                : 'Loading...'}
             </span>
           </div>
         )}
