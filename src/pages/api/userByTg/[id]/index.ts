@@ -2,8 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import prisma from '@/lib/prisma';
 import { serializeUser } from '@/lib/serializeUser';
+import withMiddleware from '@/utils/withMiddleware';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
 
   if (req.method === 'GET') {
@@ -61,4 +62,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else {
     res.status(405).end(); // Method Not Allowed
   }
-}
+};
+
+export default withMiddleware(handler);

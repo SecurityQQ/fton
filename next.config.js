@@ -4,6 +4,16 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 /** @type {import('next').NextConfig} */
-module.exports = withBundleAnalyzer({
+const nextConfig = {
   reactStrictMode: true,
-});
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: '/api/:path*',
+      },
+    ];
+  },
+};
+
+module.exports = withBundleAnalyzer(nextConfig);
