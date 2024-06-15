@@ -156,7 +156,7 @@ const EarnPage: React.FC = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center justify-center space-y-4 px-4 text-center">
-        <span className="text-xs text-gray-500">3</span>
+        <span className="text-xs text-gray-500">4</span>
         <div className="flex w-full max-w-lg items-center justify-between rounded-3xl bg-pink-100 p-4">
           <Wallet className="text-pink-500" size={32} />
           <p className="mx-4 flex-1 text-header2 text-deep-dark">Подключи свой кошелек</p>
