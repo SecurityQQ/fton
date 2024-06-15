@@ -2,7 +2,7 @@ import { AppRoot, SegmentedControl } from '@telegram-apps/telegram-ui';
 import { TonConnectButton } from '@tonconnect/ui-react';
 import { Check, ChevronRight, Server as ServerIcon, Star, Wallet } from 'lucide-react';
 import Head from 'next/head';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { getFromTelegramStorage, saveToTelegramStorage } from 'src/hooks/useTelegramStorage';
 
@@ -18,11 +18,10 @@ const EarnPage: React.FC = () => {
   const [isBlockchainInited, setIsBlockchainInited] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(0);
-  const [privateKey, setPrivateKey] = useState<string | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [copySuccess, setCopySuccess] = useState('Copy');
-
-  let privateKeyInitStarted = false;
+  const privateLoadingStarted = useRef(false);
+  const privateKey = useRef<string | null>(null);
 
   useEffect(() => {
     const checkBlockchainInited = async () => {
@@ -37,11 +36,11 @@ const EarnPage: React.FC = () => {
         }
       }
     };
-    console.log('privateKey', privateKey);
-    if (privateKey == null && !privateKeyInitStarted) {
-      privateKeyInitStarted = true;
+
+    if (privateKey.current == null && privateLoadingStarted.current === false) {
+      privateLoadingStarted.current = true;
       getInitPrivateKey().then((key) => {
-        setPrivateKey(key);
+        privateKey.current = key;
       });
     }
     console.log('selected', selected);
@@ -83,7 +82,7 @@ const EarnPage: React.FC = () => {
       if (privateKey == null) {
         await generateAndSaveNewPrivateKey();
       }
-      const publicKey = derivePublicKey(privateKey!);
+      const publicKey = derivePublicKey(privateKey.current!);
       await initBlockchainLogic(address!, publicKey);
       setIsBlockchainInited(true);
       await updateTokenBalance(1000); // Award 1000 tokens
@@ -116,14 +115,13 @@ const EarnPage: React.FC = () => {
   }
 
   async function generateAndSaveNewPrivateKey() {
-    const privateKey = await generatePrivateKey();
-    setPrivateKey(privateKey);
-    saveToTelegramStorage(window, 'privateKey', privateKey);
+    privateKey.current = await generatePrivateKey();
+    saveToTelegramStorage(window, 'privateKey', privateKey.current);
   }
 
   const copyToPrivateKey = () => {
-    if (privateKey != null) {
-      navigator.clipboard.writeText(privateKey).then(
+    if (privateKey.current != null) {
+      navigator.clipboard.writeText(privateKey.current!).then(
         () => {
           setCopySuccess('Copied!');
           setTimeout(() => {
@@ -268,7 +266,9 @@ const EarnPage: React.FC = () => {
               ключу есть только у тебя. Позже мы добавим возможность импорта ключа
             </span>
             <span className="text-xs text-gray-500">
-              {privateKey && privateKey.length > 0 ? privateKey : 'Loading...'}
+              {privateKey.current && privateKey.current.length > 0
+                ? privateKey.current
+                : 'Loading...'}
             </span>
           </div>
         )}
