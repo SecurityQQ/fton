@@ -24,13 +24,9 @@ function versionCompare(v1: string, v2: string): number {
 export async function saveToTelegramStorage(window: Window, key: string, value: string) {
   if (canUseStorage(window.Telegram.WebApp.version)) {
     return await new Promise((resolve) => {
-      window.Telegram.WebApp.CloudStorage.setItem(key, value, (err: object, isSaved: boolean) => {
-        console.log('save result:', value);
-        console.log('isSaved:', isSaved);
-        console.log('err:', err);
-        resolve(isSaved);
-      });
-      window.Telegram.WebApp.CloudStorage.get;
+      window.Telegram.WebApp.CloudStorage.setItem(key, value, (err: object, isSaved: boolean) =>
+        resolve(isSaved)
+      );
     });
   } else {
     localStorage.setItem(key, value);
@@ -40,11 +36,7 @@ export async function saveToTelegramStorage(window: Window, key: string, value: 
 export async function getFromTelegramStorage(window: Window, key: string): Promise<string | null> {
   if (canUseStorage(window.Telegram.WebApp.version)) {
     const res = await new Promise((resolve) => {
-      window.Telegram.WebApp.CloudStorage.getItem(key, (err: object, res: string) => {
-        console.log('Get from Tg Storage key:', key);
-        typeof console.log('Get from Tg Storage value:', res);
-        resolve(res);
-      });
+      window.Telegram.WebApp.CloudStorage.getItem(key, (err: object, res: string) => resolve(res));
     });
     return res as string;
   }
