@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Calendar from '../components/Calendar';
 import Loader from '../components/Loader';
@@ -7,29 +7,30 @@ import Navigation from '../components/Navigation';
 import { useUser } from '../contexts/UserContext';
 
 const CalendarPage: React.FC = () => {
-  const { user, loading, refetch } = useUser();
+  const {
+    user,
+    loading,
+    menstruations,
+    menstruationsLoading,
+    refetchMenstruations,
+    changeMenstruations,
+  } = useUser();
   const [isEditing, setIsEditing] = useState(false);
+  const [periodDays, setPeriodDays] = useState<Date[]>([]);
+  const [months, setMonths] = useState(3); // Default to 3 months
 
-  if (loading) {
-    return <Loader text="saving" />;
+  useEffect(() => {
+    setPeriodDays(menstruations);
+  }, [menstruations]);
+
+  if (loading || menstruationsLoading) {
+    return <Loader text="" />;
   }
 
-  const handleSave = async (date: Date) => {
+  const handleSave = async (changes: { date: Date; action: 'add' | 'delete' }[]) => {
     try {
-      const response = await fetch('/api/menstruation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ date, userId: user?.id }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update the period date');
-      }
-
+      await changeMenstruations(changes);
       setIsEditing(false);
-      refetch(); // Re-fetch the user data to get the updated lastPeriodDate
     } catch (error) {
       console.error(error);
     }
@@ -43,12 +44,12 @@ const CalendarPage: React.FC = () => {
       {/*todo: add popup for first session if no lastPeriodDate*/}
       {user && (
         <Calendar
-          lastMenstruationDate={user.lastPeriodDate ? new Date(user.lastPeriodDate) : undefined}
+          periodDays={periodDays}
           cycleLength={28}
-          mode="full"
           isEditing={isEditing}
           onEdit={() => setIsEditing(true)}
           onSave={handleSave}
+          onCancel={() => setIsEditing(false)}
         />
       )}
       <Navigation />

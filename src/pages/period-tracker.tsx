@@ -9,7 +9,7 @@ import PeriodTracking from '../components/PeriodTracking';
 import { useUser } from '../contexts/UserContext';
 
 const PeriodTracker: NextPage = () => {
-  const { user, loading, refetch } = useUser();
+  const { user, loading, refetchUser } = useUser();
   const router = useRouter();
 
   console.log('USER: ', user);
@@ -47,12 +47,12 @@ const PeriodTracker: NextPage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (loading) {
-        refetch();
+        refetchUser();
       }
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [loading, refetch]);
+  }, [loading, refetchUser]);
 
   if (loading) {
     return <Loader />;
