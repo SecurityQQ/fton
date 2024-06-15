@@ -17,6 +17,7 @@ export interface TelegramResponse<T> {
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.BOT_TOKEN}`;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  // Note: must be public, available without middleware
   if (req.method === 'POST') {
     const { message, callback_query } = req.body;
 
