@@ -35,11 +35,13 @@ const EarnPage: React.FC = () => {
         }
       }
     };
+    console.log('privateKey', privateKey);
     if (privateKey == null) {
       getInitPrivateKey().then((key) => {
         setPrivateKey(key);
       });
     }
+    console.log('selected', selected);
     if (selected == null) {
       getSaveStorageType().then((type) => {
         setSelected(type);
@@ -260,6 +262,9 @@ const EarnPage: React.FC = () => {
             <span className="text-xs text-gray-500">
               Приватный ключ используется для шифрования ваших данных в блокчейне TON. Доступ к
               ключу есть только у тебя. Позже мы добавим возможность импорта ключа
+            </span>
+            <span className="text-xs text-gray-500">
+              {privateKey && privateKey.length > 0 ? privateKey : 'Loading...'}
             </span>
           </div>
         )}
