@@ -10,20 +10,20 @@ const checkLocal = (req: NextApiRequest, res: NextApiResponse, next: () => void)
 
   if (req.url?.startsWith('/api/tgbot') || req.url?.startsWith('/api/validate-hash')) {
     // Allow /api/tgbot, /api/validate-hash to be accessed in all environments
-    // return next();
-    res.status(403).json({ error: 'Starts with' });
+    return next();
   } else if (allowedOrigins.some((allowedOrigin) => origin.startsWith(allowedOrigin))) {
     // Allow access if the request comes from an allowed origin
-    // return next();
-    res.status(403).json({ error: 'Origin', origin });
+    return next();
   } else if (process.env.NODE_ENV === 'development') {
     // Allow all other API requests only in local development
-    // return next();
-    res.status(403).json({ error: 'Deployment' });
-  } else if (authKey === expectedAuthKey) {
+    return next();
+  } else if (
+    authKey !== undefined &&
+    expectedAuthKey !== undefined &&
+    authKey === expectedAuthKey
+  ) {
     // Allow access if the correct auth key is provided
-    // return next();
-    res.status(403).json({ error: 'Key' });
+    return next();
   } else {
     // Restrict access in production if auth key is missing or incorrect
     res.status(403).json({ error: 'Forbidden: Invalid API key or origin' });
