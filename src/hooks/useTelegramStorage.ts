@@ -21,12 +21,15 @@ function versionCompare(v1: string, v2: string): number {
   return 0;
 }
 
-export function saveToTelegramStorage(window: Window, key: string, value: string) {
+export async function saveToTelegramStorage(window: Window, key: string, value: string) {
   if (canUseStorage(window.Telegram.WebApp.version)) {
-    window.Telegram.WebApp.CloudStorage.setItem(key, value, (err: object, isSaved: boolean) => {
-      console.log('save result:', value);
-      console.log('isSaved:', isSaved);
-      console.log('err:', err);
+    return await new Promise((resolve) => {
+      window.Telegram.WebApp.CloudStorage.setItem(key, value, (err: object, isSaved: boolean) => {
+        console.log('save result:', value);
+        console.log('isSaved:', isSaved);
+        console.log('err:', err);
+        resolve(isSaved);
+      });
     });
   } else {
     localStorage.setItem(key, value);
