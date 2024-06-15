@@ -104,11 +104,8 @@ const EarnPage: React.FC = () => {
   }
 
   async function getInitPrivateKey(): Promise<string | null> {
-    console.log('getInitPrivateKey');
     const privateKey = await getFromTelegramStorage(window, 'privateKey');
-    console.log('savedPrivateKey', privateKey);
     if (privateKey == null) {
-      console.log('generateAndSaveNewPrivateKey');
       await generateAndSaveNewPrivateKey();
       return getInitPrivateKey();
     }
@@ -158,6 +155,7 @@ const EarnPage: React.FC = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center justify-center space-y-4 px-4 text-center">
+        <span className="text-xs text-gray-500">1</span>
         <div className="flex w-full max-w-lg items-center justify-between rounded-3xl bg-pink-100 p-4">
           <Wallet className="text-pink-500" size={32} />
           <p className="mx-4 flex-1 text-header2 text-deep-dark">Подключи свой кошелек</p>
