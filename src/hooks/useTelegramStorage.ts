@@ -29,23 +29,28 @@ export function saveToTelegramStorage(window: Window, key: string, value: string
   }
 }
 
-export function getFromTelegramStorage(window: Window, key: string): string | null {
+export async function getFromTelegramStorage(window: Window, key: string): Promise<string | null> {
   if (canUseStorage(window.Telegram.WebApp.version)) {
-    return window.Telegram.WebApp.CloudStorage.getItem(key);
+    const res = await new Promise((resolve, reject) => {
+      window.Telegram.WebApp.CloudStorage.getItem(key, (value: string) => {
+        resolve(value);
+      });
+    });
+    return res as string;
   }
   return localStorage.getItem(key);
 }
 
-export function isUseApi(): boolean {
-  const type = getFromTelegramStorage(window, 'dataStorageType');
+export async function isUseApi(): Promise<boolean> {
+  const type = await getFromTelegramStorage(window, 'dataStorageType');
   return type === 'backend+ton' || type === 'backend';
 }
 
-export function isUseTon(): boolean {
-  const type = getFromTelegramStorage(window, 'dataStorageType');
+export async function isUseTon(): Promise<boolean> {
+  const type = await getFromTelegramStorage(window, 'dataStorageType');
   return type === 'backend+ton' || type === 'ton';
 }
 
-export function getUserTonPrivateKey(): string | null {
+export function getUserTonPrivateKey(): Promise<string | null> {
   return getFromTelegramStorage(window, 'privateKey');
 }
