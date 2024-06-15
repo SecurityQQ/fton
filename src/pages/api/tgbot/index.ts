@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import fetch from 'node-fetch';
 
-const TELEGRAM_API = `https://api.telegram.org/bot${process.env.BOT_TOKEN}`;
-
 export interface TelegramMessage {
   message_id: number;
   chat: {
@@ -16,13 +14,21 @@ export interface TelegramResponse<T> {
   result: T;
 }
 
+const TELEGRAM_API = `https://api.telegram.org/bot${process.env.BOT_TOKEN}`;
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
-    const { message } = req.body;
+    const { message, callback_query } = req.body;
 
     if (message && message.text === '/start') {
       const chatId = message.chat.id;
-      const text = 'Tracker: t.me/FemaleTonBot/tracker';
+      const text = `Дорогая,
+
+💡 Удобно: не нужно отдельное приложение
+🔒 Безопасно: данные зашифрованы смартконтрактом
+🌿 Умно: Персональные рекомендации по well-being на основе цикла через бота
+
+С любовью, твоя команда @femaleton`;
 
       const sentMessage = (await sendMessage(chatId, text)) as TelegramResponse<TelegramMessage>;
       if (sentMessage.ok) {
@@ -46,6 +52,16 @@ const sendMessage = async (chatId: number, text: string) => {
     body: JSON.stringify({
       chat_id: chatId,
       text,
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: '🌀 Tracker',
+              url: 'https://t.me/FemaleTonBot/tracker',
+            },
+          ],
+        ],
+      },
     }),
   });
 
