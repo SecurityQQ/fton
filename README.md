@@ -8,7 +8,6 @@ Help us to win TON Hackathon for a cookie :)
 
 <a target="_blank" href="https://dorahacks.io/buidl/13265"><img src="https://cdn.dorahacks.io/images/buidl-embed/colored-full.png" height="50" width="170" /></a>
 
-
 ![Preview](/demo/preview.png)
 
 
