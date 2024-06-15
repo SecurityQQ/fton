@@ -19,7 +19,7 @@ const EarnPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(0);
   const [privateKey, setPrivateKey] = useState<string | null>(null);
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
   const [copySuccess, setCopySuccess] = useState('Copy');
 
   useEffect(() => {
@@ -35,12 +35,16 @@ const EarnPage: React.FC = () => {
         }
       }
     };
-    getInitPrivateKey().then((key) => {
-      setPrivateKey(key);
-    });
-    getSaveStorageType().then((type) => {
-      setSelected(type);
-    });
+    if (privateKey == null) {
+      getInitPrivateKey().then((key) => {
+        setPrivateKey(key);
+      });
+    }
+    if (selected == null) {
+      getSaveStorageType().then((type) => {
+        setSelected(type);
+      });
+    }
 
     checkBlockchainInited();
   }, [address]);
