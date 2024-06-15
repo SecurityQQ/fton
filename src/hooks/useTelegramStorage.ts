@@ -30,6 +30,7 @@ export async function saveToTelegramStorage(window: Window, key: string, value: 
         console.log('err:', err);
         resolve(isSaved);
       });
+      window.Telegram.WebApp.CloudStorage.get;
     });
   } else {
     localStorage.setItem(key, value);
@@ -39,10 +40,10 @@ export async function saveToTelegramStorage(window: Window, key: string, value: 
 export async function getFromTelegramStorage(window: Window, key: string): Promise<string | null> {
   if (canUseStorage(window.Telegram.WebApp.version)) {
     const res = await new Promise((resolve) => {
-      window.Telegram.WebApp.CloudStorage.getItem(key, (value: string) => {
+      window.Telegram.WebApp.CloudStorage.getItem(key, (res: string) => {
         console.log('Get from Tg Storage key:', key);
-        console.log('Get from Tg Storage value:', value);
-        resolve(value);
+        typeof console.log('Get from Tg Storage value:', res);
+        resolve(res);
       });
     });
     return res as string;
