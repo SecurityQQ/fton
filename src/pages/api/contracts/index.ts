@@ -2,7 +2,7 @@ import { KeyPair, mnemonicToPrivateKey } from '@ton/crypto';
 import { Address, Sender, TonClient, WalletContractV3R2, toNano } from '@ton/ton';
 import assert from 'assert';
 
-import { Account } from 'src/ton_client/tact_Account';
+import { Account, HealthDataState } from 'src/ton_client/tact_Account';
 import { HealthDataRecord } from 'src/ton_client/tact_HealthDataRecord';
 
 const tonClient = new TonClient({
@@ -140,7 +140,11 @@ export async function getPublicKey(userAddress: string): Promise<string> {
   return publicKey;
 }
 
-export async function addHealthData(userAddress: string, encryptedData: string) {
+export async function addHealthData(
+  userAddress: string,
+  encryptedPeriodDateStart: string,
+  encryptedPeriodDateEnd: string
+) {
   assert(
     blockchainLogicInited,
     'Blockchain logic is not initialized. Run initBlockchainLogic first'
@@ -157,8 +161,9 @@ export async function addHealthData(userAddress: string, encryptedData: string) 
     { value: toNano('0.02') },
     {
       $$type: 'AddHealthData',
-      encryptedData,
       accessedAddress: dataOwnerAddress,
+      encryptedPeriodDateStart,
+      encryptedPeriodDateEnd,
     }
   );
   await waitForAction(
@@ -187,7 +192,10 @@ export async function getRecordsCount(userAddress: string): Promise<bigint> {
   return recordsCount;
 }
 
-export async function getHealthDataEncrypted(userAddress: string, seqno: bigint): Promise<string> {
+export async function getHealthRecordState(
+  userAddress: string,
+  seqno: bigint
+): Promise<HealthDataState> {
   assert(
     blockchainLogicInited,
     'Blockchain logic is not initialized. Run initBlockchainLogic first'
@@ -198,6 +206,6 @@ export async function getHealthDataEncrypted(userAddress: string, seqno: bigint)
   const recordContractAddress = await openedContract.getHealthDataAddress(seqno, dataOwnerAddress);
   const recordContract = HealthDataRecord.fromAddress(recordContractAddress);
   const openedRecordContract = tonClient.open(recordContract);
-  const encryptedData = await openedRecordContract.getEncryptedData();
-  return encryptedData;
+  const recordState = await openedRecordContract.getHealthDataState();
+  return recordState;
 }
