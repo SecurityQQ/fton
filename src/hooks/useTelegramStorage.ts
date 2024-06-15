@@ -40,7 +40,7 @@ export async function saveToTelegramStorage(window: Window, key: string, value: 
 export async function getFromTelegramStorage(window: Window, key: string): Promise<string | null> {
   if (canUseStorage(window.Telegram.WebApp.version)) {
     const res = await new Promise((resolve) => {
-      window.Telegram.WebApp.CloudStorage.getItem(key, (res: string) => {
+      window.Telegram.WebApp.CloudStorage.getItem(key, (err: object, res: string) => {
         console.log('Get from Tg Storage key:', key);
         typeof console.log('Get from Tg Storage value:', res);
         resolve(res);
