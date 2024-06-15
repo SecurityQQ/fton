@@ -23,7 +23,11 @@ function versionCompare(v1: string, v2: string): number {
 
 export function saveToTelegramStorage(window: Window, key: string, value: string) {
   if (canUseStorage(window.Telegram.WebApp.version)) {
-    window.Telegram.WebApp.CloudStorage.setItem(key, value);
+    window.Telegram.WebApp.CloudStorage.setItem(key, value, (err: object, isSaved: boolean) => {
+      console.log('save result for', key);
+      console.log('isSaved', isSaved);
+      console.log('err', err);
+    });
   } else {
     localStorage.setItem(key, value);
   }
