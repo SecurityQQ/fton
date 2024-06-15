@@ -1,5 +1,0 @@
-{
-  "build": {
-    "ignoreCommand": "bash ignore_step.sh"
-  }
-}
