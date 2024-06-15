@@ -46,7 +46,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     return null;
   }
 
-  const manifestUrl = 'https://fton.vercel.app/tonconnect-manifest.json';
+  const manifestUrl = process.env.NEXT_PUBLIC_MANIFEST_URL;
 
   return (
     <>
