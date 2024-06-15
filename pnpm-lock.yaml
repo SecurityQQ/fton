@@ -41,12 +41,21 @@ importers:
       '@tonconnect/ui-react':
         specifier: ^2.0.3
         version: 2.0.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@types/telegram-web-app':
+        specifier: ^7.2.1
+        version: 7.2.1
       axios:
         specifier: ^1.1.3
         version: 1.7.2
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
+      jsrsasign:
+        specifier: 10.8.2
+        version: 10.8.2
+      jsrsasign-util:
+        specifier: ^1.0.5
+        version: 1.0.5
       lucide-react:
         specifier: ^0.390.0
         version: 0.390.0(react@18.2.0)
@@ -65,10 +74,16 @@ importers:
       styled-components:
         specifier: ^6.1.11
         version: 6.1.11(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      telegram-webapps-types:
+        specifier: ^1.0.5
+        version: 1.0.5
     devDependencies:
       '@next/bundle-analyzer':
         specifier: ^13.0.2
         version: 13.5.6
+      '@types/jsrsasign':
+        specifier: ^10.5.14
+        version: 10.5.14
       '@types/node':
         specifier: 18.11.3
         version: 18.11.3
@@ -117,9 +132,6 @@ importers:
       tailwindcss:
         specifier: ^3.4.3
         version: 3.4.4
-      telegram-webapps-types:
-        specifier: ^1.0.5
-        version: 1.0.5
       typescript:
         specifier: 4.8.4
         version: 4.8.4
@@ -567,6 +579,9 @@ packages:
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
 
+  '@types/jsrsasign@10.5.14':
+    resolution: {integrity: sha512-lppSlfK6etu+cuKs40K4rg8As79PH6hzIB+v55zSqImbSH3SE6Fm8MBHCiI91cWlAP3Z4igtJK1VL3fSN09blQ==}
+
   '@types/node@18.11.3':
     resolution: {integrity: sha512-fNjDQzzOsZeKZu5NATgXUPsaFaTxeRgFXoosrHivTl8RGeV733OLawXsGfEk9a8/tySyZUyiZ6E8LcjPFZ2y1A==}
 
@@ -587,6 +602,9 @@ packages:
 
   '@types/stylis@4.2.5':
     resolution: {integrity: sha512-1Xve+NMN7FWjY14vLoY5tL3BVEQ/n42YLwaqJIPYhotZ9uBHt87VceMwWQpzmdEt2TNXIorIFG+YeCUUW7RInw==}
+
+  '@types/telegram-web-app@7.2.1':
+    resolution: {integrity: sha512-aXUUyTE8vVwolOta84wPybKNAeZq6rPVYCn/mnewN+tqF5QBqoQFnvqUATn7yNFH2+hpYF2Z2fKU6lnMQ8EC3A==}
 
   '@typescript-eslint/eslint-plugin@5.62.0':
     resolution: {integrity: sha512-TiZzBSJja/LbhNPvk6yc0JrX9XqhQ0hdh6M2svYfsHGejaKFIAGd9MQ+ERIMzLGlN/kZoYIgdxFV0PuljTKXag==}
@@ -1583,6 +1601,15 @@ packages:
   json5@1.0.2:
     resolution: {integrity: sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==}
     hasBin: true
+
+  jsonc-parser@3.2.1:
+    resolution: {integrity: sha512-AilxAyFOAcK5wA1+LeaySVBrHsGQvUFCDWXKpZjzaL0PqW+xfBOttn8GNtWKFWqneyMZj41MWF9Kl6iPWLwgOA==}
+
+  jsrsasign-util@1.0.5:
+    resolution: {integrity: sha512-e5Kp8aaT5GH2c5X8j4uaJruYmT4GcnaGb47nw8m60YqPywtnOtTISZ9hZgtZ3a+jh7B27bU2LCf3Y32wZyfhtQ==}
+
+  jsrsasign@10.8.2:
+    resolution: {integrity: sha512-iKTMkVZxyXzvd+MYLxzPk5WFZ4jPX22TrO7fQ7vS1dfso30/jntH2EexW7+K1rn11F1GkiR9Q3ulF0FQxvNNRw==}
 
   jssha@3.2.0:
     resolution: {integrity: sha512-QuruyBENDWdN4tZwJbQq7/eAK85FqrI4oDbXjy5IBhYD+2pTJyBUWZe8ctWaCkrV0gy6AaelgOZZBMeswEa/6Q==}
@@ -2874,6 +2901,8 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
+  '@types/jsrsasign@10.5.14': {}
+
   '@types/node@18.11.3': {}
 
   '@types/prop-types@15.7.12': {}
@@ -2893,6 +2922,8 @@ snapshots:
   '@types/semver@7.5.8': {}
 
   '@types/stylis@4.2.5': {}
+
+  '@types/telegram-web-app@7.2.1': {}
 
   '@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.26.0)(typescript@4.8.4))(eslint@8.26.0)(typescript@4.8.4)':
     dependencies:
@@ -4071,6 +4102,15 @@ snapshots:
   json5@1.0.2:
     dependencies:
       minimist: 1.2.8
+
+  jsonc-parser@3.2.1: {}
+
+  jsrsasign-util@1.0.5:
+    dependencies:
+      jsonc-parser: 3.2.1
+      jsrsasign: 10.8.2
+
+  jsrsasign@10.8.2: {}
 
   jssha@3.2.0: {}
 

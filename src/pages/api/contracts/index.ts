@@ -11,6 +11,7 @@ const tonClient = new TonClient({
 });
 
 async function getBotKeyPair(): Promise<KeyPair> {
+  // const mnemonics = process.env.REACT_APP_WALLET_MNEMONIC?.split(' ');
   const mnemonics = [
     'conduct',
     'insect',
@@ -37,6 +38,7 @@ async function getBotKeyPair(): Promise<KeyPair> {
     'faint',
     'tail',
   ];
+  assert(mnemonics, 'Mnemonic is not provided');
   return await mnemonicToPrivateKey(mnemonics);
 }
 
@@ -75,14 +77,17 @@ export function isBlockchainLogicInited() {
   return blockchainLogicInited;
 }
 
+export async function isContractDeployed(userAddress: string) {
+  const contract = await Account.fromInit(userAddress);
+  return await tonClient.isContractDeployed(contract.address);
+}
+
 export async function initBlockchainLogic(userAddress: string, publicKey: string) {
   if (!blockchainLogicInited) {
     if (initing) return;
     initing = true;
     try {
-      const sender = await getBotSender();
       const contract = await Account.fromInit(userAddress);
-      const openedContract = tonClient.open(contract);
       const deployed = await tonClient.isContractDeployed(contract.address);
       if (!deployed) {
         await createAccount(userAddress, publicKey);
@@ -179,23 +184,20 @@ export async function getRecordsCount(userAddress: string): Promise<bigint> {
   const contract = await Account.fromInit(userAddress);
   const openedContract = tonClient.open(contract);
   const recordsCount = await openedContract.getNumHealthDataRecords();
-  console.log(recordsCount);
   return recordsCount;
 }
 
-export async function getHealthDataAddress(userAddress: string, seqno: bigint): Promise<string> {
+export async function getHealthDataEncrypted(userAddress: string, seqno: bigint): Promise<string> {
   assert(
     blockchainLogicInited,
     'Blockchain logic is not initialized. Run initBlockchainLogic first'
   );
   const dataOwnerAddress = Address.parse(userAddress);
-  // const dataOwnerAddress = Address.parse('UQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPuwA');
   const contract = await Account.fromInit(userAddress);
   const openedContract = tonClient.open(contract);
   const recordContractAddress = await openedContract.getHealthDataAddress(seqno, dataOwnerAddress);
   const recordContract = HealthDataRecord.fromAddress(recordContractAddress);
   const openedRecordContract = tonClient.open(recordContract);
   const encryptedData = await openedRecordContract.getEncryptedData();
-  console.log(encryptedData);
   return encryptedData;
 }
