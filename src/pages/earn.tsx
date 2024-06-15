@@ -104,8 +104,11 @@ const EarnPage: React.FC = () => {
   }
 
   async function getInitPrivateKey(): Promise<string | null> {
+    console.log('getInitPrivateKey');
     const privateKey = await getFromTelegramStorage(window, 'privateKey');
+    console.log('savedPrivateKey', privateKey);
     if (privateKey == null) {
+      console.log('generateAndSaveNewPrivateKey');
       await generateAndSaveNewPrivateKey();
       return getInitPrivateKey();
     }
