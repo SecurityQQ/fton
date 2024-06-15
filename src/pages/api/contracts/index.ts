@@ -6,8 +6,7 @@ import { Account, HealthDataState } from 'src/ton_client/tact_Account';
 import { HealthDataRecord } from 'src/ton_client/tact_HealthDataRecord';
 
 const tonClient = new TonClient({
-  endpoint: 'https://testnet.toncenter.com/api/v2/jsonRPC',
-  apiKey: 'bfdde2d576e0ba956a83773736d1b1c63d2f8f71257340dc9637bd11e77e39f8',
+  endpoint: 'https://pohuivoobshe.flown.dev/jsonRPC',
 });
 
 async function getBotKeyPair(): Promise<KeyPair> {
@@ -90,7 +89,11 @@ export async function initBlockchainLogic(userAddress: string, publicKey: string
       const contract = await Account.fromInit(userAddress);
       const deployed = await tonClient.isContractDeployed(contract.address);
       if (!deployed) {
-        await createAccount(userAddress, publicKey);
+        await deployContract(userAddress, publicKey);
+      }
+      const contractPublicKey = await getPublicKey(userAddress);
+      if (contractPublicKey !== publicKey) {
+        await setPublicKey(userAddress, publicKey);
       }
       blockchainLogicInited = true;
     } finally {
@@ -99,7 +102,7 @@ export async function initBlockchainLogic(userAddress: string, publicKey: string
   }
 }
 
-async function createAccount(userAddress: string, publicKey: string) {
+async function deployContract(userAddress: string, publicKey: string) {
   const sender = await getBotSender();
   const contract = await Account.fromInit(userAddress);
   const openedContract = tonClient.open(contract);
@@ -115,6 +118,12 @@ async function createAccount(userAddress: string, publicKey: string) {
   await waitForAction(() => tonClient.isContractDeployed(contract.address));
   console.log('Contract deployed');
   console.log('Address:', contract.address.toString());
+}
+
+async function setPublicKey(userAddress: string, publicKey: string) {
+  const sender = await getBotSender();
+  const contract = await Account.fromInit(userAddress);
+  const openedContract = tonClient.open(contract);
   console.log('Setting public key...');
   await openedContract.send(
     sender,
@@ -129,14 +138,9 @@ async function createAccount(userAddress: string, publicKey: string) {
 }
 
 export async function getPublicKey(userAddress: string): Promise<string> {
-  assert(
-    blockchainLogicInited,
-    'Blockchain logic is not initialized. Run initBlockchainLogic first'
-  );
   const contract = await Account.fromInit(userAddress);
   const openedContract = tonClient.open(contract);
   const publicKey = await openedContract.getPublicKey();
-  console.log(publicKey);
   return publicKey;
 }
 
