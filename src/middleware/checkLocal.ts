@@ -14,7 +14,8 @@ const checkLocal = (req: NextApiRequest, res: NextApiResponse, next: () => void)
     res.status(403).json({ error: 'Starts with' });
   } else if (allowedOrigins.some((allowedOrigin) => origin.startsWith(allowedOrigin))) {
     // Allow access if the request comes from an allowed origin
-    return next();
+    // return next();
+    res.status(403).json({ error: 'Origin', origin });
   } else if (process.env.NODE_ENV === 'development') {
     // Allow all other API requests only in local development
     // return next();
