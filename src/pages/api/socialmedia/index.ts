@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import prisma from '@/lib/prisma';
+import withMiddleware from '@/utils/withMiddleware';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
       const socialMediaInteractions = await prisma.socialMedia.findMany({
@@ -31,4 +32,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else {
     res.status(405).end(); // Method Not Allowed
   }
-}
+};
+
+export default withMiddleware(handler);
