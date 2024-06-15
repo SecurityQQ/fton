@@ -1,23 +1,20 @@
 import {
-  Cell,
-  Slice,
-  Address,
-  Builder,
-  beginCell,
-  ComputeError,
-  TupleItem,
-  TupleReader,
-  Dictionary,
-  contractAddress,
-  ContractProvider,
-  Sender,
-  Contract,
-  ContractABI,
-  ABIType,
   ABIGetter,
   ABIReceiver,
-  TupleBuilder,
+  ABIType,
+  Address,
+  Builder,
+  Cell,
+  Contract,
+  ContractABI,
+  ContractProvider,
   DictionaryValue,
+  Sender,
+  Slice,
+  TupleBuilder,
+  TupleReader,
+  beginCell,
+  contractAddress,
 } from '@ton/core';
 
 export type StateInit = {
@@ -514,46 +511,53 @@ function dictValueParserAddHealthDataResponse(): DictionaryValue<AddHealthDataRe
 export type AddHealthData = {
   $$type: 'AddHealthData';
   accessedAddress: Address;
-  encryptedData: string;
+  encryptedPeriodDateStart: string;
+  encryptedPeriodDateEnd: string;
 };
 
 export function storeAddHealthData(src: AddHealthData) {
   return (builder: Builder) => {
     const b_0 = builder;
-    b_0.storeUint(315300219, 32);
+    b_0.storeUint(2553461971, 32);
     b_0.storeAddress(src.accessedAddress);
-    b_0.storeStringRefTail(src.encryptedData);
+    b_0.storeStringRefTail(src.encryptedPeriodDateStart);
+    b_0.storeStringRefTail(src.encryptedPeriodDateEnd);
   };
 }
 
 export function loadAddHealthData(slice: Slice) {
   const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 315300219) {
+  if (sc_0.loadUint(32) !== 2553461971) {
     throw Error('Invalid prefix');
   }
   const _accessedAddress = sc_0.loadAddress();
-  const _encryptedData = sc_0.loadStringRefTail();
+  const _encryptedPeriodDateStart = sc_0.loadStringRefTail();
+  const _encryptedPeriodDateEnd = sc_0.loadStringRefTail();
   return {
     $$type: 'AddHealthData' as const,
     accessedAddress: _accessedAddress,
-    encryptedData: _encryptedData,
+    encryptedPeriodDateStart: _encryptedPeriodDateStart,
+    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
   };
 }
 
 function loadTupleAddHealthData(source: TupleReader) {
   const _accessedAddress = source.readAddress();
-  const _encryptedData = source.readString();
+  const _encryptedPeriodDateStart = source.readString();
+  const _encryptedPeriodDateEnd = source.readString();
   return {
     $$type: 'AddHealthData' as const,
     accessedAddress: _accessedAddress,
-    encryptedData: _encryptedData,
+    encryptedPeriodDateStart: _encryptedPeriodDateStart,
+    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
   };
 }
 
 function storeTupleAddHealthData(source: AddHealthData) {
   const builder = new TupleBuilder();
   builder.writeAddress(source.accessedAddress);
-  builder.writeString(source.encryptedData);
+  builder.writeString(source.encryptedPeriodDateStart);
+  builder.writeString(source.encryptedPeriodDateEnd);
   return builder.build();
 }
 
@@ -570,34 +574,47 @@ function dictValueParserAddHealthData(): DictionaryValue<AddHealthData> {
 
 export type AddInternalHealthData = {
   $$type: 'AddInternalHealthData';
-  encryptedData: string;
+  encryptedPeriodDateStart: string;
+  encryptedPeriodDateEnd: string;
 };
 
 export function storeAddInternalHealthData(src: AddInternalHealthData) {
   return (builder: Builder) => {
     const b_0 = builder;
-    b_0.storeUint(3663464031, 32);
-    b_0.storeStringRefTail(src.encryptedData);
+    b_0.storeUint(779420174, 32);
+    b_0.storeStringRefTail(src.encryptedPeriodDateStart);
+    b_0.storeStringRefTail(src.encryptedPeriodDateEnd);
   };
 }
 
 export function loadAddInternalHealthData(slice: Slice) {
   const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 3663464031) {
+  if (sc_0.loadUint(32) !== 779420174) {
     throw Error('Invalid prefix');
   }
-  const _encryptedData = sc_0.loadStringRefTail();
-  return { $$type: 'AddInternalHealthData' as const, encryptedData: _encryptedData };
+  const _encryptedPeriodDateStart = sc_0.loadStringRefTail();
+  const _encryptedPeriodDateEnd = sc_0.loadStringRefTail();
+  return {
+    $$type: 'AddInternalHealthData' as const,
+    encryptedPeriodDateStart: _encryptedPeriodDateStart,
+    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
+  };
 }
 
 function loadTupleAddInternalHealthData(source: TupleReader) {
-  const _encryptedData = source.readString();
-  return { $$type: 'AddInternalHealthData' as const, encryptedData: _encryptedData };
+  const _encryptedPeriodDateStart = source.readString();
+  const _encryptedPeriodDateEnd = source.readString();
+  return {
+    $$type: 'AddInternalHealthData' as const,
+    encryptedPeriodDateStart: _encryptedPeriodDateStart,
+    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
+  };
 }
 
 function storeTupleAddInternalHealthData(source: AddInternalHealthData) {
   const builder = new TupleBuilder();
-  builder.writeString(source.encryptedData);
+  builder.writeString(source.encryptedPeriodDateStart);
+  builder.writeString(source.encryptedPeriodDateEnd);
   return builder.build();
 }
 
@@ -656,6 +673,234 @@ function dictValueParserSetPublicKey(): DictionaryValue<SetPublicKey> {
   };
 }
 
+export type SetInactiveRecord = {
+  $$type: 'SetInactiveRecord';
+  accessedAddress: Address;
+  seqno: bigint;
+};
+
+export function storeSetInactiveRecord(src: SetInactiveRecord) {
+  return (builder: Builder) => {
+    const b_0 = builder;
+    b_0.storeUint(3088345220, 32);
+    b_0.storeAddress(src.accessedAddress);
+    b_0.storeUint(src.seqno, 256);
+  };
+}
+
+export function loadSetInactiveRecord(slice: Slice) {
+  const sc_0 = slice;
+  if (sc_0.loadUint(32) !== 3088345220) {
+    throw Error('Invalid prefix');
+  }
+  const _accessedAddress = sc_0.loadAddress();
+  const _seqno = sc_0.loadUintBig(256);
+  return { $$type: 'SetInactiveRecord' as const, accessedAddress: _accessedAddress, seqno: _seqno };
+}
+
+function loadTupleSetInactiveRecord(source: TupleReader) {
+  const _accessedAddress = source.readAddress();
+  const _seqno = source.readBigNumber();
+  return { $$type: 'SetInactiveRecord' as const, accessedAddress: _accessedAddress, seqno: _seqno };
+}
+
+function storeTupleSetInactiveRecord(source: SetInactiveRecord) {
+  const builder = new TupleBuilder();
+  builder.writeAddress(source.accessedAddress);
+  builder.writeNumber(source.seqno);
+  return builder.build();
+}
+
+function dictValueParserSetInactiveRecord(): DictionaryValue<SetInactiveRecord> {
+  return {
+    serialize: (src, buidler) => {
+      buidler.storeRef(beginCell().store(storeSetInactiveRecord(src)).endCell());
+    },
+    parse: (src) => {
+      return loadSetInactiveRecord(src.loadRef().beginParse());
+    },
+  };
+}
+
+export type SetInactiveRecordInternal = {
+  $$type: 'SetInactiveRecordInternal';
+  excess: Address;
+};
+
+export function storeSetInactiveRecordInternal(src: SetInactiveRecordInternal) {
+  return (builder: Builder) => {
+    const b_0 = builder;
+    b_0.storeUint(3184535658, 32);
+    b_0.storeAddress(src.excess);
+  };
+}
+
+export function loadSetInactiveRecordInternal(slice: Slice) {
+  const sc_0 = slice;
+  if (sc_0.loadUint(32) !== 3184535658) {
+    throw Error('Invalid prefix');
+  }
+  const _excess = sc_0.loadAddress();
+  return { $$type: 'SetInactiveRecordInternal' as const, excess: _excess };
+}
+
+function loadTupleSetInactiveRecordInternal(source: TupleReader) {
+  const _excess = source.readAddress();
+  return { $$type: 'SetInactiveRecordInternal' as const, excess: _excess };
+}
+
+function storeTupleSetInactiveRecordInternal(source: SetInactiveRecordInternal) {
+  const builder = new TupleBuilder();
+  builder.writeAddress(source.excess);
+  return builder.build();
+}
+
+function dictValueParserSetInactiveRecordInternal(): DictionaryValue<SetInactiveRecordInternal> {
+  return {
+    serialize: (src, buidler) => {
+      buidler.storeRef(beginCell().store(storeSetInactiveRecordInternal(src)).endCell());
+    },
+    parse: (src) => {
+      return loadSetInactiveRecordInternal(src.loadRef().beginParse());
+    },
+  };
+}
+
+export type ChangeHealthData = {
+  $$type: 'ChangeHealthData';
+  accessedAddress: Address;
+  seqno: bigint;
+  encryptedPeriodDateStart: string;
+  encryptedPeriodDateEnd: string;
+};
+
+export function storeChangeHealthData(src: ChangeHealthData) {
+  return (builder: Builder) => {
+    const b_0 = builder;
+    b_0.storeUint(1397979250, 32);
+    b_0.storeAddress(src.accessedAddress);
+    b_0.storeUint(src.seqno, 256);
+    b_0.storeStringRefTail(src.encryptedPeriodDateStart);
+    b_0.storeStringRefTail(src.encryptedPeriodDateEnd);
+  };
+}
+
+export function loadChangeHealthData(slice: Slice) {
+  const sc_0 = slice;
+  if (sc_0.loadUint(32) !== 1397979250) {
+    throw Error('Invalid prefix');
+  }
+  const _accessedAddress = sc_0.loadAddress();
+  const _seqno = sc_0.loadUintBig(256);
+  const _encryptedPeriodDateStart = sc_0.loadStringRefTail();
+  const _encryptedPeriodDateEnd = sc_0.loadStringRefTail();
+  return {
+    $$type: 'ChangeHealthData' as const,
+    accessedAddress: _accessedAddress,
+    seqno: _seqno,
+    encryptedPeriodDateStart: _encryptedPeriodDateStart,
+    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
+  };
+}
+
+function loadTupleChangeHealthData(source: TupleReader) {
+  const _accessedAddress = source.readAddress();
+  const _seqno = source.readBigNumber();
+  const _encryptedPeriodDateStart = source.readString();
+  const _encryptedPeriodDateEnd = source.readString();
+  return {
+    $$type: 'ChangeHealthData' as const,
+    accessedAddress: _accessedAddress,
+    seqno: _seqno,
+    encryptedPeriodDateStart: _encryptedPeriodDateStart,
+    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
+  };
+}
+
+function storeTupleChangeHealthData(source: ChangeHealthData) {
+  const builder = new TupleBuilder();
+  builder.writeAddress(source.accessedAddress);
+  builder.writeNumber(source.seqno);
+  builder.writeString(source.encryptedPeriodDateStart);
+  builder.writeString(source.encryptedPeriodDateEnd);
+  return builder.build();
+}
+
+function dictValueParserChangeHealthData(): DictionaryValue<ChangeHealthData> {
+  return {
+    serialize: (src, buidler) => {
+      buidler.storeRef(beginCell().store(storeChangeHealthData(src)).endCell());
+    },
+    parse: (src) => {
+      return loadChangeHealthData(src.loadRef().beginParse());
+    },
+  };
+}
+
+export type HealthDataState = {
+  $$type: 'HealthDataState';
+  encryptedPeriodDateStart: string;
+  encryptedPeriodDateEnd: string;
+  recordIsActive: boolean;
+};
+
+export function storeHealthDataState(src: HealthDataState) {
+  return (builder: Builder) => {
+    const b_0 = builder;
+    b_0.storeUint(4170313116, 32);
+    b_0.storeStringRefTail(src.encryptedPeriodDateStart);
+    b_0.storeStringRefTail(src.encryptedPeriodDateEnd);
+    b_0.storeBit(src.recordIsActive);
+  };
+}
+
+export function loadHealthDataState(slice: Slice) {
+  const sc_0 = slice;
+  if (sc_0.loadUint(32) !== 4170313116) {
+    throw Error('Invalid prefix');
+  }
+  const _encryptedPeriodDateStart = sc_0.loadStringRefTail();
+  const _encryptedPeriodDateEnd = sc_0.loadStringRefTail();
+  const _recordIsActive = sc_0.loadBit();
+  return {
+    $$type: 'HealthDataState' as const,
+    encryptedPeriodDateStart: _encryptedPeriodDateStart,
+    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
+    recordIsActive: _recordIsActive,
+  };
+}
+
+function loadTupleHealthDataState(source: TupleReader) {
+  const _encryptedPeriodDateStart = source.readString();
+  const _encryptedPeriodDateEnd = source.readString();
+  const _recordIsActive = source.readBoolean();
+  return {
+    $$type: 'HealthDataState' as const,
+    encryptedPeriodDateStart: _encryptedPeriodDateStart,
+    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
+    recordIsActive: _recordIsActive,
+  };
+}
+
+function storeTupleHealthDataState(source: HealthDataState) {
+  const builder = new TupleBuilder();
+  builder.writeString(source.encryptedPeriodDateStart);
+  builder.writeString(source.encryptedPeriodDateEnd);
+  builder.writeBoolean(source.recordIsActive);
+  return builder.build();
+}
+
+function dictValueParserHealthDataState(): DictionaryValue<HealthDataState> {
+  return {
+    serialize: (src, buidler) => {
+      buidler.storeRef(beginCell().store(storeHealthDataState(src)).endCell());
+    },
+    parse: (src) => {
+      return loadHealthDataState(src.loadRef().beginParse());
+    },
+  };
+}
+
 type Account_init_args = {
   $$type: 'Account_init_args';
   accountOwner: string;
@@ -670,10 +915,10 @@ function initAccount_init_args(src: Account_init_args) {
 
 async function Account_init(accountOwner: string) {
   const __code = Cell.fromBase64(
-    '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'
+    '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'
   );
   const __system = Cell.fromBase64(
-    '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'
+    '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'
   );
   const builder = beginCell();
   builder.storeRef(__system);
@@ -708,9 +953,8 @@ const Account_errors: { [key: number]: { message: string } } = {
   135: { message: `Code of a contract was not found` },
   136: { message: `Invalid address` },
   137: { message: `Masterchain support is not enabled for this contract` },
-  4429: { message: `Invalid sender` },
+  49405: { message: `Record does not exist` },
   54404: { message: `Parent only` },
-  61782: { message: `Data already set` },
 };
 
 const Account_types: ABIType[] = [
@@ -792,21 +1036,69 @@ const Account_types: ABIType[] = [
   },
   {
     name: 'AddHealthData',
-    header: 315300219,
+    header: 2553461971,
     fields: [
       { name: 'accessedAddress', type: { kind: 'simple', type: 'address', optional: false } },
-      { name: 'encryptedData', type: { kind: 'simple', type: 'string', optional: false } },
+      {
+        name: 'encryptedPeriodDateStart',
+        type: { kind: 'simple', type: 'string', optional: false },
+      },
+      { name: 'encryptedPeriodDateEnd', type: { kind: 'simple', type: 'string', optional: false } },
     ],
   },
   {
     name: 'AddInternalHealthData',
-    header: 3663464031,
-    fields: [{ name: 'encryptedData', type: { kind: 'simple', type: 'string', optional: false } }],
+    header: 779420174,
+    fields: [
+      {
+        name: 'encryptedPeriodDateStart',
+        type: { kind: 'simple', type: 'string', optional: false },
+      },
+      { name: 'encryptedPeriodDateEnd', type: { kind: 'simple', type: 'string', optional: false } },
+    ],
   },
   {
     name: 'SetPublicKey',
     header: 1524430048,
     fields: [{ name: 'publicKey', type: { kind: 'simple', type: 'string', optional: false } }],
+  },
+  {
+    name: 'SetInactiveRecord',
+    header: 3088345220,
+    fields: [
+      { name: 'accessedAddress', type: { kind: 'simple', type: 'address', optional: false } },
+      { name: 'seqno', type: { kind: 'simple', type: 'uint', optional: false, format: 256 } },
+    ],
+  },
+  {
+    name: 'SetInactiveRecordInternal',
+    header: 3184535658,
+    fields: [{ name: 'excess', type: { kind: 'simple', type: 'address', optional: false } }],
+  },
+  {
+    name: 'ChangeHealthData',
+    header: 1397979250,
+    fields: [
+      { name: 'accessedAddress', type: { kind: 'simple', type: 'address', optional: false } },
+      { name: 'seqno', type: { kind: 'simple', type: 'uint', optional: false, format: 256 } },
+      {
+        name: 'encryptedPeriodDateStart',
+        type: { kind: 'simple', type: 'string', optional: false },
+      },
+      { name: 'encryptedPeriodDateEnd', type: { kind: 'simple', type: 'string', optional: false } },
+    ],
+  },
+  {
+    name: 'HealthDataState',
+    header: 4170313116,
+    fields: [
+      {
+        name: 'encryptedPeriodDateStart',
+        type: { kind: 'simple', type: 'string', optional: false },
+      },
+      { name: 'encryptedPeriodDateEnd', type: { kind: 'simple', type: 'string', optional: false } },
+      { name: 'recordIsActive', type: { kind: 'simple', type: 'bool', optional: false } },
+    ],
   },
 ];
 
@@ -849,6 +1141,8 @@ const Account_getters: ABIGetter[] = [
 const Account_receivers: ABIReceiver[] = [
   { receiver: 'internal', message: { kind: 'typed', type: 'SetPublicKey' } },
   { receiver: 'internal', message: { kind: 'typed', type: 'AddHealthData' } },
+  { receiver: 'internal', message: { kind: 'typed', type: 'ChangeHealthData' } },
+  { receiver: 'internal', message: { kind: 'typed', type: 'SetInactiveRecord' } },
   { receiver: 'internal', message: { kind: 'typed', type: 'Deploy' } },
 ];
 
@@ -885,7 +1179,7 @@ export class Account implements Contract {
     provider: ContractProvider,
     via: Sender,
     args: { value: bigint; bounce?: boolean | null | undefined },
-    message: SetPublicKey | AddHealthData | Deploy
+    message: SetPublicKey | AddHealthData | ChangeHealthData | SetInactiveRecord | Deploy
   ) {
     let body: Cell | null = null;
     if (
@@ -903,6 +1197,22 @@ export class Account implements Contract {
       message.$$type === 'AddHealthData'
     ) {
       body = beginCell().store(storeAddHealthData(message)).endCell();
+    }
+    if (
+      message &&
+      typeof message === 'object' &&
+      !(message instanceof Slice) &&
+      message.$$type === 'ChangeHealthData'
+    ) {
+      body = beginCell().store(storeChangeHealthData(message)).endCell();
+    }
+    if (
+      message &&
+      typeof message === 'object' &&
+      !(message instanceof Slice) &&
+      message.$$type === 'SetInactiveRecord'
+    ) {
+      body = beginCell().store(storeSetInactiveRecord(message)).endCell();
     }
     if (
       message &&

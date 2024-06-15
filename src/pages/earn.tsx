@@ -1,26 +1,16 @@
-import { CHAIN } from '@tonconnect/protocol';
+import { AppRoot, SegmentedControl } from '@telegram-apps/telegram-ui';
 import { TonConnectButton } from '@tonconnect/ui-react';
-import { Check, Star, Wallet, ToggleRight as SwitchIcon, ChevronRight } from 'lucide-react';
+import { Check, ChevronRight, Server as ServerIcon, Star, Wallet } from 'lucide-react';
 import Head from 'next/head';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import React, { useState, useEffect } from 'react';
-import Switch from 'react-switch';
+import React, { useEffect, useState } from 'react';
 
-import {
-  isBlockchainLogicInited,
-  addHealthData,
-  getHealthDataAddress,
-  getPublicKey,
-  getRecordsCount,
-  initBlockchainLogic,
-} from './api/contracts';
+import { getFromTelegramStorage, saveToTelegramStorage } from 'src/hooks/useTelegramStorage';
+
+import { initBlockchainLogic, isBlockchainLogicInited, isContractDeployed } from './api/contracts';
+import { derivePublicKey, generatePrivateKey } from './api/contracts/encryption';
 import Navigation from '../components/Navigation';
-import { Button } from '../components/styled/styled';
 import { useUser } from '../contexts/UserContext';
 import { useTonConnect } from '../hooks/useTonConnect';
-
-const mockPublicKey = 'test_key';
 
 const EarnPage: React.FC = () => {
   const { network, wallet, address } = useTonConnect();
@@ -28,14 +18,21 @@ const EarnPage: React.FC = () => {
   const [isBlockchainInited, setIsBlockchainInited] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(0);
-  const [useBlockchain, setUseBlockchain] = useState(false);
-  const router = useRouter();
+  const [privateKey, setPrivateKey] = useState(getInitPrivateKey());
+  const [selected, setSelected] = useState(getSaveStorageType());
+  const [copySuccess, setCopySuccess] = useState('Copy');
 
   useEffect(() => {
     const checkBlockchainInited = async () => {
       if (address) {
         const inited = isBlockchainLogicInited();
         setIsBlockchainInited(inited);
+        if (!inited) {
+          const isContractDeployedRes = await isContractDeployed(address);
+          if (isContractDeployedRes) {
+            await handleInitBlockchain();
+          }
+        }
       }
     };
 
@@ -68,7 +65,11 @@ const EarnPage: React.FC = () => {
   const handleInitBlockchain = async () => {
     setLoading(true);
     try {
-      await initBlockchainLogic(address!, mockPublicKey);
+      if (privateKey == null) {
+        await generateAndSaveNewPrivateKey();
+      }
+      const publicKey = derivePublicKey(privateKey!);
+      await initBlockchainLogic(address!, publicKey);
       setIsBlockchainInited(true);
       await updateTokenBalance(1000); // Award 1000 tokens
     } catch (error) {
@@ -78,8 +79,60 @@ const EarnPage: React.FC = () => {
     }
   };
 
-  const handleToggleUseBlockchain = () => {
-    setUseBlockchain((prev) => !prev);
+  function getSaveStorageType(): number {
+    const type = getFromTelegramStorage(window, 'dataStorageType');
+    switch (type) {
+      case 'backend+ton':
+        return 1;
+      case 'ton':
+        return 2;
+      default:
+        return 0;
+    }
+  }
+
+  function getInitPrivateKey(): string | null {
+    const privateKey = getFromTelegramStorage(window, 'privateKey');
+    if (privateKey == null) {
+      generateAndSaveNewPrivateKey();
+    }
+    return privateKey;
+  }
+
+  async function generateAndSaveNewPrivateKey() {
+    const privateKey = await generatePrivateKey();
+    setPrivateKey(privateKey);
+    saveToTelegramStorage(window, 'privateKey', privateKey);
+  }
+
+  const copyToPrivateKey = () => {
+    if (privateKey != null) {
+      navigator.clipboard.writeText(privateKey).then(
+        () => {
+          setCopySuccess('Copied!');
+          setTimeout(() => {
+            setCopySuccess('Copy');
+          }, 2000);
+        },
+        () => {
+          setCopySuccess('Failed to copy!');
+        }
+      );
+    }
+  };
+
+  const handleSelect = (index: number) => {
+    setSelected(index);
+    let selectedValue = 'backend';
+    switch (index) {
+      case 1:
+        selectedValue = 'backend+ton';
+        break;
+      case 2:
+        selectedValue = 'ton';
+        break;
+    }
+    saveToTelegramStorage(window, 'dataStorageType', selectedValue);
   };
 
   return (
@@ -87,12 +140,12 @@ const EarnPage: React.FC = () => {
       <Head>
         <title>Earn</title>
       </Head>
+
       <main className="flex w-full flex-1 flex-col items-center justify-center space-y-4 px-4 text-center">
         <div className="flex w-full max-w-lg items-center justify-between rounded-3xl bg-pink-100 p-4">
           <Wallet className="text-pink-500" size={32} />
           <p className="mx-4 flex-1 text-header2 text-deep-dark">Подключи свой кошелек</p>
           <TonConnectButton />
-          <ChevronRight className="text-pink-500" size={24} />
         </div>
 
         {isBlockchainInited ? (
@@ -100,9 +153,8 @@ const EarnPage: React.FC = () => {
             <div className="flex w-full items-center justify-between">
               <Check className="text-green-500" size={32} />
               <p className="text-lg font-semibold text-green-500">Challenge Completed</p>
-              <ChevronRight className="text-green-500" size={24} />
+              <p className="text-xl font-semibold text-green-500">+ 1 000 FHC</p>
             </div>
-            <p className="mt-2 text-xl font-semibold text-green-500">+ 1 000 FHC</p>
           </div>
         ) : (
           <div
@@ -115,29 +167,91 @@ const EarnPage: React.FC = () => {
                 <Star className="text-blue-500" size={32} />
               )}
               <p className="mx-4 flex-1 text-header2 text-deep-dark">
-                Создай первую запись Blockchain (около 30 секунд)
+                Создай свой аккаунт в Blockchain TON (около 30 секунд)
               </p>
               <ChevronRight className="text-blue-500" size={24} />
             </div>
             <p className="mt-2 text-xl font-semibold text-blue-500">+ 1 000 FHC</p>
           </div>
         )}
-        <div className="mb-4 flex w-full max-w-lg items-center justify-between rounded-3xl bg-purple-100 p-4">
-          <SwitchIcon className="text-purple-500" size={32} />
-          <p className="mx-4 flex-1 text-header2 text-deep-dark">
-            Использовать блокчейн в твоих транзакциях
-          </p>
-          <Switch
-            onChange={handleToggleUseBlockchain}
-            checked={useBlockchain}
-            offColor="#888"
-            onColor="#0b8"
-            checkedIcon={false}
-            uncheckedIcon={false}
-            className="react-switch"
-          />
-          <ChevronRight className="text-purple-500" size={24} />
-        </div>
+        {!isBlockchainInited ? (
+          <div />
+        ) : (
+          <div className="flex w-full max-w-lg flex-col items-center justify-center">
+            <div className="mb-4 flex w-full max-w-lg items-center justify-between rounded-3xl bg-purple-100 p-4">
+              <ServerIcon className="text-purple-500" size={32} />
+              <p className="mx-4 flex-1 text-header2 text-deep-dark">
+                Где ты хочешь хранить свои данные?
+              </p>
+              <AppRoot>
+                <SegmentedControl className="relative mx-auto flex max-w-lg justify-between overflow-hidden rounded-lg bg-white p-3 shadow-md">
+                  <SegmentedControl.Item
+                    className={`relative z-10 text-center ${
+                      selected === 0 ? 'bg-blue-500 text-white' : ''
+                    }`}
+                    selected={selected === 0}
+                    onClick={() => handleSelect(0)}
+                    style={{ borderRadius: '8px' }}>
+                    <label
+                      className={`block cursor-pointer p-2 font-semibold transition-colors duration-200 ${
+                        selected === 0 ? 'text-white' : ''
+                      }`}>
+                      Her
+                    </label>
+                    <input
+                      className="absolute inset-0 size-full cursor-pointer opacity-0"
+                      type="radio"
+                    />
+                  </SegmentedControl.Item>
+                  <SegmentedControl.Item
+                    className={`relative z-10 text-center ${
+                      selected === 1 ? 'bg-blue-500 text-white' : ''
+                    }`}
+                    selected={selected === 1}
+                    onClick={() => handleSelect(1)}
+                    style={{ borderRadius: '8px' }}>
+                    <label
+                      className={`block cursor-pointer p-2 font-semibold transition-colors duration-200 ${
+                        selected === 1 ? 'text-white' : ''
+                      }`}>
+                      Her+TON
+                    </label>
+                    <input
+                      className="absolute inset-0 size-full cursor-pointer opacity-0"
+                      type="radio"
+                    />
+                  </SegmentedControl.Item>
+                  <SegmentedControl.Item
+                    className={`relative z-10 text-center ${
+                      selected === 2 ? 'bg-blue-500 text-white' : ''
+                    }`}
+                    selected={selected === 2}
+                    onClick={() => handleSelect(2)}
+                    style={{ borderRadius: '8px' }}>
+                    <label
+                      className={`block cursor-pointer p-2 font-semibold transition-colors duration-200 ${
+                        selected === 2 ? 'text-white' : ''
+                      }`}>
+                      TON
+                    </label>
+                    <input
+                      className="absolute inset-0 size-full cursor-pointer opacity-0"
+                      type="radio"
+                    />
+                  </SegmentedControl.Item>
+                </SegmentedControl>
+              </AppRoot>
+            </div>
+            <div>
+              <div>Copy your private key:</div>
+              <button onClick={copyToPrivateKey}>{copySuccess}</button>
+            </div>
+            <span className="text-xs text-gray-500">
+              Приватный ключ используется для шифрования ваших данных в блокчейне TON. Доступ к
+              ключу есть только у тебя. Позже мы добавим возможность импорта ключа
+            </span>
+          </div>
+        )}
       </main>
       <Navigation />
     </div>
@@ -145,30 +259,3 @@ const EarnPage: React.FC = () => {
 };
 
 export default EarnPage;
-
-{
-  /*<Button>{network ? (network === CHAIN.MAINNET ? 'mainnet' : 'testnet') : 'N/A'}</Button>
-        <p>
-          <strong>Wallet:</strong> {wallet} <br />
-          <strong>Address:</strong> {address} <br />
-          <strong>Token Balance:</strong> {tokenBalance} FHC <br />
-        </p>*/
-}
-
-{
-  /*<button onClick={() => initBlockchainLogic(address!, mockPublicKey)}>
-          Init Blockchain Logic
-        </button>
-        <button onClick={() => getPublicKey(address!)}>Check publicKey</button>
-        <button onClick={() => getRecordsCount(address!)}>Get Records Count</button>
-        <button
-          onClick={async () =>
-            addHealthData(address!, 'This is data ' + (await getRecordsCount(address!)).toString())
-          }>
-          Add Health Data
-        </button>
-        <button
-          onClick={async () => getHealthDataAddress(address!, await getRecordsCount(address!))}>
-          Get Last Health Data
-        </button>*/
-}
