@@ -22,6 +22,8 @@ const EarnPage: React.FC = () => {
   const [selected, setSelected] = useState<number | null>(null);
   const [copySuccess, setCopySuccess] = useState('Copy');
 
+  let privateKeyInitStarted = false;
+
   useEffect(() => {
     const checkBlockchainInited = async () => {
       if (address) {
@@ -36,7 +38,8 @@ const EarnPage: React.FC = () => {
       }
     };
     console.log('privateKey', privateKey);
-    if (privateKey == null) {
+    if (privateKey == null && !privateKeyInitStarted) {
+      privateKeyInitStarted = true;
       getInitPrivateKey().then((key) => {
         setPrivateKey(key);
       });
@@ -155,7 +158,7 @@ const EarnPage: React.FC = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center justify-center space-y-4 px-4 text-center">
-        <span className="text-xs text-gray-500">1</span>
+        <span className="text-xs text-gray-500">2</span>
         <div className="flex w-full max-w-lg items-center justify-between rounded-3xl bg-pink-100 p-4">
           <Wallet className="text-pink-500" size={32} />
           <p className="mx-4 flex-1 text-header2 text-deep-dark">Подключи свой кошелек</p>
