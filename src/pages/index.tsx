@@ -23,10 +23,6 @@ const Home: NextPage = () => {
     router.push('/period-tracker');
   };
 
-  if (loading) {
-    return <Loader />;
-  }
-
   return (
     <div className="relative flex min-h-screen flex-col items-center bg-white p-4">
       <div className="flex flex-col items-center gap-6 p-0">

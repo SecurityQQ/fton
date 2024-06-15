@@ -7,68 +7,30 @@ import Navigation from '../components/Navigation';
 import { useUser } from '../contexts/UserContext';
 
 const CalendarPage: React.FC = () => {
-  const { user, loading, refetch } = useUser();
+  const {
+    user,
+    loading,
+    menstruations,
+    menstruationsLoading,
+    refetchMenstruations,
+    changeMenstruations,
+  } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [periodDays, setPeriodDays] = useState<Date[]>([]);
   const [months, setMonths] = useState(3); // Default to 3 months
 
   useEffect(() => {
-    const fetchMenstruations = async () => {
-      if (user?.id) {
-        try {
-          const response = await fetch(`/api/menstruation?userId=${user.id}&months=${months}`);
-          if (response.ok) {
-            const data = await response.json();
-            setPeriodDays(data.map((m: any) => new Date(m.date)));
-          } else {
-            console.error('Failed to fetch menstruation dates');
-          }
-        } catch (error) {
-          console.error('Error fetching menstruation dates:', error);
-        }
-      }
-    };
+    setPeriodDays(menstruations);
+  }, [menstruations]);
 
-    fetchMenstruations();
-  }, [user, months]);
-
-  if (loading) {
-    return <Loader text="loading" />;
+  if (loading || menstruationsLoading) {
+    return <Loader text="" />;
   }
 
   const handleSave = async (changes: { date: Date; action: 'add' | 'delete' }[]) => {
     try {
-      const response = await fetch('/api/menstruation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ changes, userId: user?.id }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update the period dates');
-      }
-
-      // Update local periodDays state based on changes
-      const updatedPeriodDays = [...periodDays];
-
-      changes.forEach((change) => {
-        if (change.action === 'add') {
-          updatedPeriodDays.push(change.date);
-        } else if (change.action === 'delete') {
-          const index = updatedPeriodDays.findIndex(
-            (periodDate) => periodDate.toDateString() === change.date.toDateString()
-          );
-          if (index !== -1) {
-            updatedPeriodDays.splice(index, 1);
-          }
-        }
-      });
-
-      setPeriodDays(updatedPeriodDays);
+      await changeMenstruations(changes);
       setIsEditing(false);
-      refetch(); // Re-fetch the user data to get the updated periodDays
     } catch (error) {
       console.error(error);
     }

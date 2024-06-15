@@ -7,7 +7,12 @@ import { useTonConnect } from '../hooks/useTonConnect';
 type UserContextType = {
   user: User | null;
   loading: boolean;
-  refetch: () => void;
+  menstruations: Date[];
+  menstruationsLoading: boolean;
+  lastPeriodDate: Date | null;
+  refetchUser: () => void;
+  refetchMenstruations: () => void;
+  changeMenstruations: (changes: { date: Date; action: 'add' | 'delete' }[]) => Promise<void>;
 };
 
 type UserProviderProps = {
@@ -32,6 +37,9 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [menstruations, setMenstruations] = useState<Date[]>([]);
+  const [menstruationsLoading, setMenstruationsLoading] = useState(true);
+  const [lastPeriodDate, setLastPeriodDate] = useState<Date | null>(null);
   const initData = useInitData();
   const { connected, wallet } = useTonConnect();
 
@@ -98,6 +106,69 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
+  const fetchMenstruations = async (userId: string, months: number = 3) => {
+    try {
+      const response = await fetch(`/api/menstruation?userId=${userId}&months=${months}`);
+      if (response.ok) {
+        const menstruationData = await response.json();
+        const sortedMenstruationData = menstruationData.sort(
+          (a: { date: string }, b: { date: string }) =>
+            new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+        setMenstruations(
+          sortedMenstruationData.map((item: { date: string }) => new Date(item.date))
+        );
+        if (sortedMenstruationData.length > 0) {
+          const lastPeriodStart = new Date(sortedMenstruationData[0].date);
+          setLastPeriodDate(lastPeriodStart);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch menstruation data:', error);
+    } finally {
+      setMenstruationsLoading(false);
+    }
+  };
+
+  const changeMenstruations = async (changes: { date: Date; action: 'add' | 'delete' }[]) => {
+    if (!user) return;
+
+    try {
+      const response = await fetch('/api/menstruation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ changes, userId: user.id }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update the period dates');
+      }
+
+      // Update local periodDays state based on changes
+      const updatedMenstruations = [...menstruations];
+
+      changes.forEach((change) => {
+        if (change.action === 'add') {
+          updatedMenstruations.push(change.date);
+        } else if (change.action === 'delete') {
+          const index = updatedMenstruations.findIndex(
+            (periodDate) => periodDate.toDateString() === change.date.toDateString()
+          );
+          if (index !== -1) {
+            updatedMenstruations.splice(index, 1);
+          }
+        }
+      });
+
+      setMenstruations(updatedMenstruations);
+      refetchMenstruations(); // Re-fetch the menstruation data to get the updated periodDays
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const getNullOrMissingFields = (existingUser: User, newUser: TelegramUser): string[] => {
     const missingFields: string[] = [];
 
@@ -153,6 +224,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         }
 
         setUser(existingUser);
+
+        if (existingUser) {
+          setMenstruationsLoading(true);
+          await fetchMenstruations(existingUser.id);
+        }
       }
       setLoading(false);
     };
@@ -169,7 +245,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   }, [connected, wallet, user, initData]);
 
-  const refetch = async () => {
+  const refetchUser = async () => {
     if (initData?.user) {
       setLoading(true);
       const telegramId = initData.user.id.toString();
@@ -179,7 +255,28 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
-  return <UserContext.Provider value={{ user, loading, refetch }}>{children}</UserContext.Provider>;
+  const refetchMenstruations = async () => {
+    if (user) {
+      // setMenstruationsLoading(true);
+      await fetchMenstruations(user.id);
+    }
+  };
+
+  return (
+    <UserContext.Provider
+      value={{
+        user,
+        loading,
+        menstruations,
+        menstruationsLoading,
+        lastPeriodDate,
+        refetchUser,
+        refetchMenstruations,
+        changeMenstruations,
+      }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUser = () => {
