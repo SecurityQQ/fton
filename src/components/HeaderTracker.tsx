@@ -81,7 +81,7 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
     if (!lastMenstruationDate) {
       setRecommendation('Чтобы воспользоваться трекером, обновите дату последних месячных');
       setNextEvent({
-        eventName: 'default',
+        eventName: 'Чтобы воспользоваться приложением введите дату',
         eventMessage: 'Дата последних месячных не указана',
         daysUntilNextEvent: 0,
         pregnancyChance: '',
@@ -109,19 +109,15 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
   if (!nextEvent) return null;
 
   return (
-    <div className="relative flex w-full flex-col items-center pb-4">
-      <img
-        src="/bgelipse.svg"
-        alt="Background"
-        className="absolute z-0 h-full w-[200vw] object-cover"
-      />
+    <div className="relative flex w-full flex-col items-center overflow-hidden pb-4">
+      <img src="/bgelipse.svg" alt="Background" className="object-overlay absolute z-0 size-full" />
       <div className="relative z-10 flex w-full flex-col items-center px-4">
         {lastMenstruationDate ? (
           <div className="w-full">
             <MiniCalendar lastMenstruationDate={lastMenstruationDate} cycleLength={cycleLength} />
           </div>
         ) : null}
-        <div className="w-full max-w-md p-2 text-center">
+        <div className="mb-4 w-full max-w-md p-2 text-center">
           <p className={`${nextEvent.pregnancyChanceColor} text-lg`}>{nextEvent.pregnancyChance}</p>
           <p className="text-xl text-[var(--font-dark-primary)]">{nextEvent.eventMessage}</p>
           {lastMenstruationDate && (
