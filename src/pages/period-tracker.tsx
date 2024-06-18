@@ -12,8 +12,6 @@ const PeriodTracker: NextPage = () => {
   const { user, loading, refetchUser } = useUser();
   const router = useRouter();
 
-  console.log('USER: ', user);
-
   const handlePeriodDateChange = () => {
     console.log('Period date change clicked');
     router.push('/calendar');
@@ -59,7 +57,7 @@ const PeriodTracker: NextPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white text-center">
       <Head>
         <title>Period Tracker</title>
         <link rel="icon" href="/favicon.ico" />

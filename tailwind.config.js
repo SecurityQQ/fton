@@ -5,8 +5,6 @@ module.exports = {
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      // Fonts are being loaded on `src/pages/_document.tsx`, so if you want to
-      // change the font, you need to change the url there and name here.
       fontFamily: {
         sans: ['var(--font-roboto)', ...defaultTheme.fontFamily.sans],
         mono: ['var(--font-roboto-mono)', ...defaultTheme.fontFamily.mono],
@@ -30,6 +28,18 @@ module.exports = {
         'telegram-primary': 'var(--telegram-button-color)',
         'telegram-primary-text': 'var(--telegram-button-text-color)',
         'telegram-secondary-white': 'var(--telegram-secondary-bg-color)',
+
+        'font-blue-primary': 'var(--font-blue-primary)',
+        'font-blue-secondary': 'var(--font-blue-secondary)',
+        'font-pink-primary': 'var(--font-pink-primary)',
+        'font-pink-secondary': 'var(--font-pink-secondary)',
+        'font-purple-primary': 'var(--font-purple-primary)',
+        'font-purple-secondary': 'var(--font-purple-secondary)',
+        'font-orange-primary': 'var(--font-orange-primary)',
+        'font-orange-secondary': 'var(--font-orange-secondary)',
+        'font-dark-primary': 'var(--font-dark-primary)',
+        'font-dark-secondary': 'var(--font-dark-secondary)',
+
         'bright-blue': '#007AFF',
         'bright-orange': '#F77047',
         'orange-light': '#FFD3C6',
@@ -44,7 +54,27 @@ module.exports = {
         green2: '#51C88A',
         'text-green': '#44BF7F',
       },
+
+      // todo: inspect if it's needed
+      backgroundImage: {
+        'gradient-blue': 'var(--gradient-blue)',
+        'gradient-pink': 'var(--gradient-pink)',
+        'gradient-purple': 'var(--gradient-purple)',
+        'gradient-orange': 'var(--gradient-orange)',
+        'card-gradient-blue': 'var(--card-gradient-blue)',
+        'card-gradient-pink': 'var(--card-gradient-pink)',
+        'card-gradient-purple': 'var(--card-gradient-purple)',
+        'card-gradient-orange': 'var(--card-gradient-orange)',
+        'card-gradient-green': 'var(--card-gradient-green)',
+      },
     },
   },
   plugins: [],
+  safelist: [
+    'bg-card-gradient-blue',
+    'bg-card-gradient-pink',
+    'bg-card-gradient-purple',
+    'bg-card-gradient-orange',
+    'bg-card-gradient-green',
+  ],
 };

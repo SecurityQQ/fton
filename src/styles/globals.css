@@ -12,6 +12,36 @@
   --telegram-button-color: #3390ec;
   --telegram-button-text-color: #ffffff;
   --telegram-secondary-bg-color: #f4f4f5;
+
+  /* Custom Font Colors */
+  --font-blue-primary: #007AFF;
+  --font-blue-secondary: #DCF2FF;
+  --font-pink-primary: #FF56B3;
+  --font-pink-secondary: #FFDEED;
+  --font-purple-primary: #CD70E4;
+  --font-purple-secondary: #EEDCFE;
+  --font-orange-primary: #F68F44;
+  --font-orange-secondary: #FFD3C6;
+  --font-dark-primary: #0C2F55;
+  --font-dark-secondary: rgba(12, 47, 85, 0.2);
+
+  --font-dark-secondary: #EEF6F8;
+  --font-green-primary: #00C975;
+  --font-green-secondary: #7DFFC8;
+
+  /* Gradient Colors */
+  --gradient-blue: linear-gradient(180deg, #007AFF 0%, #32B3EA 100%);
+  --gradient-pink: linear-gradient(180deg, #FF668A 0%, #FF4EB8 100%);
+  --gradient-purple: linear-gradient(180deg, #A24CF7 0%, #D495FA 100%);
+  --gradient-orange: linear-gradient(180deg, #FFD3B3 0%, #FF8730 100%);
+  --gradient-green: linear-gradient(180deg, #7DFFC8 0%, #00C975 100%);
+
+  --card-gradient-blue: linear-gradient(180deg, #86EAFF 0%, #39BBF3 100%);
+  --card-gradient-pink: linear-gradient(180deg, #FFADDA 0%, #FF54B2 100%);
+  --card-gradient-purple: linear-gradient(180deg, #A24CF7 0%, #D495FA 100%);
+  --card-gradient-orange: linear-gradient(180deg, #FFD3B3 0%, #FF8730 100%);
+  --card-gradient-green: linear-gradient(180deg, #7DFFC8 0%, #00C975 100%);
+
 }
 
 @layer base {
@@ -41,5 +71,121 @@
   }
   .bg-telegram-secondary {
     background-color: var(--telegram-secondary-bg-color);
+  }
+
+  /* Custom Font Classes */
+  .font-blue-primary {
+    color: var(--font-blue-primary);
+  }
+  .font-blue-secondary {
+    color: var(--font-blue-secondary);
+  }
+  .font-pink-primary {
+    color: var(--font-pink-primary);
+  }
+  .font-pink-secondary {
+    color: var(--font-pink-secondary);
+  }
+  .font-purple-primary {
+    color: var(--font-purple-primary);
+  }
+  .font-purple-secondary {
+    color: var(--font-purple-secondary);
+  }
+  .font-orange-primary {
+    color: var(--font-orange-primary);
+  }
+  .font-orange-secondary {
+    color: var(--font-orange-secondary);
+  }
+  .font-dark-primary {
+    color: var(--font-dark-primary);
+  }
+  .font-dark-secondary {
+    color: var(--font-dark-secondary);
+  }
+
+  /* Gradient Background Classes */
+  .bg-gradient-blue {
+    background: var(--gradient-blue);
+  }
+  .bg-gradient-pink {
+    background: var(--gradient-pink);
+  }
+  .bg-gradient-purple {
+    background: var(--gradient-purple);
+  }
+  .bg-gradient-orange {
+    background: var(--gradient-orange);
+  }
+
+  .bg-card-gradient-blue {
+    background: var(--card-gradient-blue);
+  }
+  .bg-card-gradient-pink {
+    background: var(--card-gradient-pink);
+  }
+  .bg-card-gradient-purple {
+    background: var(--card-gradient-purple);
+  }
+  .bg-card-gradient-orange {
+    background: var(--card-gradient-orange);
+  }
+  .bg-card-gradient-green {
+    background: var(--card-gradient-green);
+  }
+
+  /* Gradient Text Classes */
+  .text-gradient-blue {
+    background: var(--gradient-blue);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+
+  .text-gradient-pink {
+    background: var(--gradient-pink);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+  .text-gradient-purple {
+    background: var(--gradient-purple);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+  .text-gradient-orange {
+    background: var(--gradient-orange);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+
+  .text-gradient-green {
+    background: var(--gradient-green);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+}
+
+@layer utilities {
+  .custom-gradient-text-blue {
+    @apply bg-font-blue-secondary text-transparent bg-clip-text bg-gradient-blue;
+  }
+  .custom-gradient-text-pink {
+    @apply bg-font-pink-secondary text-transparent bg-clip-text bg-gradient-pink;
+  }
+  .custom-gradient-text-purple {
+    @apply bg-font-purple-secondary text-transparent bg-clip-text bg-gradient-purple;
+  }
+  .custom-gradient-text-orange {
+    @apply bg-font-orange-secondary text-transparent bg-clip-text bg-gradient-orange;
   }
 }
