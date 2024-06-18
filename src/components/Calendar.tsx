@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 
 import CalendarNumber from '@/components/ui/CalendarNumber';
 
@@ -30,9 +30,12 @@ const Calendar: React.FC<CalendarProps> = ({
       initialMonths.push(new Date(new Date().getFullYear(), new Date().getMonth() + i, 1));
     }
     setMonths(initialMonths);
+  }, []);
+
+  useLayoutEffect(() => {
     const currentMonthIndex = 4; // The index of the current month in the initialMonths array
     document.getElementById(`month-${currentMonthIndex}`)?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
+  }, [months]);
 
   useEffect(() => {
     setFirstDayOfLastPeriod(getFirstDayOfLastPeriod());
@@ -239,7 +242,7 @@ const Calendar: React.FC<CalendarProps> = ({
         </div>
       </div>
 
-      <div className="bg-telegram-bg mt-[56px] flex h-full flex-col items-center gap-2 overflow-y-scroll pb-24 pt-16">
+      <div className="bg-telegram-bg mt-[56px] flex h-full flex-col items-center gap-2 overflow-y-scroll">
         {renderCalendar()}
         {isEditing ? (
           <div className="absolute bottom-[91px] left-1/2 flex h-[33px] w-[259px] -translate-x-1/2 flex-row items-start gap-2">
