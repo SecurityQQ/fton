@@ -24,7 +24,7 @@ const Button: React.FC<ButtonProps> = ({
     blue: {
       primary: 'bg-gradient-blue text-white',
       secondary: 'bg-font-blue-secondary',
-      white: 'bg-white text-gradient-blue',
+      white: 'bg-white',
       transparent: 'bg-white text-gradient-blue',
     },
     pink: {

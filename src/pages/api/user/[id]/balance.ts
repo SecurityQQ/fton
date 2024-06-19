@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import prisma from '@/lib/prisma';
+import { serializeUser } from '@/lib/serializeUser';
 import withMiddleware from '@/utils/withMiddleware';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -30,8 +31,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         data: { tokenBalance: { increment: amount } },
       });
 
-      res.status(200).json(user);
+      res.status(200).json(serializeUser(user));
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else {

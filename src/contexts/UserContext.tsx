@@ -10,8 +10,11 @@ type UserContextType = {
   menstruations: Date[];
   menstruationsLoading: boolean;
   lastPeriodDate: Date | null;
+  farmingSession: any | null; // Add this line
+  farmingSessionLoading: boolean; // Add this line
   refetchUser: () => void;
   refetchMenstruations: () => void;
+  refetchFarmingSession: () => void; // Add this line
   changeMenstruations: (changes: { date: Date; action: 'add' | 'delete' }[]) => Promise<void>;
 };
 
@@ -41,6 +44,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [menstruations, setMenstruations] = useState<Date[]>([]);
   const [menstruationsLoading, setMenstruationsLoading] = useState(true);
   const [lastPeriodDate, setLastPeriodDate] = useState<Date | null>(null);
+
+  const [farmingSession, setFarmingSession] = useState<any | null>(null); // Add this line
+  const [farmingSessionLoading, setFarmingSessionLoading] = useState(true); // Add this line
+
   const initData = useInitData();
   const { connected, wallet } = useTonConnect();
 
@@ -128,6 +135,22 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       console.error('Failed to fetch menstruation data:', error);
     } finally {
       setMenstruationsLoading(false);
+    }
+  };
+
+  const fetchFarmingSession = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/farming/status?userId=${userId}`);
+      if (response.ok) {
+        const farmingSessionData = await response.json();
+        return farmingSessionData;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to fetch farming session data:', error);
+      return null;
+    } finally {
+      setFarmingSessionLoading(false);
     }
   };
 
@@ -229,6 +252,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         if (existingUser) {
           setMenstruationsLoading(true);
           await fetchMenstruations(existingUser.id);
+
+          setFarmingSessionLoading(true);
+          const sessionData = await fetchFarmingSession(existingUser.id); // Fetch farming session
+          setFarmingSession(sessionData);
         }
       }
       setLoading(false);
@@ -258,8 +285,18 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const refetchMenstruations = async () => {
     if (user) {
-      // setMenstruationsLoading(true);
+      setMenstruationsLoading(true);
       await fetchMenstruations(user.id);
+    }
+  };
+
+  const refetchFarmingSession = async () => {
+    // Add this function
+    console.log('refetchingFarmingSession');
+    if (user) {
+      setFarmingSessionLoading(true);
+      const sessionData = await fetchFarmingSession(user.id);
+      setFarmingSession(sessionData);
     }
   };
 
@@ -271,8 +308,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         menstruations,
         menstruationsLoading,
         lastPeriodDate,
+        farmingSession, // Add this line
+        farmingSessionLoading, // Add this line
         refetchUser,
         refetchMenstruations,
+        refetchFarmingSession, // Add this line
         changeMenstruations,
       }}>
       {children}
