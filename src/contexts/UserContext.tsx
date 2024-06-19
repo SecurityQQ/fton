@@ -1,6 +1,15 @@
 import { User } from '@prisma/client';
 import { useInitData } from '@tma.js/sdk-react';
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+
+import { getUserTonPrivateKey, isUseApi, isUseTon } from '@/hooks/useTelegramStorage';
+import {
+  getMonthPeriodData,
+  initBlockchainLogic,
+  updateMonthPeriodData,
+  waitForAction,
+} from '@/pages/api/contracts';
+import { derivePublicKey } from '@/pages/api/contracts/encryption';
 
 import { useTonConnect } from '../hooks/useTonConnect';
 
@@ -42,7 +51,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [menstruationsLoading, setMenstruationsLoading] = useState(true);
   const [lastPeriodDate, setLastPeriodDate] = useState<Date | null>(null);
   const initData = useInitData();
-  const { connected, wallet } = useTonConnect();
+  const { address, connected, wallet } = useTonConnect();
 
   const fetchUser = async (telegramId: string): Promise<User | null> => {
     try {
@@ -108,21 +117,33 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   };
 
   const fetchMenstruations = async (userId: string, months: number = 3) => {
+    const useApi = await isUseApi();
+    const useTon = await isUseTon();
+    const tonPrivateKey = await getUserTonPrivateKey();
     try {
-      const response = await fetch(`/api/menstruation?userId=${userId}&months=${months}`);
-      if (response.ok) {
-        const menstruationData = await response.json();
-        const sortedMenstruationData = menstruationData.sort(
-          (a: { date: string }, b: { date: string }) =>
-            new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
-        setMenstruations(
-          sortedMenstruationData.map((item: { date: string }) => new Date(item.date))
-        );
-        if (sortedMenstruationData.length > 0) {
-          const lastPeriodStart = new Date(sortedMenstruationData[0].date);
-          setLastPeriodDate(lastPeriodStart);
+      let dates = [];
+      if (useApi || tonPrivateKey == null || address == null) {
+        const response = await fetch(`/api/menstruation?userId=${userId}&months=${months}`);
+        if (response.ok) {
+          const menstruationData = await response.json();
+          dates = menstruationData.map((item: { date: string }) => new Date(item.date));
         }
+      } else if (useTon) {
+        await waitForAction(async () => {
+          console.log('connected', connected);
+          console.log('address', 'q' + address + 'q');
+          return connected && address !== null && address!.length > 0;
+        });
+        const publicKey = derivePublicKey(tonPrivateKey);
+        await initBlockchainLogic(address!, publicKey);
+        dates = await getMonthPeriodData(address!, tonPrivateKey!);
+        console.log('dates', dates);
+      }
+      const sortedMenstruationData = dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
+      setMenstruations(sortedMenstruationData);
+      if (sortedMenstruationData.length > 0) {
+        const lastPeriodStart = sortedMenstruationData[0];
+        setLastPeriodDate(lastPeriodStart);
       }
     } catch (error) {
       console.error('Failed to fetch menstruation data:', error);
@@ -133,38 +154,51 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const changeMenstruations = async (changes: { date: Date; action: 'add' | 'delete' }[]) => {
     if (!user) return;
-
+    const useApi = await isUseApi();
+    const useTon = await isUseTon();
+    const tonPrivateKey = await getUserTonPrivateKey();
     try {
-      const response = await fetch('/api/menstruation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ changes, userId: user.id }),
-      });
+      if (useApi || tonPrivateKey == null || address == null) {
+        const response = await fetch('/api/menstruation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ changes, userId: user.id }),
+        });
 
-      if (!response.ok) {
-        throw new Error('Failed to update the period dates');
-      }
-
-      // Update local periodDays state based on changes
-      const updatedMenstruations = [...menstruations];
-
-      changes.forEach((change) => {
-        if (change.action === 'add') {
-          updatedMenstruations.push(change.date);
-        } else if (change.action === 'delete') {
-          const index = updatedMenstruations.findIndex(
-            (periodDate) => periodDate.toDateString() === change.date.toDateString()
-          );
-          if (index !== -1) {
-            updatedMenstruations.splice(index, 1);
-          }
+        if (!response.ok) {
+          throw new Error('Failed to update the period dates');
         }
-      });
 
-      setMenstruations(updatedMenstruations);
-      refetchMenstruations(); // Re-fetch the menstruation data to get the updated periodDays
+        // Update local periodDays state based on changes
+        const updatedMenstruations = [...menstruations];
+
+        changes.forEach((change) => {
+          if (change.action === 'add') {
+            updatedMenstruations.push(change.date);
+          } else if (change.action === 'delete') {
+            const index = updatedMenstruations.findIndex(
+              (periodDate) => periodDate.toDateString() === change.date.toDateString()
+            );
+            if (index !== -1) {
+              updatedMenstruations.splice(index, 1);
+            }
+          }
+        });
+
+        setMenstruations(updatedMenstruations);
+        refetchMenstruations(); // Re-fetch the menstruation data to get the updated periodDays
+      }
+      if (useTon) {
+        if (!address || !tonPrivateKey) return;
+        await waitForAction(async () => connected && address !== null && address!.length > 0);
+        const publicKey = derivePublicKey(tonPrivateKey);
+        await initBlockchainLogic(address!, publicKey);
+        const updatedMenstruations = await updateMonthPeriodData(address!, changes, tonPrivateKey!);
+        setMenstruations(updatedMenstruations);
+        refetchMenstruations();
+      }
     } catch (error) {
       console.error(error);
     }
