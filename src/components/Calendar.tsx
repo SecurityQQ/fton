@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+
+import CalendarNumber from '@/components/ui/CalendarNumber';
 
 type CalendarProps = {
   periodDays: Date[];
@@ -24,11 +26,16 @@ const Calendar: React.FC<CalendarProps> = ({
 
   useEffect(() => {
     const initialMonths = [];
-    for (let i = -1; i <= 1; i++) {
+    for (let i = -4; i <= 2; i++) {
       initialMonths.push(new Date(new Date().getFullYear(), new Date().getMonth() + i, 1));
     }
     setMonths(initialMonths);
   }, []);
+
+  useLayoutEffect(() => {
+    const currentMonthIndex = 4; // The index of the current month in the initialMonths array
+    document.getElementById(`month-${currentMonthIndex}`)?.scrollIntoView({ behavior: 'smooth' });
+  }, [months]);
 
   useEffect(() => {
     setFirstDayOfLastPeriod(getFirstDayOfLastPeriod());
@@ -60,7 +67,6 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const today = new Date();
-
 
   const isFutureDate = (date: Date) => date > today;
 
@@ -127,12 +133,26 @@ const Calendar: React.FC<CalendarProps> = ({
 
   const renderCalendar = () => {
     const weekDays = ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'];
+    const monthNames = [
+      'Январь',
+      'Февраль',
+      'Март',
+      'Апрель',
+      'Май',
+      'Июнь',
+      'Июль',
+      'Август',
+      'Сентябрь',
+      'Октябрь',
+      'Ноябрь',
+      'Декабрь',
+    ];
 
     return months.map((month, index) => (
-      <div key={index} className="w-full px-4">
+      <div key={index} id={`month-${index}`} className="w-full px-4">
         <header className="bg-telegram-bg flex w-full items-center justify-center py-2">
           <h1 className="text-telegram-text text-lg font-semibold">
-            {month.toLocaleString('default', { month: 'long' })}
+            {monthNames[month.getMonth()]}
           </h1>
         </header>
 
@@ -154,65 +174,42 @@ const Calendar: React.FC<CalendarProps> = ({
               (change) => change.date.toDateString() === date.toDateString()
             );
 
-            const getBackgroundColor = () => {
+            const getCalendarNumberType = () => {
               if (isEditing) {
                 if (isPeriodDay) {
-                  return isInChanges
-                    ? 'bg-transparent'
-                    : 'bg-gradient-to-b from-[#FF668A] to-[#FF4EB8]';
+                  return isInChanges ? 'default' : 'periodPast';
                 } else if (isInChanges) {
-                  return 'bg-gradient-to-b from-[#FF668A] to-[#FF4EB8]';
+                  return 'select';
                 }
-                return 'border-2 border-[rgba(12,47,85,0.2)]';
+                return 'default';
               }
               if (showPeriod) {
-                return futurePeriod
-                  ? 'border-2 border-dashed border-[#FF4EB8]'
-                  : 'bg-gradient-to-b from-[#FF668A] to-[#FF4EB8]';
+                return futurePeriod ? 'periodFuture' : 'periodPast';
               }
               if (showMaybePeriod) {
-                return 'border-2 border-dashed border-grey-700';
+                return 'select';
               }
               if (showOvulation) {
-                return futureOvulation
-                  ? 'border-2 border-dashed border-[#32B3EA]'
-                  : 'bg-gradient-to-b from-[#007AFF] to-[#32B3EA]';
+                return futureOvulation ? 'ovulationFuture' : 'ovulationPast';
               }
               if (isToday) {
-                return 'bg-[#DCF2FF]';
+                return 'today';
               }
-              return 'bg-transparent';
-            };
-
-            const getTextColor = () => {
-              if (isEditing) {
-                if (isPeriodDay) {
-                  return isInChanges ? 'text-telegram-text' : 'text-white';
-                }
-                if (isInChanges) {
-                  return 'text-white';
-                }
-              }
-              if (showPeriod && !futurePeriod) {
-                return 'text-black';
-              }
-              if (isToday) {
-                return 'text-[#0C2F55]';
-              }
-              return isCurrentMonth ? 'text-telegram-text' : 'text-gray-400';
+              return 'default';
             };
 
             return (
               <div key={index} className="relative flex flex-col items-center">
                 <div
-                  className={`flex size-8 items-center justify-center rounded-full ${getBackgroundColor()} ${
+                  className={`flex size-8 items-center justify-center rounded-full ${
                     !isCurrentMonth ? 'text-gray-400' : 'text-telegram-text'
                   }`}
                   onClick={() => handleDateClick(date)}>
-                  <span
-                    className={`absolute left-1/2 top-1/2 flex h-6 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center text-lg font-medium ${getTextColor()}`}>
-                    {date.getDate()}
-                  </span>
+                  <CalendarNumber
+                    type={getCalendarNumberType()}
+                    number={date.getDate()}
+                    className={!isCurrentMonth ? 'text-gray-400' : ''}
+                  />
                 </div>
               </div>
             );
