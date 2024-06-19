@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
+import TipCard from '@/components/TipCard';
+
 import MiniCalendar from './MiniCalendar';
 import Button from './ui/Button';
 import recommendationsData from '../assets/recommendations.json';
+import { useModal } from '../contexts/ModalContext';
 
 type HeaderSectionProps = {
   lastMenstruationDate?: Date;
@@ -71,6 +74,8 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
   lastMenstruationDate,
   onPeriodDateChange,
 }) => {
+  const { openModal, closeModal } = useModal();
+
   const [recommendation, setRecommendation] = useState<string>('');
   const [daysSinceLastPeriod, setDaysSinceLastPeriod] = useState<number>(0);
   const [nextEvent, setNextEvent] = useState<ReturnType<typeof calculateNextEvent> | null>(null);
@@ -132,7 +137,21 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
             className="mx-auto my-2 w-fit min-w-[80%] px-4">
             {nextEvent.buttonText}
           </Button>
-          <Button type={nextEvent.buttonType} subtype="secondary" className="mx-auto w-3/4">
+          <Button
+            type={nextEvent.buttonType}
+            subtype="secondary"
+            className="mx-auto w-3/4"
+            onClick={() =>
+              openModal(
+                <TipCard
+                  title="Совет дня"
+                  day={`${daysSinceLastPeriod + 1}й день цикла`}
+                  advice={recommendation}
+                  buttonText="Супер"
+                  onButtonClick={closeModal}
+                />
+              )
+            }>
             СМОТРЕТЬ СОВЕТ ДНЯ
           </Button>
         </div>

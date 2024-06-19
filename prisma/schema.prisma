@@ -31,8 +31,23 @@ model User {
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
 
+  farming       FarmingSession[]
+
   @@index([telegramId], name: "telegramId_index")
 }
+
+model FarmingSession {
+  id            String   @id @default(cuid())
+  userId        String
+  timeFinish    DateTime
+  totalReward   Float
+  prizeReceived Boolean  @default(false) // Short name for prize received indicator
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+
 
 
 model Menstruation {

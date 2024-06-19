@@ -1,14 +1,9 @@
 // components/Farming.tsx
 import { MessageSquareHeart, Rss, UserPlus } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import FarmingTracker from '@/components/ui/FarmingTracker';
-
-type FarmingProps = {
-  tokenBalance: number;
-  onStartFarming: () => void;
-  onViewInfo: (type: 'details' | 'history') => void;
-};
+import { useUser } from '@/contexts/UserContext';
 
 const cardClassName =
   'flex flex-col justify-between items-center p-3 gap-2 bg-[var(--font-dark-secondary)] rounded-[4px] flex-1';
@@ -57,13 +52,69 @@ const InviteCard: React.FC = () => {
   );
 };
 
-const Farming: React.FC<FarmingProps> = ({ tokenBalance, onStartFarming, onViewInfo }) => {
+const Farming: React.FC<object> = () => {
+  const { user, refetchUser, farmingSession, farmingSessionLoading, refetchFarmingSession } =
+    useUser();
+  const [isFarming, setIsFarming] = useState(false);
+  const [timeStart, setTimeStart] = useState<Date | null>(null);
+  const [timeFinish, setTimeFinish] = useState<Date | null>(null);
+
+  useEffect(() => {
+    if (farmingSession) {
+      const now = new Date().getTime();
+      const finishTime = new Date(farmingSession.timeFinish).getTime();
+      const startTime = finishTime - 8 * 60 * 60 * 1000; // 8 hours before finish
+      if (now < finishTime) {
+        setIsFarming(true);
+        setTimeStart(new Date(startTime));
+        setTimeFinish(new Date(finishTime));
+      }
+    } else {
+      setIsFarming(false);
+    }
+  }, [farmingSession]);
+
+  const handleFarmingStart = async () => {
+    if (!user) return;
+    try {
+      const response = await fetch('/api/farming/start', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      if (response.ok) {
+        refetchFarmingSession(); // Refresh session data
+      } else {
+        console.error('Failed to start farming session');
+      }
+    } catch (error) {
+      console.error('Error starting farming session:', error);
+    }
+  };
+
+  const handleViewInfo = (type: 'details' | 'history') => {
+    // Handle view info logic
+  };
+
+  const handleFarmingFinish = async () => {
+    setIsFarming(false);
+    await refetchFarmingSession(); // Refetch the latest farming session
+    await refetchUser();
+  };
+
   return (
     <div className="relative mx-auto flex w-full flex-col gap-2 p-0">
       <FarmingTracker
-        tokenBalance={tokenBalance}
-        onStartFarming={onStartFarming}
-        onViewInfo={onViewInfo}
+        tokenBalance={user?.tokenBalance ?? 0}
+        isFarming={isFarming}
+        timeStart={timeStart}
+        timeFinish={timeFinish}
+        onStartFarming={handleFarmingStart}
+        onViewInfo={handleViewInfo}
+        setIsFarming={setIsFarming}
+        onFinishFarming={handleFarmingFinish} // Forward the finish handler
       />
       {/* Bottom Section */}
       <div className="flex size-full flex-row items-stretch gap-2 p-0">

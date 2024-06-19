@@ -7,6 +7,7 @@ import { Roboto, Roboto_Mono } from 'next/font/google';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
+import { ModalProvider } from '../contexts/ModalContext';
 import { UserProvider } from '../contexts/UserContext';
 import { setupMockTelegramEnv } from '../lib/mockEnv'; // Ensure the path is correct
 
@@ -57,7 +58,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <TonConnectUIProvider manifestUrl={manifestUrl}>
           <SDKProvider acceptCustomStyles>
             <UserProvider>
-              <Component {...pageProps} />
+              <ModalProvider>
+                <Component {...pageProps} />
+              </ModalProvider>
             </UserProvider>
           </SDKProvider>
         </TonConnectUIProvider>
