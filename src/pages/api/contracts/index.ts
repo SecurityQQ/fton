@@ -1,46 +1,21 @@
+// pages/api/contracts.ts
+import { NextApiRequest, NextApiResponse } from 'next';
 import { KeyPair, mnemonicToPrivateKey } from '@ton/crypto';
 import { Address, Dictionary, Sender, TonClient, WalletContractV3R2, toNano } from '@ton/ton';
 import assert from 'assert';
-
+import { ApiError } from 'types/ApiError';
 import { Account, PeriodDataItem } from 'src/ton_client/tact_Account';
 import { MonthPeriodData } from 'src/ton_client/tact_MonthPeriodData';
-
-import { decryptData, derivePublicKey, encryptData } from './encryption';
+import { decryptData, derivePublicKey, encryptData } from '@/lib/encryption';
 
 const tonClient = new TonClient({
   endpoint: 'https://testnet.toncenter.com/api/v2/jsonRPC',
-  apiKey: 'bfdde2d576e0ba956a83773736d1b1c63d2f8f71257340dc9637bd11e77e39f8',
+  apiKey: process.env.TON_API_KEY,
 });
 
 async function getBotKeyPair(): Promise<KeyPair> {
-  // const mnemonics = process.env.REACT_APP_WALLET_MNEMONIC?.split(' ');
-  const mnemonics = [
-    'conduct',
-    'insect',
-    'era',
-    'zebra',
-    'dignity',
-    'gauge',
-    'unaware',
-    'road',
-    'hockey',
-    'error',
-    'rail',
-    'easy',
-    'need',
-    'cry',
-    'tired',
-    'cloth',
-    'satisfy',
-    'muffin',
-    'myth',
-    'win',
-    'couple',
-    'task',
-    'faint',
-    'tail',
-  ];
-  assert(mnemonics, 'Mnemonic is not provided');
+  const mnemonics = process.env.WALLET_MNEMONIC?.split(' ') ?? [];
+  assert(mnemonics.length > 0, 'Mnemonic is not provided');
   return await mnemonicToPrivateKey(mnemonics);
 }
 
@@ -53,9 +28,8 @@ async function getBotSender(): Promise<Sender> {
   const provider = tonClient.provider(wallet.address, wallet.init);
   return wallet.sender(provider, keyPair.secretKey);
 }
-('');
 
-export async function waitForAction(
+async function waitForAction(
   checkCondition: () => Promise<boolean>,
   attempts = 50,
   sleepDuration = 500
@@ -76,16 +50,7 @@ export async function waitForAction(
 let blockchainLogicInited = false;
 let initing: Promise<void> | null = null;
 
-export function isBlockchainLogicInited() {
-  return blockchainLogicInited;
-}
-
-export async function isContractDeployed(userAddress: string) {
-  const contract = await Account.fromInit(userAddress);
-  return await tonClient.isContractDeployed(contract.address);
-}
-
-export async function initBlockchainLogic(userAddress: string, publicKey: string) {
+async function initBlockchainLogic(userAddress: string, publicKey: string) {
   if (!blockchainLogicInited) {
     if (initing === null) {
       initing = new Promise(async (resolve) => {
@@ -146,7 +111,7 @@ async function setPublicKey(userAddress: string, publicKey: string) {
   console.log('Public key set');
 }
 
-export async function getPublicKey(userAddress: string): Promise<string> {
+async function getPublicKey(userAddress: string): Promise<string> {
   const contract = await Account.fromInit(userAddress);
   const openedContract = tonClient.open(contract);
   const publicKey = await openedContract.getPublicKey();
@@ -211,7 +176,7 @@ async function getEncryptedItemsToDelete(
   return encryptedDates;
 }
 
-export async function updateMonthPeriodData(
+async function updateMonthPeriodData(
   userAddress: string,
   changes: { date: Date; action: 'add' | 'delete' }[],
   privateKey: string
@@ -322,7 +287,7 @@ async function getFilledMonthsCount(userAddress: string): Promise<bigint> {
   return recordsCount;
 }
 
-export async function getMonthPeriodData(userAddress: string, privateKey: string): Promise<Date[]> {
+async function getMonthPeriodData(userAddress: string, privateKey: string): Promise<Date[]> {
   assert(
     blockchainLogicInited,
     'Blockchain logic is not initialized. Run initBlockchainLogic first'
@@ -350,3 +315,52 @@ export async function getMonthPeriodData(userAddress: string, privateKey: string
   }
   return data;
 }
+
+async function initAndGetMonthPeriodData(userAddress: string, publicKey: string, privateKey: string): Promise<Date[]> {
+  await initBlockchainLogic(userAddress, publicKey);
+  const monthPeriodData = await getMonthPeriodData(userAddress, privateKey);
+  return monthPeriodData;
+}
+
+// Next.js API handler
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const { action, userAddress, publicKey, privateKey, changes } = req.body;
+  try {
+    switch (action) {
+      case 'initBlockchainLogic':
+        await initBlockchainLogic(userAddress, publicKey);
+        res.status(200).json({ message: 'Blockchain logic initialized' });
+        break;
+      case 'isContractDeployed':
+        const isDeployed = await tonClient.isContractDeployed(userAddress);
+        res.status(200).json({ isDeployed });
+        break;
+      case 'updateMonthPeriodData':
+        const updatedDates = await updateMonthPeriodData(userAddress, changes, privateKey);
+        res.status(200).json({ updatedDates });
+        break;
+      case 'getMonthPeriodData':
+        const monthPeriodData = await getMonthPeriodData(userAddress, privateKey);
+        res.status(200).json({ monthPeriodData });
+        break;
+
+      case 'initAndGetMonthPeriodData':
+        const monthPeriodDataResponse = await initAndGetMonthPeriodData(userAddress, publicKey, privateKey);
+        res.status(200).json({ monthPeriodDataResponse });
+        break;
+
+      default:
+        res.status(400).json({ message: 'Invalid action' });
+    }
+  } catch (error: unknown) {
+    console.error(error);
+    const apiError = error as ApiError;
+    if (apiError.response?.status === 429) {
+      res.status(429).json({ error: 'Ton Blockchain слишком нагружен, попробуйте позже или переключите на традиционный режим' });
+    } else if (apiError instanceof Error) {
+      res.status(500).json({ error: apiError.message });
+    } else {
+      res.status(500).json({ error: 'An unknown error occurred' });
+    }
+  }
+};

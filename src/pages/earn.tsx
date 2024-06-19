@@ -3,14 +3,22 @@ import { TonConnectButton } from '@tonconnect/ui-react';
 import { Check, ChevronRight, Server as ServerIcon, Star, Wallet } from 'lucide-react';
 import Head from 'next/head';
 import React, { useEffect, useRef, useState } from 'react';
+import { ApiError } from '@/types/ApiError';
 
 import { getFromTelegramStorage, saveToTelegramStorage } from 'src/hooks/useTelegramStorage';
-
-import { initBlockchainLogic, isBlockchainLogicInited, isContractDeployed } from './api/contracts';
-import { derivePublicKey, generatePrivateKey } from './api/contracts/encryption';
+import { derivePublicKey, generatePrivateKey } from '@/lib/encryption';
 import Navigation from '../components/Navigation';
 import { useUser } from '../contexts/UserContext';
 import { useTonConnect } from '../hooks/useTonConnect';
+import Toaster from '@/components/ui/Toaster';
+import { toast } from 'sonner';
+
+
+const showToast = (message: string) => {
+  toast.custom((t) => <Toaster message={message} />);
+};
+
+
 
 const EarnPage: React.FC = () => {
   const { network, wallet, address } = useTonConnect();
@@ -23,16 +31,38 @@ const EarnPage: React.FC = () => {
   const selectedLoadingStarted = useRef(false);
   const privateLoadingStarted = useRef(false);
   const privateKey = useRef<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
 
   useEffect(() => {
     const checkBlockchainInited = async () => {
       if (address) {
-        const inited = isBlockchainLogicInited();
-        setIsBlockchainInited(inited);
-        if (!inited) {
-          const isContractDeployedRes = await isContractDeployed(address);
-          if (isContractDeployedRes) {
+        try {
+          const response = await fetch('/api/contracts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              action: 'isContractDeployed',
+              userAddress: address,
+            }),
+          }).then((res) => res.json());
+
+          if (response.isDeployed) {
+            setIsBlockchainInited(true);
+          }
+
+          if (!response.isDeployed) {
             await handleInitBlockchain();
+          }
+        } catch (error) {
+          const apiError = error as ApiError;
+          console.error('Failed to check blockchain initialization:', apiError);
+          if (apiError.response?.status === 429) {
+            setErrorMessage('Ton Blockchain слишком нагружен, попробуйте позже или переключите на традиционный режим');
+          } else {
+            setErrorMessage('An error occurred, please try again later.');
           }
         }
       }
@@ -49,6 +79,12 @@ const EarnPage: React.FC = () => {
 
     checkBlockchainInited();
   }, [address]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      showToast(errorMessage);
+    }
+  }, [errorMessage]);
 
   const updateTokenBalance = async (amount: number) => {
     if (user && user.id) {
@@ -76,15 +112,31 @@ const EarnPage: React.FC = () => {
   const handleInitBlockchain = async () => {
     setLoading(true);
     try {
-      if (privateKey == null) {
+      if (!privateKey.current) {
         await generateAndSaveNewPrivateKey();
       }
       const publicKey = derivePublicKey(privateKey.current!);
-      await initBlockchainLogic(address!, publicKey);
+      await fetch('/api/contracts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'initBlockchainLogic',
+          userAddress: address,
+          publicKey,
+        }),
+      });
       setIsBlockchainInited(true);
       await updateTokenBalance(1000); // Award 1000 tokens
     } catch (error) {
-      console.error('Failed to initialize blockchain logic:', error);
+      const apiError = error as ApiError;
+      console.error('Failed to initialize blockchain logic:', apiError);
+      if (apiError.response?.status === 429) {
+        setErrorMessage('Ton Blockchain слишком нагружен, попробуйте позже или переключите на традиционный режим');
+      } else {
+        setErrorMessage('An error occurred, please try again later.');
+      }
     } finally {
       setLoading(false);
     }

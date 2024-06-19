@@ -35,6 +35,7 @@
     "react-dom": "18.2.0",
     "react-ios-corners": "^1.0.0",
     "react-switch": "^7.0.0",
+    "sonner": "^1.5.0",
     "styled-components": "^6.1.11",
     "telegram-webapps-types": "^1.0.5"
   },

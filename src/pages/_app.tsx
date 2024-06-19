@@ -6,7 +6,7 @@ import type { AppProps } from 'next/app';
 import { Roboto, Roboto_Mono } from 'next/font/google';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
-
+import { Toaster, toast } from 'sonner'
 import { ModalProvider } from '../contexts/ModalContext';
 import { UserProvider } from '../contexts/UserContext';
 import { setupMockTelegramEnv } from '../lib/mockEnv'; // Ensure the path is correct
@@ -60,6 +60,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <SDKProvider acceptCustomStyles>
             <UserProvider>
               <ModalProvider>
+                <Toaster />
                 <Component {...pageProps} />
               </ModalProvider>
             </UserProvider>
