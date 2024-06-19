@@ -8,6 +8,7 @@ import {
   Contract,
   ContractABI,
   ContractProvider,
+  Dictionary,
   DictionaryValue,
   Sender,
   Slice,
@@ -464,167 +465,238 @@ function dictValueParserChangeOwnerOk(): DictionaryValue<ChangeOwnerOk> {
   };
 }
 
-export type AddHealthDataResponse = {
-  $$type: 'AddHealthDataResponse';
+export type UpdateMonthPeriodDataResponse = {
+  $$type: 'UpdateMonthPeriodDataResponse';
   seqno: bigint;
 };
 
-export function storeAddHealthDataResponse(src: AddHealthDataResponse) {
+export function storeUpdateMonthPeriodDataResponse(src: UpdateMonthPeriodDataResponse) {
   return (builder: Builder) => {
     const b_0 = builder;
-    b_0.storeUint(1787238602, 32);
+    b_0.storeUint(1763108018, 32);
     b_0.storeUint(src.seqno, 256);
   };
 }
 
-export function loadAddHealthDataResponse(slice: Slice) {
+export function loadUpdateMonthPeriodDataResponse(slice: Slice) {
   const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 1787238602) {
+  if (sc_0.loadUint(32) !== 1763108018) {
     throw Error('Invalid prefix');
   }
   const _seqno = sc_0.loadUintBig(256);
-  return { $$type: 'AddHealthDataResponse' as const, seqno: _seqno };
+  return { $$type: 'UpdateMonthPeriodDataResponse' as const, seqno: _seqno };
 }
 
-function loadTupleAddHealthDataResponse(source: TupleReader) {
+function loadTupleUpdateMonthPeriodDataResponse(source: TupleReader) {
   const _seqno = source.readBigNumber();
-  return { $$type: 'AddHealthDataResponse' as const, seqno: _seqno };
+  return { $$type: 'UpdateMonthPeriodDataResponse' as const, seqno: _seqno };
 }
 
-function storeTupleAddHealthDataResponse(source: AddHealthDataResponse) {
+function storeTupleUpdateMonthPeriodDataResponse(source: UpdateMonthPeriodDataResponse) {
   const builder = new TupleBuilder();
   builder.writeNumber(source.seqno);
   return builder.build();
 }
 
-function dictValueParserAddHealthDataResponse(): DictionaryValue<AddHealthDataResponse> {
+function dictValueParserUpdateMonthPeriodDataResponse(): DictionaryValue<UpdateMonthPeriodDataResponse> {
   return {
     serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeAddHealthDataResponse(src)).endCell());
+      buidler.storeRef(beginCell().store(storeUpdateMonthPeriodDataResponse(src)).endCell());
     },
     parse: (src) => {
-      return loadAddHealthDataResponse(src.loadRef().beginParse());
+      return loadUpdateMonthPeriodDataResponse(src.loadRef().beginParse());
     },
   };
 }
 
-export type AddHealthData = {
-  $$type: 'AddHealthData';
+export type UpdateMonthPeriodData = {
+  $$type: 'UpdateMonthPeriodData';
   accessedAddress: Address;
-  encryptedPeriodDateStart: string;
-  encryptedPeriodDateEnd: string;
+  monthIndex: bigint;
+  toAdd: Dictionary<bigint, PeriodDataItem>;
+  toDelete: Dictionary<bigint, PeriodDataItem>;
 };
 
-export function storeAddHealthData(src: AddHealthData) {
+export function storeUpdateMonthPeriodData(src: UpdateMonthPeriodData) {
   return (builder: Builder) => {
     const b_0 = builder;
-    b_0.storeUint(2553461971, 32);
+    b_0.storeUint(162194738, 32);
     b_0.storeAddress(src.accessedAddress);
-    b_0.storeStringRefTail(src.encryptedPeriodDateStart);
-    b_0.storeStringRefTail(src.encryptedPeriodDateEnd);
+    b_0.storeInt(src.monthIndex, 257);
+    b_0.storeDict(src.toAdd, Dictionary.Keys.BigInt(257), dictValueParserPeriodDataItem());
+    b_0.storeDict(src.toDelete, Dictionary.Keys.BigInt(257), dictValueParserPeriodDataItem());
   };
 }
 
-export function loadAddHealthData(slice: Slice) {
+export function loadUpdateMonthPeriodData(slice: Slice) {
   const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 2553461971) {
+  if (sc_0.loadUint(32) !== 162194738) {
     throw Error('Invalid prefix');
   }
   const _accessedAddress = sc_0.loadAddress();
-  const _encryptedPeriodDateStart = sc_0.loadStringRefTail();
-  const _encryptedPeriodDateEnd = sc_0.loadStringRefTail();
+  const _monthIndex = sc_0.loadIntBig(257);
+  const _toAdd = Dictionary.load(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    sc_0
+  );
+  const _toDelete = Dictionary.load(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    sc_0
+  );
   return {
-    $$type: 'AddHealthData' as const,
+    $$type: 'UpdateMonthPeriodData' as const,
     accessedAddress: _accessedAddress,
-    encryptedPeriodDateStart: _encryptedPeriodDateStart,
-    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
+    monthIndex: _monthIndex,
+    toAdd: _toAdd,
+    toDelete: _toDelete,
   };
 }
 
-function loadTupleAddHealthData(source: TupleReader) {
+function loadTupleUpdateMonthPeriodData(source: TupleReader) {
   const _accessedAddress = source.readAddress();
-  const _encryptedPeriodDateStart = source.readString();
-  const _encryptedPeriodDateEnd = source.readString();
+  const _monthIndex = source.readBigNumber();
+  const _toAdd = Dictionary.loadDirect(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    source.readCellOpt()
+  );
+  const _toDelete = Dictionary.loadDirect(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    source.readCellOpt()
+  );
   return {
-    $$type: 'AddHealthData' as const,
+    $$type: 'UpdateMonthPeriodData' as const,
     accessedAddress: _accessedAddress,
-    encryptedPeriodDateStart: _encryptedPeriodDateStart,
-    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
+    monthIndex: _monthIndex,
+    toAdd: _toAdd,
+    toDelete: _toDelete,
   };
 }
 
-function storeTupleAddHealthData(source: AddHealthData) {
+function storeTupleUpdateMonthPeriodData(source: UpdateMonthPeriodData) {
   const builder = new TupleBuilder();
   builder.writeAddress(source.accessedAddress);
-  builder.writeString(source.encryptedPeriodDateStart);
-  builder.writeString(source.encryptedPeriodDateEnd);
+  builder.writeNumber(source.monthIndex);
+  builder.writeCell(
+    source.toAdd.size > 0
+      ? beginCell()
+          .storeDictDirect(
+            source.toAdd,
+            Dictionary.Keys.BigInt(257),
+            dictValueParserPeriodDataItem()
+          )
+          .endCell()
+      : null
+  );
+  builder.writeCell(
+    source.toDelete.size > 0
+      ? beginCell()
+          .storeDictDirect(
+            source.toDelete,
+            Dictionary.Keys.BigInt(257),
+            dictValueParserPeriodDataItem()
+          )
+          .endCell()
+      : null
+  );
   return builder.build();
 }
 
-function dictValueParserAddHealthData(): DictionaryValue<AddHealthData> {
+function dictValueParserUpdateMonthPeriodData(): DictionaryValue<UpdateMonthPeriodData> {
   return {
     serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeAddHealthData(src)).endCell());
+      buidler.storeRef(beginCell().store(storeUpdateMonthPeriodData(src)).endCell());
     },
     parse: (src) => {
-      return loadAddHealthData(src.loadRef().beginParse());
+      return loadUpdateMonthPeriodData(src.loadRef().beginParse());
     },
   };
 }
 
-export type AddInternalHealthData = {
-  $$type: 'AddInternalHealthData';
-  encryptedPeriodDateStart: string;
-  encryptedPeriodDateEnd: string;
+export type InternalUpdateMonthPeriodData = {
+  $$type: 'InternalUpdateMonthPeriodData';
+  toAdd: Dictionary<bigint, PeriodDataItem>;
+  toDelete: Dictionary<bigint, PeriodDataItem>;
 };
 
-export function storeAddInternalHealthData(src: AddInternalHealthData) {
+export function storeInternalUpdateMonthPeriodData(src: InternalUpdateMonthPeriodData) {
   return (builder: Builder) => {
     const b_0 = builder;
-    b_0.storeUint(779420174, 32);
-    b_0.storeStringRefTail(src.encryptedPeriodDateStart);
-    b_0.storeStringRefTail(src.encryptedPeriodDateEnd);
+    b_0.storeUint(1624185093, 32);
+    b_0.storeDict(src.toAdd, Dictionary.Keys.BigInt(257), dictValueParserPeriodDataItem());
+    b_0.storeDict(src.toDelete, Dictionary.Keys.BigInt(257), dictValueParserPeriodDataItem());
   };
 }
 
-export function loadAddInternalHealthData(slice: Slice) {
+export function loadInternalUpdateMonthPeriodData(slice: Slice) {
   const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 779420174) {
+  if (sc_0.loadUint(32) !== 1624185093) {
     throw Error('Invalid prefix');
   }
-  const _encryptedPeriodDateStart = sc_0.loadStringRefTail();
-  const _encryptedPeriodDateEnd = sc_0.loadStringRefTail();
-  return {
-    $$type: 'AddInternalHealthData' as const,
-    encryptedPeriodDateStart: _encryptedPeriodDateStart,
-    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
-  };
+  const _toAdd = Dictionary.load(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    sc_0
+  );
+  const _toDelete = Dictionary.load(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    sc_0
+  );
+  return { $$type: 'InternalUpdateMonthPeriodData' as const, toAdd: _toAdd, toDelete: _toDelete };
 }
 
-function loadTupleAddInternalHealthData(source: TupleReader) {
-  const _encryptedPeriodDateStart = source.readString();
-  const _encryptedPeriodDateEnd = source.readString();
-  return {
-    $$type: 'AddInternalHealthData' as const,
-    encryptedPeriodDateStart: _encryptedPeriodDateStart,
-    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
-  };
+function loadTupleInternalUpdateMonthPeriodData(source: TupleReader) {
+  const _toAdd = Dictionary.loadDirect(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    source.readCellOpt()
+  );
+  const _toDelete = Dictionary.loadDirect(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    source.readCellOpt()
+  );
+  return { $$type: 'InternalUpdateMonthPeriodData' as const, toAdd: _toAdd, toDelete: _toDelete };
 }
 
-function storeTupleAddInternalHealthData(source: AddInternalHealthData) {
+function storeTupleInternalUpdateMonthPeriodData(source: InternalUpdateMonthPeriodData) {
   const builder = new TupleBuilder();
-  builder.writeString(source.encryptedPeriodDateStart);
-  builder.writeString(source.encryptedPeriodDateEnd);
+  builder.writeCell(
+    source.toAdd.size > 0
+      ? beginCell()
+          .storeDictDirect(
+            source.toAdd,
+            Dictionary.Keys.BigInt(257),
+            dictValueParserPeriodDataItem()
+          )
+          .endCell()
+      : null
+  );
+  builder.writeCell(
+    source.toDelete.size > 0
+      ? beginCell()
+          .storeDictDirect(
+            source.toDelete,
+            Dictionary.Keys.BigInt(257),
+            dictValueParserPeriodDataItem()
+          )
+          .endCell()
+      : null
+  );
   return builder.build();
 }
 
-function dictValueParserAddInternalHealthData(): DictionaryValue<AddInternalHealthData> {
+function dictValueParserInternalUpdateMonthPeriodData(): DictionaryValue<InternalUpdateMonthPeriodData> {
   return {
     serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeAddInternalHealthData(src)).endCell());
+      buidler.storeRef(beginCell().store(storeInternalUpdateMonthPeriodData(src)).endCell());
     },
     parse: (src) => {
-      return loadAddInternalHealthData(src.loadRef().beginParse());
+      return loadInternalUpdateMonthPeriodData(src.loadRef().beginParse());
     },
   };
 }
@@ -673,230 +745,42 @@ function dictValueParserSetPublicKey(): DictionaryValue<SetPublicKey> {
   };
 }
 
-export type SetInactiveRecord = {
-  $$type: 'SetInactiveRecord';
-  accessedAddress: Address;
-  seqno: bigint;
+export type PeriodDataItem = {
+  $$type: 'PeriodDataItem';
+  date: string;
 };
 
-export function storeSetInactiveRecord(src: SetInactiveRecord) {
+export function storePeriodDataItem(src: PeriodDataItem) {
   return (builder: Builder) => {
     const b_0 = builder;
-    b_0.storeUint(3088345220, 32);
-    b_0.storeAddress(src.accessedAddress);
-    b_0.storeUint(src.seqno, 256);
+    b_0.storeStringRefTail(src.date);
   };
 }
 
-export function loadSetInactiveRecord(slice: Slice) {
+export function loadPeriodDataItem(slice: Slice) {
   const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 3088345220) {
-    throw Error('Invalid prefix');
-  }
-  const _accessedAddress = sc_0.loadAddress();
-  const _seqno = sc_0.loadUintBig(256);
-  return { $$type: 'SetInactiveRecord' as const, accessedAddress: _accessedAddress, seqno: _seqno };
+  const _date = sc_0.loadStringRefTail();
+  return { $$type: 'PeriodDataItem' as const, date: _date };
 }
 
-function loadTupleSetInactiveRecord(source: TupleReader) {
-  const _accessedAddress = source.readAddress();
-  const _seqno = source.readBigNumber();
-  return { $$type: 'SetInactiveRecord' as const, accessedAddress: _accessedAddress, seqno: _seqno };
+function loadTuplePeriodDataItem(source: TupleReader) {
+  const _date = source.readString();
+  return { $$type: 'PeriodDataItem' as const, date: _date };
 }
 
-function storeTupleSetInactiveRecord(source: SetInactiveRecord) {
+function storeTuplePeriodDataItem(source: PeriodDataItem) {
   const builder = new TupleBuilder();
-  builder.writeAddress(source.accessedAddress);
-  builder.writeNumber(source.seqno);
+  builder.writeString(source.date);
   return builder.build();
 }
 
-function dictValueParserSetInactiveRecord(): DictionaryValue<SetInactiveRecord> {
+function dictValueParserPeriodDataItem(): DictionaryValue<PeriodDataItem> {
   return {
     serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeSetInactiveRecord(src)).endCell());
+      buidler.storeRef(beginCell().store(storePeriodDataItem(src)).endCell());
     },
     parse: (src) => {
-      return loadSetInactiveRecord(src.loadRef().beginParse());
-    },
-  };
-}
-
-export type SetInactiveRecordInternal = {
-  $$type: 'SetInactiveRecordInternal';
-  excess: Address;
-};
-
-export function storeSetInactiveRecordInternal(src: SetInactiveRecordInternal) {
-  return (builder: Builder) => {
-    const b_0 = builder;
-    b_0.storeUint(3184535658, 32);
-    b_0.storeAddress(src.excess);
-  };
-}
-
-export function loadSetInactiveRecordInternal(slice: Slice) {
-  const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 3184535658) {
-    throw Error('Invalid prefix');
-  }
-  const _excess = sc_0.loadAddress();
-  return { $$type: 'SetInactiveRecordInternal' as const, excess: _excess };
-}
-
-function loadTupleSetInactiveRecordInternal(source: TupleReader) {
-  const _excess = source.readAddress();
-  return { $$type: 'SetInactiveRecordInternal' as const, excess: _excess };
-}
-
-function storeTupleSetInactiveRecordInternal(source: SetInactiveRecordInternal) {
-  const builder = new TupleBuilder();
-  builder.writeAddress(source.excess);
-  return builder.build();
-}
-
-function dictValueParserSetInactiveRecordInternal(): DictionaryValue<SetInactiveRecordInternal> {
-  return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeSetInactiveRecordInternal(src)).endCell());
-    },
-    parse: (src) => {
-      return loadSetInactiveRecordInternal(src.loadRef().beginParse());
-    },
-  };
-}
-
-export type ChangeHealthData = {
-  $$type: 'ChangeHealthData';
-  accessedAddress: Address;
-  seqno: bigint;
-  encryptedPeriodDateStart: string;
-  encryptedPeriodDateEnd: string;
-};
-
-export function storeChangeHealthData(src: ChangeHealthData) {
-  return (builder: Builder) => {
-    const b_0 = builder;
-    b_0.storeUint(1397979250, 32);
-    b_0.storeAddress(src.accessedAddress);
-    b_0.storeUint(src.seqno, 256);
-    b_0.storeStringRefTail(src.encryptedPeriodDateStart);
-    b_0.storeStringRefTail(src.encryptedPeriodDateEnd);
-  };
-}
-
-export function loadChangeHealthData(slice: Slice) {
-  const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 1397979250) {
-    throw Error('Invalid prefix');
-  }
-  const _accessedAddress = sc_0.loadAddress();
-  const _seqno = sc_0.loadUintBig(256);
-  const _encryptedPeriodDateStart = sc_0.loadStringRefTail();
-  const _encryptedPeriodDateEnd = sc_0.loadStringRefTail();
-  return {
-    $$type: 'ChangeHealthData' as const,
-    accessedAddress: _accessedAddress,
-    seqno: _seqno,
-    encryptedPeriodDateStart: _encryptedPeriodDateStart,
-    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
-  };
-}
-
-function loadTupleChangeHealthData(source: TupleReader) {
-  const _accessedAddress = source.readAddress();
-  const _seqno = source.readBigNumber();
-  const _encryptedPeriodDateStart = source.readString();
-  const _encryptedPeriodDateEnd = source.readString();
-  return {
-    $$type: 'ChangeHealthData' as const,
-    accessedAddress: _accessedAddress,
-    seqno: _seqno,
-    encryptedPeriodDateStart: _encryptedPeriodDateStart,
-    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
-  };
-}
-
-function storeTupleChangeHealthData(source: ChangeHealthData) {
-  const builder = new TupleBuilder();
-  builder.writeAddress(source.accessedAddress);
-  builder.writeNumber(source.seqno);
-  builder.writeString(source.encryptedPeriodDateStart);
-  builder.writeString(source.encryptedPeriodDateEnd);
-  return builder.build();
-}
-
-function dictValueParserChangeHealthData(): DictionaryValue<ChangeHealthData> {
-  return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeChangeHealthData(src)).endCell());
-    },
-    parse: (src) => {
-      return loadChangeHealthData(src.loadRef().beginParse());
-    },
-  };
-}
-
-export type HealthDataState = {
-  $$type: 'HealthDataState';
-  encryptedPeriodDateStart: string;
-  encryptedPeriodDateEnd: string;
-  recordIsActive: boolean;
-};
-
-export function storeHealthDataState(src: HealthDataState) {
-  return (builder: Builder) => {
-    const b_0 = builder;
-    b_0.storeUint(4170313116, 32);
-    b_0.storeStringRefTail(src.encryptedPeriodDateStart);
-    b_0.storeStringRefTail(src.encryptedPeriodDateEnd);
-    b_0.storeBit(src.recordIsActive);
-  };
-}
-
-export function loadHealthDataState(slice: Slice) {
-  const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 4170313116) {
-    throw Error('Invalid prefix');
-  }
-  const _encryptedPeriodDateStart = sc_0.loadStringRefTail();
-  const _encryptedPeriodDateEnd = sc_0.loadStringRefTail();
-  const _recordIsActive = sc_0.loadBit();
-  return {
-    $$type: 'HealthDataState' as const,
-    encryptedPeriodDateStart: _encryptedPeriodDateStart,
-    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
-    recordIsActive: _recordIsActive,
-  };
-}
-
-function loadTupleHealthDataState(source: TupleReader) {
-  const _encryptedPeriodDateStart = source.readString();
-  const _encryptedPeriodDateEnd = source.readString();
-  const _recordIsActive = source.readBoolean();
-  return {
-    $$type: 'HealthDataState' as const,
-    encryptedPeriodDateStart: _encryptedPeriodDateStart,
-    encryptedPeriodDateEnd: _encryptedPeriodDateEnd,
-    recordIsActive: _recordIsActive,
-  };
-}
-
-function storeTupleHealthDataState(source: HealthDataState) {
-  const builder = new TupleBuilder();
-  builder.writeString(source.encryptedPeriodDateStart);
-  builder.writeString(source.encryptedPeriodDateEnd);
-  builder.writeBoolean(source.recordIsActive);
-  return builder.build();
-}
-
-function dictValueParserHealthDataState(): DictionaryValue<HealthDataState> {
-  return {
-    serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeHealthDataState(src)).endCell());
-    },
-    parse: (src) => {
-      return loadHealthDataState(src.loadRef().beginParse());
+      return loadPeriodDataItem(src.loadRef().beginParse());
     },
   };
 }
@@ -915,10 +799,10 @@ function initAccount_init_args(src: Account_init_args) {
 
 async function Account_init(accountOwner: string) {
   const __code = Cell.fromBase64(
-    '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'
+    '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'
   );
   const __system = Cell.fromBase64(
-    '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'
+    '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'
   );
   const builder = beginCell();
   builder.storeRef(__system);
@@ -953,7 +837,7 @@ const Account_errors: { [key: number]: { message: string } } = {
   135: { message: `Code of a contract was not found` },
   136: { message: `Invalid address` },
   137: { message: `Masterchain support is not enabled for this contract` },
-  49405: { message: `Record does not exist` },
+  48525: { message: `Data array is full` },
   54404: { message: `Parent only` },
 };
 
@@ -1028,33 +912,40 @@ const Account_types: ABIType[] = [
     ],
   },
   {
-    name: 'AddHealthDataResponse',
-    header: 1787238602,
+    name: 'UpdateMonthPeriodDataResponse',
+    header: 1763108018,
     fields: [
       { name: 'seqno', type: { kind: 'simple', type: 'uint', optional: false, format: 256 } },
     ],
   },
   {
-    name: 'AddHealthData',
-    header: 2553461971,
+    name: 'UpdateMonthPeriodData',
+    header: 162194738,
     fields: [
       { name: 'accessedAddress', type: { kind: 'simple', type: 'address', optional: false } },
+      { name: 'monthIndex', type: { kind: 'simple', type: 'int', optional: false, format: 257 } },
       {
-        name: 'encryptedPeriodDateStart',
-        type: { kind: 'simple', type: 'string', optional: false },
+        name: 'toAdd',
+        type: { kind: 'dict', key: 'int', value: 'PeriodDataItem', valueFormat: 'ref' },
       },
-      { name: 'encryptedPeriodDateEnd', type: { kind: 'simple', type: 'string', optional: false } },
+      {
+        name: 'toDelete',
+        type: { kind: 'dict', key: 'int', value: 'PeriodDataItem', valueFormat: 'ref' },
+      },
     ],
   },
   {
-    name: 'AddInternalHealthData',
-    header: 779420174,
+    name: 'InternalUpdateMonthPeriodData',
+    header: 1624185093,
     fields: [
       {
-        name: 'encryptedPeriodDateStart',
-        type: { kind: 'simple', type: 'string', optional: false },
+        name: 'toAdd',
+        type: { kind: 'dict', key: 'int', value: 'PeriodDataItem', valueFormat: 'ref' },
       },
-      { name: 'encryptedPeriodDateEnd', type: { kind: 'simple', type: 'string', optional: false } },
+      {
+        name: 'toDelete',
+        type: { kind: 'dict', key: 'int', value: 'PeriodDataItem', valueFormat: 'ref' },
+      },
     ],
   },
   {
@@ -1063,42 +954,9 @@ const Account_types: ABIType[] = [
     fields: [{ name: 'publicKey', type: { kind: 'simple', type: 'string', optional: false } }],
   },
   {
-    name: 'SetInactiveRecord',
-    header: 3088345220,
-    fields: [
-      { name: 'accessedAddress', type: { kind: 'simple', type: 'address', optional: false } },
-      { name: 'seqno', type: { kind: 'simple', type: 'uint', optional: false, format: 256 } },
-    ],
-  },
-  {
-    name: 'SetInactiveRecordInternal',
-    header: 3184535658,
-    fields: [{ name: 'excess', type: { kind: 'simple', type: 'address', optional: false } }],
-  },
-  {
-    name: 'ChangeHealthData',
-    header: 1397979250,
-    fields: [
-      { name: 'accessedAddress', type: { kind: 'simple', type: 'address', optional: false } },
-      { name: 'seqno', type: { kind: 'simple', type: 'uint', optional: false, format: 256 } },
-      {
-        name: 'encryptedPeriodDateStart',
-        type: { kind: 'simple', type: 'string', optional: false },
-      },
-      { name: 'encryptedPeriodDateEnd', type: { kind: 'simple', type: 'string', optional: false } },
-    ],
-  },
-  {
-    name: 'HealthDataState',
-    header: 4170313116,
-    fields: [
-      {
-        name: 'encryptedPeriodDateStart',
-        type: { kind: 'simple', type: 'string', optional: false },
-      },
-      { name: 'encryptedPeriodDateEnd', type: { kind: 'simple', type: 'string', optional: false } },
-      { name: 'recordIsActive', type: { kind: 'simple', type: 'bool', optional: false } },
-    ],
+    name: 'PeriodDataItem',
+    header: null,
+    fields: [{ name: 'date', type: { kind: 'simple', type: 'string', optional: false } }],
   },
 ];
 
@@ -1109,7 +967,7 @@ const Account_getters: ABIGetter[] = [
     returnType: { kind: 'simple', type: 'string', optional: false },
   },
   {
-    name: 'numHealthDataRecords',
+    name: 'numFilledMonths',
     arguments: [],
     returnType: { kind: 'simple', type: 'int', optional: false, format: 257 },
   },
@@ -1119,7 +977,7 @@ const Account_getters: ABIGetter[] = [
     returnType: { kind: 'simple', type: 'int', optional: false, format: 257 },
   },
   {
-    name: 'healthDataAddress',
+    name: 'monthPeriodDataAddress',
     arguments: [
       { name: 'seqno', type: { kind: 'simple', type: 'int', optional: false, format: 257 } },
       { name: 'accessedAddress', type: { kind: 'simple', type: 'address', optional: false } },
@@ -1140,9 +998,7 @@ const Account_getters: ABIGetter[] = [
 
 const Account_receivers: ABIReceiver[] = [
   { receiver: 'internal', message: { kind: 'typed', type: 'SetPublicKey' } },
-  { receiver: 'internal', message: { kind: 'typed', type: 'AddHealthData' } },
-  { receiver: 'internal', message: { kind: 'typed', type: 'ChangeHealthData' } },
-  { receiver: 'internal', message: { kind: 'typed', type: 'SetInactiveRecord' } },
+  { receiver: 'internal', message: { kind: 'typed', type: 'UpdateMonthPeriodData' } },
   { receiver: 'internal', message: { kind: 'typed', type: 'Deploy' } },
 ];
 
@@ -1179,7 +1035,7 @@ export class Account implements Contract {
     provider: ContractProvider,
     via: Sender,
     args: { value: bigint; bounce?: boolean | null | undefined },
-    message: SetPublicKey | AddHealthData | ChangeHealthData | SetInactiveRecord | Deploy
+    message: SetPublicKey | UpdateMonthPeriodData | Deploy
   ) {
     let body: Cell | null = null;
     if (
@@ -1194,25 +1050,9 @@ export class Account implements Contract {
       message &&
       typeof message === 'object' &&
       !(message instanceof Slice) &&
-      message.$$type === 'AddHealthData'
+      message.$$type === 'UpdateMonthPeriodData'
     ) {
-      body = beginCell().store(storeAddHealthData(message)).endCell();
-    }
-    if (
-      message &&
-      typeof message === 'object' &&
-      !(message instanceof Slice) &&
-      message.$$type === 'ChangeHealthData'
-    ) {
-      body = beginCell().store(storeChangeHealthData(message)).endCell();
-    }
-    if (
-      message &&
-      typeof message === 'object' &&
-      !(message instanceof Slice) &&
-      message.$$type === 'SetInactiveRecord'
-    ) {
-      body = beginCell().store(storeSetInactiveRecord(message)).endCell();
+      body = beginCell().store(storeUpdateMonthPeriodData(message)).endCell();
     }
     if (
       message &&
@@ -1236,9 +1076,9 @@ export class Account implements Contract {
     return result;
   }
 
-  async getNumHealthDataRecords(provider: ContractProvider) {
+  async getNumFilledMonths(provider: ContractProvider) {
     const builder = new TupleBuilder();
-    const source = (await provider.get('numHealthDataRecords', builder.build())).stack;
+    const source = (await provider.get('numFilledMonths', builder.build())).stack;
     const result = source.readBigNumber();
     return result;
   }
@@ -1250,11 +1090,15 @@ export class Account implements Contract {
     return result;
   }
 
-  async getHealthDataAddress(provider: ContractProvider, seqno: bigint, accessedAddress: Address) {
+  async getMonthPeriodDataAddress(
+    provider: ContractProvider,
+    seqno: bigint,
+    accessedAddress: Address
+  ) {
     const builder = new TupleBuilder();
     builder.writeNumber(seqno);
     builder.writeAddress(accessedAddress);
-    const source = (await provider.get('healthDataAddress', builder.build())).stack;
+    const source = (await provider.get('monthPeriodDataAddress', builder.build())).stack;
     const result = source.readAddress();
     return result;
   }
