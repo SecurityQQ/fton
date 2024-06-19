@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 
+import Button from '@/components/ui/Button';
 import CalendarNumber from '@/components/ui/CalendarNumber';
+import HorizontalButton from '@/components/ui/HorizontalButton';
+import { useUser } from '@/contexts/UserContext';
+import { isUseTon } from '@/hooks/useTelegramStorage';
 
 type CalendarProps = {
   periodDays: Date[];
@@ -20,6 +24,9 @@ const Calendar: React.FC<CalendarProps> = ({
   onCancel,
 }) => {
   const [months, setMonths] = useState<Date[]>([]);
+  const [useTon, setUseTon] = useState<boolean>(false);
+
+  const { menstruationsLoading } = useUser();
 
   const [changes, setChanges] = useState<{ date: Date; action: 'add' | 'delete' }[]>([]);
   const [firstDayOfLastPeriod, setFirstDayOfLastPeriod] = useState<Date | null>(null);
@@ -30,6 +37,13 @@ const Calendar: React.FC<CalendarProps> = ({
       initialMonths.push(new Date(new Date().getFullYear(), new Date().getMonth() + i, 1));
     }
     setMonths(initialMonths);
+
+    const fetchUseTon = async () => {
+      const result = await isUseTon();
+      setUseTon(result);
+    };
+
+    fetchUseTon();
   }, []);
 
   useLayoutEffect(() => {
@@ -244,30 +258,28 @@ const Calendar: React.FC<CalendarProps> = ({
 
       <div className="bg-telegram-bg mt-[56px] flex h-full flex-col items-center gap-2 overflow-y-scroll">
         {renderCalendar()}
-        {isEditing ? (
-          <div className="absolute bottom-[91px] left-1/2 flex h-[33px] w-[259px] -translate-x-1/2 flex-row items-start gap-2">
-            <button
-              className="flex h-[33px] w-[128.5px] items-center justify-center gap-1.5 rounded-l-[30px] rounded-r-[4px] bg-[#DCF2FF] px-5 py-2 text-[14px] font-semibold uppercase"
-              onClick={handleCancelChanges}>
-              <span className="bg-gradient-to-b from-[#007AFF] to-[#32B3EA] bg-clip-text text-transparent">
-                Отмена
-              </span>
-            </button>
-            <button
-              className="flex h-[33px] w-[128.5px] items-center justify-center gap-1.5 rounded-l-[4px] rounded-r-[30px] bg-gradient-to-b from-[#007AFF] to-[#32B3EA] px-5 py-2 text-[14px] font-semibold uppercase text-white"
-              onClick={handleSaveChanges}>
-              Сохранить
-            </button>
-          </div>
-        ) : (
-          <div className="fixed bottom-[91px] flex w-full justify-center">
-            <button
-              className="flex h-[33px] w-[243px] items-center justify-center gap-1.5 rounded-[30px] bg-gradient-to-b from-[#007AFF] to-[#32B3EA] px-5 py-2 text-[14px] font-semibold uppercase text-white"
+        <div className="fixed bottom-[91px]">
+          {isEditing ? (
+            <HorizontalButton
+              type="blue"
+              leftText="Отмена"
+              rightText="Сохранить"
+              leftOnClick={handleCancelChanges}
+              rightOnClick={handleSaveChanges}
+            />
+          ) : (
+            <Button
+              type={menstruationsLoading ? 'ghost' : 'blue'}
+              subtype="primary"
               onClick={onEdit}>
-              ИЗМЕНИТЬ ДАТЫ МЕСЯЧНЫХ
-            </button>
-          </div>
-        )}
+              {menstruationsLoading
+                ? useTon
+                  ? 'Сохраняем данные в блокчейн (до 30 секунд)'
+                  : 'Сохраняем данные'
+                : 'ИЗМЕНИТЬ ДАТЫ МЕСЯЧНЫХ'}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

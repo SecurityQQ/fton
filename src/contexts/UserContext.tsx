@@ -58,7 +58,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [farmingSessionLoading, setFarmingSessionLoading] = useState(true); // Add this line
 
   const initData = useInitData();
-  const { address, connected, wallet } = useTonConnect();
+  const { address, connected, wallet } = useTonConnect(); // BUGFIX: address must be fetched over SSR
 
   const fetchUser = async (telegramId: string): Promise<User | null> => {
     try {
@@ -136,15 +136,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           dates = menstruationData.map((item: { date: string }) => new Date(item.date));
         }
       } else if (useTon) {
-        await waitForAction(async () => {
-          console.log('connected', connected);
-          console.log('address', 'q' + address + 'q');
-          return connected && address !== null && address!.length > 0;
-        });
+        const storedAddress = localStorage.getItem('walletAddress') || address; // TODO: make it better :)
+
+        if (!storedAddress) {
+          console.error('no address. lmao.', storedAddress);
+        }
+
         const publicKey = derivePublicKey(tonPrivateKey);
-        await initBlockchainLogic(address!, publicKey);
-        dates = await getMonthPeriodData(address!, tonPrivateKey!);
-        console.log('dates', dates);
+        await initBlockchainLogic(storedAddress!, publicKey);
+        dates = await getMonthPeriodData(storedAddress!, tonPrivateKey!);
       }
       const sortedMenstruationData = dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
       setMenstruations(sortedMenstruationData);
@@ -214,11 +214,22 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         refetchMenstruations(); // Re-fetch the menstruation data to get the updated periodDays
       }
       if (useTon) {
-        if (!address || !tonPrivateKey) return;
-        await waitForAction(async () => connected && address !== null && address!.length > 0);
+        const storedAddress = localStorage.getItem('walletAddress') || address; // TODO: make it better :)
+        if (!storedAddress || !tonPrivateKey) return;
+
+        if (!storedAddress) {
+          console.error('address is undefined, but save is called');
+        } else {
+          console.log('change menst | using address: ', storedAddress);
+        }
+
         const publicKey = derivePublicKey(tonPrivateKey);
-        await initBlockchainLogic(address!, publicKey);
-        const updatedMenstruations = await updateMonthPeriodData(address!, changes, tonPrivateKey!);
+        await initBlockchainLogic(storedAddress!, publicKey);
+        const updatedMenstruations = await updateMonthPeriodData(
+          storedAddress!,
+          changes,
+          tonPrivateKey!
+        );
         setMenstruations(updatedMenstruations);
         refetchMenstruations();
       }
@@ -307,6 +318,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   }, [connected, wallet, user, initData]);
 
+  useEffect(() => {
+    if (connected && wallet) {
+      localStorage.setItem('walletAddress', wallet);
+    }
+  }, [connected, wallet]);
+
   const refetchUser = async () => {
     if (initData?.user) {
       setLoading(true);
@@ -342,11 +359,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         menstruations,
         menstruationsLoading,
         lastPeriodDate,
-        farmingSession, // Add this line
-        farmingSessionLoading, // Add this line
+        farmingSession,
+        farmingSessionLoading,
         refetchUser,
         refetchMenstruations,
-        refetchFarmingSession, // Add this line
+        refetchFarmingSession,
         changeMenstruations,
       }}>
       {children}
