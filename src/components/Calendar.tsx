@@ -20,7 +20,7 @@ const Calendar: React.FC<CalendarProps> = ({
   onCancel,
 }) => {
   const [months, setMonths] = useState<Date[]>([]);
-
+  const [isSaving, setIsSaving] = useState(false);
   const [changes, setChanges] = useState<{ date: Date; action: 'add' | 'delete' }[]>([]);
   const [firstDayOfLastPeriod, setFirstDayOfLastPeriod] = useState<Date | null>(null);
 
@@ -179,7 +179,7 @@ const Calendar: React.FC<CalendarProps> = ({
                 if (isPeriodDay) {
                   return isInChanges ? 'default' : 'periodPast';
                 } else if (isInChanges) {
-                  return 'select';
+                  return 'periodFuture';
                 }
                 return 'default';
               }
@@ -220,8 +220,10 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const handleSaveChanges = async () => {
+    setIsSaving(true);
     await onSave(changes);
     setChanges([]);
+    setIsSaving(false);
   };
 
   const handleCancelChanges = () => {
@@ -256,7 +258,11 @@ const Calendar: React.FC<CalendarProps> = ({
             <button
               className="flex h-[33px] w-[128.5px] items-center justify-center gap-1.5 rounded-l-[4px] rounded-r-[30px] bg-gradient-to-b from-[#007AFF] to-[#32B3EA] px-5 py-2 text-[14px] font-semibold uppercase text-white"
               onClick={handleSaveChanges}>
-              Сохранить
+              {isSaving ? (
+                <div className="size-8 animate-spin rounded-full border-y-2 border-blue-500" />
+              ) : (
+                'Сохранить'
+              )}
             </button>
           </div>
         ) : (
