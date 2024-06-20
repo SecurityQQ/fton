@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 import Button from '@/components/ui/Button';
 import Coin from '@/components/ui/Coin';
-import HorizontalButton from '@/components/ui/HorizontalButton';
 
 import styles from './FarmingTracker.module.css';
 
@@ -38,7 +37,8 @@ const FarmingTracker: React.FC<FarmingTrackerProps> = ({
       if (timeFinish) {
         const now = new Date().getTime();
         const finishTime = new Date(timeFinish).getTime();
-        return Math.max(Math.floor((finishTime - now) / 1000), 0); // time left in seconds
+        const tls = Math.max(Math.floor((finishTime - now) / 1000), 0); // time left in seconds
+        return tls;
       }
       return 0;
     };
@@ -49,8 +49,10 @@ const FarmingTracker: React.FC<FarmingTrackerProps> = ({
     if (isFarming) {
       timer = setInterval(() => {
         const newTimeLeft = calculateTimeLeft();
-        if (newTimeLeft <= 0) {
+        if (newTimeLeft <= 0 && timeFinish) {
           setIsFarming(false);
+
+          console.log('time is over: almost ready to onFinishFarming', newTimeLeft, timeFinish);
           onFinishFarming(); // Call onFinishFarming when farming is done
           clearInterval(timer);
         } else {

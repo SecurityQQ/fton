@@ -85,7 +85,7 @@ const Farming: React.FC<object> = () => {
         body: JSON.stringify({ userId: user.id }),
       });
       if (response.ok) {
-        refetchFarmingSession(); // Refresh session data
+        refetchFarmingSession(true); // Refresh session data
       } else {
         console.error('Failed to start farming session');
       }
@@ -100,8 +100,8 @@ const Farming: React.FC<object> = () => {
 
   const handleFarmingFinish = async () => {
     setIsFarming(false);
-    await refetchFarmingSession(); // Refetch the latest farming session
-    await refetchUser();
+    refetchFarmingSession(false); // Refetch the latest farming session
+    refetchUser();
   };
 
   return (

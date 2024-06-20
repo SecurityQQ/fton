@@ -28,7 +28,7 @@ type UserContextType = {
   farmingSessionLoading: boolean;
   refetchUser: () => void;
   refetchMenstruations: () => void;
-  refetchFarmingSession: () => void;
+  refetchFarmingSession: (silent: boolean) => void;
   changeMenstruations: (changes: { date: Date; action: 'add' | 'delete' }[]) => Promise<void>;
 };
 
@@ -364,10 +364,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
-  const refetchFarmingSession = async () => {
-    console.log('Refetching farming session');
+  const refetchFarmingSession = async (silent: boolean = false) => {
     if (user) {
-      setFarmingSessionLoading(true);
+      if (!silent) {
+        setFarmingSessionLoading(true);
+      }
       const sessionData = await fetchFarmingSession(user.id);
       setFarmingSession(sessionData);
     }
