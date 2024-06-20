@@ -1,17 +1,22 @@
 import { User } from '@prisma/client';
 import { useInitData } from '@tma.js/sdk-react';
+import axios from 'axios';
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
+import Toaster from '@/components/ui/Toaster';
 import { getUserTonPrivateKey, isUseApi, isUseTon } from '@/hooks/useTelegramStorage';
-import {
-  getMonthPeriodData,
-  initBlockchainLogic,
-  updateMonthPeriodData,
-  waitForAction,
-} from '@/pages/api/contracts';
-import { derivePublicKey } from '@/pages/api/contracts/encryption';
+import { initBlockchainLogic } from '@/lib/contract/blockchain';
+import { getMonthPeriodData, updateMonthPeriodData } from '@/lib/contract/data';
+import { waitForAction } from '@/lib/contract/utils';
+import { derivePublicKey } from '@/lib/encryption';
+import { getFirstDayOfLastPeriod } from '@/utils/periodDates';
 
 import { useTonConnect } from '../hooks/useTonConnect';
+
+const showToast = (message: string) => {
+  toast.custom((t) => <Toaster message={message} />);
+};
 
 type UserContextType = {
   user: User | null;
@@ -19,11 +24,11 @@ type UserContextType = {
   menstruations: Date[];
   menstruationsLoading: boolean;
   lastPeriodDate: Date | null;
-  farmingSession: any | null; // Add this line
-  farmingSessionLoading: boolean; // Add this line
+  farmingSession: any | null;
+  farmingSessionLoading: boolean;
   refetchUser: () => void;
   refetchMenstruations: () => void;
-  refetchFarmingSession: () => void; // Add this line
+  refetchFarmingSession: () => void;
   changeMenstruations: (changes: { date: Date; action: 'add' | 'delete' }[]) => Promise<void>;
 };
 
@@ -54,8 +59,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [menstruationsLoading, setMenstruationsLoading] = useState(true);
   const [lastPeriodDate, setLastPeriodDate] = useState<Date | null>(null);
 
-  const [farmingSession, setFarmingSession] = useState<any | null>(null); // Add this line
-  const [farmingSessionLoading, setFarmingSessionLoading] = useState(true); // Add this line
+  const [farmingSession, setFarmingSession] = useState<any | null>(null);
+  const [farmingSessionLoading, setFarmingSessionLoading] = useState(true);
 
   const initData = useInitData();
   const { address, connected, wallet } = useTonConnect();
@@ -70,6 +75,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       return null;
     } catch (error) {
       console.error('Failed to fetch user data:', error);
+      showToast('Failed to fetch user data');
       return null;
     }
   };
@@ -87,6 +93,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       return newUser;
     } catch (error) {
       console.error('Failed to create user:', error);
+      showToast('Failed to create user');
       return null;
     }
   };
@@ -104,6 +111,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       setUser(updatedUser);
     } catch (error) {
       console.error('Failed to update user:', error);
+      showToast('Failed to update user');
     }
   };
 
@@ -120,6 +128,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       setUser(updatedUser);
     } catch (error) {
       console.error('Failed to update wallet address:', error);
+      showToast('Failed to update wallet address');
     }
   };
 
@@ -136,24 +145,26 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           dates = menstruationData.map((item: { date: string }) => new Date(item.date));
         }
       } else if (useTon) {
-        await waitForAction(async () => {
-          console.log('connected', connected);
-          console.log('address', 'q' + address + 'q');
-          return connected && address !== null && address!.length > 0;
-        });
+        const storedAddress = localStorage.getItem('walletAddress') || address;
+
+        if (!storedAddress) {
+          console.error('No address found.');
+        }
+
         const publicKey = derivePublicKey(tonPrivateKey);
-        await initBlockchainLogic(address!, publicKey);
-        dates = await getMonthPeriodData(address!, tonPrivateKey!);
-        console.log('dates', dates);
+        await initBlockchainLogic(storedAddress!, publicKey);
+        dates = await getMonthPeriodData(storedAddress!, tonPrivateKey!);
       }
       const sortedMenstruationData = dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
       setMenstruations(sortedMenstruationData);
+
       if (sortedMenstruationData.length > 0) {
-        const lastPeriodStart = sortedMenstruationData[0];
+        const lastPeriodStart = getFirstDayOfLastPeriod(sortedMenstruationData);
         setLastPeriodDate(lastPeriodStart);
       }
     } catch (error) {
       console.error('Failed to fetch menstruation data:', error);
+      showToast('Failed to fetch menstruation data');
     } finally {
       setMenstruationsLoading(false);
     }
@@ -169,6 +180,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       return null;
     } catch (error) {
       console.error('Failed to fetch farming session data:', error);
+      showToast('Failed to fetch farming session data');
       return null;
     } finally {
       setFarmingSessionLoading(false);
@@ -214,16 +226,38 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         refetchMenstruations(); // Re-fetch the menstruation data to get the updated periodDays
       }
       if (useTon) {
-        if (!address || !tonPrivateKey) return;
-        await waitForAction(async () => connected && address !== null && address!.length > 0);
+        const storedAddress = localStorage.getItem('walletAddress') || address;
+        if (!storedAddress || !tonPrivateKey) return;
+
+        if (!storedAddress) {
+          console.error('Address is undefined, but save is called');
+        } else {
+          console.log('Changing menstruations | using address: ', storedAddress);
+        }
+
         const publicKey = derivePublicKey(tonPrivateKey);
-        await initBlockchainLogic(address!, publicKey);
-        const updatedMenstruations = await updateMonthPeriodData(address!, changes, tonPrivateKey!);
-        setMenstruations(updatedMenstruations);
-        refetchMenstruations();
+        await initBlockchainLogic(storedAddress!, publicKey);
+        const result = await updateMonthPeriodData(storedAddress!, changes, tonPrivateKey!);
+
+        if (result.success) {
+          setMenstruations(result.data!);
+          refetchMenstruations();
+        } else {
+          if (result.statusCode === 429) {
+            showToast('Too many requests. Please try again later.');
+          } else {
+            showToast(result.error || 'Failed to update menstruations');
+          }
+        }
       }
     } catch (error) {
-      console.error(error);
+      if (axios.isAxiosError(error) && error.response?.status === 429) {
+        console.error('Too many requests:', error);
+        showToast('Too many requests. Please try again later.');
+      } else {
+        console.error('Failed to change menstruations:', error);
+        showToast('Failed to change menstruations');
+      }
     }
   };
 
@@ -288,7 +322,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           await fetchMenstruations(existingUser.id);
 
           setFarmingSessionLoading(true);
-          const sessionData = await fetchFarmingSession(existingUser.id); // Fetch farming session
+          const sessionData = await fetchFarmingSession(existingUser.id);
           setFarmingSession(sessionData);
         }
       }
@@ -306,6 +340,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       }
     }
   }, [connected, wallet, user, initData]);
+
+  useEffect(() => {
+    if (connected && wallet) {
+      localStorage.setItem('walletAddress', wallet);
+    }
+  }, [connected, wallet]);
 
   const refetchUser = async () => {
     if (initData?.user) {
@@ -325,8 +365,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   };
 
   const refetchFarmingSession = async () => {
-    // Add this function
-    console.log('refetchingFarmingSession');
+    console.log('Refetching farming session');
     if (user) {
       setFarmingSessionLoading(true);
       const sessionData = await fetchFarmingSession(user.id);
@@ -342,11 +381,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         menstruations,
         menstruationsLoading,
         lastPeriodDate,
-        farmingSession, // Add this line
-        farmingSessionLoading, // Add this line
+        farmingSession,
+        farmingSessionLoading,
         refetchUser,
         refetchMenstruations,
-        refetchFarmingSession, // Add this line
+        refetchFarmingSession,
         changeMenstruations,
       }}>
       {children}

@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
 import TipCard from '@/components/TipCard';
+import {
+  DefaultEvent,
+  getDayLabel,
+  calculateNextEvent,
+  CalendarEventButtonType,
+} from '@/utils/periodDates';
 
 import MiniCalendar from './MiniCalendar';
 import Button from './ui/Button';
@@ -10,64 +16,6 @@ import { useModal } from '../contexts/ModalContext';
 type HeaderSectionProps = {
   lastMenstruationDate?: Date;
   onPeriodDateChange: () => void;
-};
-
-type ButtonType = 'blue' | 'pink' | 'purple' | 'orange' | 'dark' | 'ghost' | undefined;
-
-const getDayLabel = (days: number) => {
-  if (days === 1) return 'день';
-  if (days >= 2 && days <= 4) return 'дня';
-  return 'дней';
-};
-
-const calculateNextEvent = (daysSinceLastPeriod: number, cycleLength: number) => {
-  const daysUntilNextPeriod = cycleLength - (daysSinceLastPeriod % cycleLength);
-
-  if (daysSinceLastPeriod < 5) {
-    return {
-      eventName: 'menstruation',
-      eventMessage: 'Месячные будут',
-      daysUntilNextEvent: 5 - daysSinceLastPeriod,
-      pregnancyChance: 'Есть вероятность забеременеть',
-      eventColor: 'text-gradient-pink',
-      pregnancyChanceColor: 'text-[var(--font-pink-primary)]',
-      buttonType: 'pink' as ButtonType,
-      buttonText: 'ИЗМЕНИТЬ ДАТЫ МЕСЯЧНЫХ',
-    };
-  } else if (daysSinceLastPeriod >= 12 && daysSinceLastPeriod < 17) {
-    return {
-      eventName: 'ovulation',
-      eventMessage: 'Овуляция через',
-      daysUntilNextEvent: 17 - daysSinceLastPeriod,
-      pregnancyChance: 'Высокая вероятность забеременеть',
-      eventColor: 'text-gradient-blue',
-      pregnancyChanceColor: 'text-[var(--font-blue-primary)]',
-      buttonType: 'blue' as ButtonType,
-      buttonText: 'ОТКРЫТЬ КАЛЕНДАРЬ',
-    };
-  } else if (daysUntilNextPeriod <= 5) {
-    return {
-      eventName: 'menstruation',
-      eventMessage: 'Месячные через',
-      daysUntilNextEvent: daysUntilNextPeriod,
-      pregnancyChance: 'Низкая вероятность забеременеть',
-      eventColor: 'text-gradient-pink',
-      pregnancyChanceColor: 'text-[var(--font-pink-primary)]',
-      buttonType: 'pink' as ButtonType,
-      buttonText: 'ОТМЕТИТЬ МЕСЯЧНЫЕ',
-    };
-  } else {
-    return {
-      eventName: 'default',
-      eventMessage: 'Месячные через',
-      daysUntilNextEvent: daysUntilNextPeriod,
-      pregnancyChance: 'Низкая вероятность забеременеть',
-      eventColor: 'text-[var(--font-dark-primary)]',
-      pregnancyChanceColor: 'text-[var(--font-dark-primary)]',
-      buttonType: 'pink' as ButtonType,
-      buttonText: 'ОТКРЫТЬ КАЛЕНДАРЬ',
-    };
-  }
 };
 
 const HeaderTracker: React.FC<HeaderSectionProps> = ({
@@ -82,19 +30,12 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
 
   const cycleLength = 28;
 
+  console.log('lastMenstruationDate ', lastMenstruationDate);
+
   useEffect(() => {
     if (!lastMenstruationDate) {
       setRecommendation('Чтобы воспользоваться трекером, обновите дату последних месячных');
-      setNextEvent({
-        eventName: 'Чтобы воспользоваться приложением введите дату',
-        eventMessage: 'Дата последних месячных не указана',
-        daysUntilNextEvent: 0,
-        pregnancyChance: '',
-        eventColor: 'text-[var(--font-dark-primary)]',
-        pregnancyChanceColor: 'text-[var(--font-dark-primary)]',
-        buttonType: 'dark' as ButtonType,
-        buttonText: 'ОТКРЫТЬ КАЛЕНДАРЬ',
-      });
+      setNextEvent(DefaultEvent);
       return;
     }
 
@@ -104,7 +45,10 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
     );
     setDaysSinceLastPeriod(daysSinceLastPeriodCalc);
 
-    const phaseIndex = (daysSinceLastPeriodCalc + 24) % recommendationsData.recommendations.length;
+    const phaseIndex = (daysSinceLastPeriodCalc + 24) % recommendationsData.recommendations.length; // 24 because we shifted recommendatins
+
+    console.log('daysSinceLastPeriodCalc: ', daysSinceLastPeriodCalc);
+
     setRecommendation(recommendationsData.recommendations[phaseIndex]);
 
     const calculatedEvent = calculateNextEvent(daysSinceLastPeriodCalc, cycleLength);
@@ -145,7 +89,7 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
               openModal(
                 <TipCard
                   title="Совет дня"
-                  day={`${daysSinceLastPeriod + 1}й день цикла`}
+                  day={`${daysSinceLastPeriod}й день цикла`}
                   advice={recommendation}
                   buttonText="Супер"
                   onButtonClick={closeModal}

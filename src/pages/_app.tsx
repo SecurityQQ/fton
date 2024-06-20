@@ -1,12 +1,12 @@
 import '../styles/globals.css';
 import { SDKProvider } from '@tma.js/sdk-react';
-import { TonConnectUIProvider } from '@tonconnect/ui-react';
+import { TonConnectButton, TonConnectUIProvider } from '@tonconnect/ui-react';
 import axios from 'axios';
 import type { AppProps } from 'next/app';
 import { Roboto, Roboto_Mono } from 'next/font/google';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
-
+import { Toaster, toast } from 'sonner'
 import { ModalProvider } from '../contexts/ModalContext';
 import { UserProvider } from '../contexts/UserContext';
 import { setupMockTelegramEnv } from '../lib/mockEnv'; // Ensure the path is correct
@@ -56,9 +56,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <body className={`${ROBOTO_TTF.variable} ${ROBOTO_MONO_TTF.variable}`}>
         <TonConnectUIProvider manifestUrl={manifestUrl}>
+          {/*<TonConnectButton className="hidden" />*/}
           <SDKProvider acceptCustomStyles>
             <UserProvider>
               <ModalProvider>
+                <Toaster />
                 <Component {...pageProps} />
               </ModalProvider>
             </UserProvider>

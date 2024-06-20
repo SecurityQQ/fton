@@ -4,10 +4,10 @@ import { Check, ChevronRight, Server as ServerIcon, Star, Wallet } from 'lucide-
 import Head from 'next/head';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { initBlockchainLogic, isContractDeployed } from '@/lib/contract/blockchain';
+import { derivePublicKey, generatePrivateKey } from '@/lib/encryption';
 import { getFromTelegramStorage, saveToTelegramStorage } from 'src/hooks/useTelegramStorage';
 
-import { initBlockchainLogic, isBlockchainLogicInited, isContractDeployed } from './api/contracts';
-import { derivePublicKey, generatePrivateKey } from './api/contracts/encryption';
 import Navigation from '../components/Navigation';
 import { useUser } from '../contexts/UserContext';
 import { useTonConnect } from '../hooks/useTonConnect';
@@ -19,7 +19,7 @@ const EarnPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
-  const [copySuccess, setCopySuccess] = useState('Copy');
+  const [copySuccess, setCopySuccess] = useState('Скопировать');
   const selectedLoadingStarted = useRef(false);
   const privateLoadingStarted = useRef(false);
   const privateKey = useRef<string | null>(null);
@@ -27,7 +27,7 @@ const EarnPage: React.FC = () => {
   useEffect(() => {
     const checkBlockchainInited = async () => {
       if (address) {
-        const inited = isBlockchainLogicInited();
+        const inited = await isContractDeployed(address);
         setIsBlockchainInited(inited);
         if (!inited) {
           const isContractDeployedRes = await isContractDeployed(address);
@@ -50,7 +50,7 @@ const EarnPage: React.FC = () => {
     checkBlockchainInited();
   }, [address]);
 
-  const updateTokenBalance = async (amount: number) => {
+  const updateTokenBalance = async (amount: number, reason: string) => {
     if (user && user.id) {
       try {
         const response = await fetch(`/api/user/${user.id}/balance`, {
@@ -58,7 +58,7 @@ const EarnPage: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ amount }),
+          body: JSON.stringify({ amount, reason }),
         });
 
         if (response.ok) {
@@ -82,7 +82,7 @@ const EarnPage: React.FC = () => {
       const publicKey = derivePublicKey(privateKey.current!);
       await initBlockchainLogic(address!, publicKey);
       setIsBlockchainInited(true);
-      await updateTokenBalance(1000); // Award 1000 tokens
+      await updateTokenBalance(1000, 'TON Connect'); // Award 1000 tokens
     } catch (error) {
       console.error('Failed to initialize blockchain logic:', error);
     } finally {
@@ -120,13 +120,13 @@ const EarnPage: React.FC = () => {
     if (privateKey.current != null) {
       navigator.clipboard.writeText(privateKey.current!).then(
         () => {
-          setCopySuccess('Copied!');
+          setCopySuccess('Скопировано!');
           setTimeout(() => {
-            setCopySuccess('Copy');
+            setCopySuccess('Копировать');
           }, 2000);
         },
         () => {
-          setCopySuccess('Failed to copy!');
+          setCopySuccess('Не получилось скопировать!');
         }
       );
     }
@@ -153,7 +153,7 @@ const EarnPage: React.FC = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center justify-center space-y-4 px-4 text-center">
-        <span className="text-xs text-gray-500">5</span>
+        {/*<span className="text-xs text-gray-500">5</span>*/}
         <div className="flex w-full max-w-lg items-center justify-between rounded-3xl bg-pink-100 p-4">
           <Wallet className="text-pink-500" size={32} />
           <p className="mx-4 flex-1 text-header2 text-deep-dark">Подключи свой кошелек</p>
@@ -164,7 +164,7 @@ const EarnPage: React.FC = () => {
           <div className="flex w-full max-w-lg flex-col items-center justify-center rounded-3xl bg-green-100 p-4">
             <div className="flex w-full items-center justify-between">
               <Check className="text-green-500" size={32} />
-              <p className="text-lg font-semibold text-green-500">Challenge Completed</p>
+              <p className="text-lg font-semibold text-green-500">Свой аккаунт в Blockchain TON</p>
               <p className="text-xl font-semibold text-green-500">+ 1 000 FHC</p>
             </div>
           </div>
@@ -192,9 +192,7 @@ const EarnPage: React.FC = () => {
           <div className="flex w-full max-w-lg flex-col items-center justify-center">
             <div className="mb-4 flex w-full max-w-lg items-center justify-between rounded-3xl bg-purple-100 p-4">
               <ServerIcon className="text-purple-500" size={32} />
-              <p className="mx-4 flex-1 text-header2 text-deep-dark">
-                Где ты хочешь хранить свои данные?
-              </p>
+              <p className="mx-4 flex-1 text-header2 text-deep-dark">Где хранить данные?</p>
               <AppRoot>
                 <SegmentedControl className="relative mx-auto flex max-w-lg justify-between overflow-hidden rounded-lg bg-white p-3 shadow-md">
                   <SegmentedControl.Item
@@ -208,31 +206,14 @@ const EarnPage: React.FC = () => {
                       className={`block cursor-pointer p-2 font-semibold transition-colors duration-200 ${
                         selected === 0 ? 'text-white' : ''
                       }`}>
-                      Her
+                      Сервер
                     </label>
                     <input
                       className="absolute inset-0 size-full cursor-pointer opacity-0"
                       type="radio"
                     />
                   </SegmentedControl.Item>
-                  <SegmentedControl.Item
-                    className={`relative z-10 text-center ${
-                      selected === 1 ? 'bg-blue-500 text-white' : ''
-                    }`}
-                    selected={selected === 1}
-                    onClick={() => handleSelect(1)}
-                    style={{ borderRadius: '8px' }}>
-                    <label
-                      className={`block cursor-pointer p-2 font-semibold transition-colors duration-200 ${
-                        selected === 1 ? 'text-white' : ''
-                      }`}>
-                      Her+TON
-                    </label>
-                    <input
-                      className="absolute inset-0 size-full cursor-pointer opacity-0"
-                      type="radio"
-                    />
-                  </SegmentedControl.Item>
+
                   <SegmentedControl.Item
                     className={`relative z-10 text-center ${
                       selected === 2 ? 'bg-blue-500 text-white' : ''
@@ -255,7 +236,7 @@ const EarnPage: React.FC = () => {
               </AppRoot>
             </div>
             <div>
-              <div>Copy your private key:</div>
+              <div>Скопировать приватный ключ:</div>
               <button onClick={copyToPrivateKey}>{copySuccess}</button>
             </div>
             <span className="text-xs text-gray-500">
@@ -271,3 +252,22 @@ const EarnPage: React.FC = () => {
 };
 
 export default EarnPage;
+
+// <SegmentedControl.Item
+//                    className={`relative z-10 text-center ${
+//                      selected === 1 ? 'bg-blue-500 text-white' : ''
+//                    }`}
+//                    selected={selected === 1}
+//                    onClick={() => handleSelect(1)}
+//                    style={{ borderRadius: '8px' }}>
+//                    <label
+//                      className={`block cursor-pointer p-2 font-semibold transition-colors duration-200 ${
+//                        selected === 1 ? 'text-white' : ''
+//                      }`}>
+//                      Her+TON
+//                    </label>
+//                    <input
+//                      className="absolute inset-0 size-full cursor-pointer opacity-0"
+//                      type="radio"
+//                    />
+//                  </SegmentedControl.Item>

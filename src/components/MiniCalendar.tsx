@@ -1,6 +1,11 @@
 import React from 'react';
 
 import CalendarNumber from '@/components/ui/CalendarNumber';
+import {
+  getCalendarNumberType,
+  predictOvulationAndPeriod,
+  isFutureDate,
+} from '@/utils/periodDates';
 
 type MiniCalendarProps = {
   lastMenstruationDate: Date;
@@ -9,9 +14,10 @@ type MiniCalendarProps = {
 
 const MiniCalendar: React.FC<MiniCalendarProps> = ({ lastMenstruationDate, cycleLength }) => {
   const today = new Date();
-  const daysSinceLastPeriod = Math.floor(
-    (today.getTime() - new Date(lastMenstruationDate).getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const periodDays = [lastMenstruationDate]; // Assuming lastMenstruationDate is the only period day for this context
+  const firstDayOfLastPeriod = lastMenstruationDate;
+  const isEditing = false; // Assuming MiniCalendar is not in editing mode
+  const changes: { date: Date; action: 'add' | 'delete' }[] = []; // Assuming no changes for this context
 
   const generateNext7Days = () => {
     const dates = [];
@@ -38,30 +44,18 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ lastMenstruationDate, cycle
   return (
     <div className="flex w-full justify-between">
       {orderedDayNames.map((day, index) => {
-        const daysFromStartOfCycle = (daysSinceLastPeriod + index) % cycleLength;
-        const isPeriod = daysFromStartOfCycle >= 0 && daysFromStartOfCycle < 5;
-        const isOvulation = daysFromStartOfCycle >= 12 && daysFromStartOfCycle < 17;
         const date = dates[index];
-        const isToday = date.toDateString() === today.toDateString();
+        const type = getCalendarNumberType(
+          date,
+          periodDays,
+          firstDayOfLastPeriod,
+          cycleLength,
+          today,
+          isEditing,
+          changes
+        );
 
-        let type:
-          | 'default'
-          | 'today'
-          | 'periodPast'
-          | 'periodFuture'
-          | 'ovulationPast'
-          | 'ovulationFuture'
-          | 'select'
-          | 'selected';
-        if (isToday) {
-          type = 'today';
-        } else if (isPeriod) {
-          type = 'periodFuture';
-        } else if (isOvulation) {
-          type = 'ovulationFuture';
-        } else {
-          type = 'default';
-        }
+        const isToday = date.toDateString() === today.toDateString();
 
         return (
           <div className="mt-7 flex flex-col items-center gap-1.5" key={index}>
