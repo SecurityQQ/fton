@@ -51,8 +51,6 @@ const FarmingTracker: React.FC<FarmingTrackerProps> = ({
         const newTimeLeft = calculateTimeLeft();
         if (newTimeLeft <= 0 && timeFinish) {
           setIsFarming(false);
-
-          console.log('time is over: almost ready to onFinishFarming', newTimeLeft, timeFinish);
           onFinishFarming(); // Call onFinishFarming when farming is done
           clearInterval(timer);
         } else {
