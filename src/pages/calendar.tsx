@@ -20,6 +20,8 @@ const CalendarPage: React.FC = () => {
   const [months, setMonths] = useState(3); // Default to 3 months
 
   useEffect(() => {
+    console.log('Mensturations:', menstruations);
+
     setPeriodDays(menstruations);
   }, [menstruations]);
 

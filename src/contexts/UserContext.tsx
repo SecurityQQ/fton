@@ -137,17 +137,16 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         }
       } else if (useTon) {
         await waitForAction(async () => {
-          console.log('connected', connected);
-          console.log('address', 'q' + address + 'q');
           return connected && address !== null && address!.length > 0;
         });
         const publicKey = derivePublicKey(tonPrivateKey);
         await initBlockchainLogic(address!, publicKey);
         dates = await getMonthPeriodData(address!, tonPrivateKey!);
-        console.log('dates', dates);
       }
+
       const sortedMenstruationData = dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
       setMenstruations(sortedMenstruationData);
+
       if (sortedMenstruationData.length > 0) {
         const lastPeriodStart = sortedMenstruationData[0];
         setLastPeriodDate(lastPeriodStart);

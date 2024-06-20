@@ -33,7 +33,7 @@ const Calendar: React.FC<CalendarProps> = ({
   }, []);
 
   useLayoutEffect(() => {
-    const currentMonthIndex = 4; // The index of the current month in the initialMonths array
+    const currentMonthIndex = 3; // The index of the current month in the initialMonths array
     document.getElementById(`month-${currentMonthIndex}`)?.scrollIntoView();
   }, [months]);
 
