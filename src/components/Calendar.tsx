@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 
+import Loader from '@/components/Loader';
 import Button from '@/components/ui/Button';
 import CalendarNumber from '@/components/ui/CalendarNumber';
 import HorizontalButton from '@/components/ui/HorizontalButton';
@@ -32,6 +33,7 @@ const Calendar: React.FC<CalendarProps> = ({
   onCancel,
 }) => {
   const [months, setMonths] = useState<Date[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
   const [useTon, setUseTon] = useState<boolean>(false);
   const { menstruationsLoading } = useUser();
   const [changes, setChanges] = useState<{ date: Date; action: 'add' | 'delete' }[]>([]);
@@ -54,13 +56,12 @@ const Calendar: React.FC<CalendarProps> = ({
   }, []);
 
   useLayoutEffect(() => {
-    const currentMonthIndex = 4; // The index of the current month in the initialMonths array
+    const currentMonthIndex = 3; // The index of the current month in the initialMonths array
     document.getElementById(`month-${currentMonthIndex}`)?.scrollIntoView();
   }, [months]);
 
   useEffect(() => {
     const fd = getFirstDayOfLastPeriod(periodDays);
-    console.log('First day of last period: ', fd);
     setFirstDayOfLastPeriod(fd);
   }, [periodDays]);
 
@@ -159,8 +160,10 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const handleSaveChanges = async () => {
+    setIsSaving(true);
     await onSave(changes);
     setChanges([]);
+    setIsSaving(false);
   };
 
   const handleCancelChanges = () => {
@@ -183,6 +186,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
       <div className="bg-telegram-bg mt-[56px] flex h-full flex-col items-center gap-2 overflow-y-scroll">
         {renderCalendar()}
+        {isSaving && <Loader />}
         <div className="fixed bottom-[91px]">
           {isEditing ? (
             <HorizontalButton
@@ -193,11 +197,8 @@ const Calendar: React.FC<CalendarProps> = ({
               rightOnClick={handleSaveChanges}
             />
           ) : (
-            <Button
-              type={menstruationsLoading ? 'ghost' : 'blue'}
-              subtype="primary"
-              onClick={onEdit}>
-              {menstruationsLoading
+            <Button type={isSaving ? 'ghost' : 'blue'} subtype="primary" onClick={onEdit}>
+              {isSaving
                 ? useTon
                   ? 'Сохраняем данные в блокчейн (до 30 секунд)'
                   : 'Сохраняем данные'
@@ -209,5 +210,7 @@ const Calendar: React.FC<CalendarProps> = ({
     </div>
   );
 };
+
+// BUGFIX: condition isSaving for button names do not work
 
 export default Calendar;

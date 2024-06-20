@@ -91,7 +91,7 @@ export const getCalendarNumberType = (
     if (isPeriodDay) {
       return isInChanges ? 'default' : 'periodPast';
     } else if (isInChanges) {
-      return 'select';
+      return isFutureDate(date, today) ? 'periodFuture' : 'periodPast';
     }
     return 'default';
   }

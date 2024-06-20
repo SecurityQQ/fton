@@ -22,11 +22,20 @@ export const setupMockTelegramEnv = () => {
       const initDataRaw = new URLSearchParams([
         [
           'user',
+          //   JSON.stringify({
+          //   id: 208206100,
+          //   first_name: 'Alex',
+          //   last_name: 'M',
+          //   username: 'aleksandr_malyshev',
+          //   language_code: 'en',
+          //   is_premium: true,
+          //   allows_write_to_pm: true,
+          // }),
           JSON.stringify({
             id: 99281932,
             first_name: 'Andrew',
-            last_name: 'Rogue',
-            username: 'rogue',
+            last_name: 'Rogou',
+            username: 'Rogou',
             language_code: 'en',
             is_premium: true,
             allows_write_to_pm: true,

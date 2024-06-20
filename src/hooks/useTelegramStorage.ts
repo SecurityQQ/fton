@@ -45,7 +45,7 @@ export async function getFromTelegramStorage(window: Window, key: string): Promi
 
 export async function isUseApi(): Promise<boolean> {
   const type = await getFromTelegramStorage(window, 'dataStorageType');
-  return type === 'backend+ton' || type === 'backend';
+  return type === 'backend+ton' || type === 'backend' || !type;
 }
 
 export async function isUseTon(): Promise<boolean> {

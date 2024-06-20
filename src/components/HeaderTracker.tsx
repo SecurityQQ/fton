@@ -30,8 +30,6 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
 
   const cycleLength = 28;
 
-  console.log('lastMenstruationDate ', lastMenstruationDate);
-
   useEffect(() => {
     if (!lastMenstruationDate) {
       setRecommendation('Чтобы воспользоваться трекером, обновите дату последних месячных');
@@ -46,8 +44,6 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
     setDaysSinceLastPeriod(daysSinceLastPeriodCalc);
 
     const phaseIndex = (daysSinceLastPeriodCalc + 24) % recommendationsData.recommendations.length; // 24 because we shifted recommendatins
-
-    console.log('daysSinceLastPeriodCalc: ', daysSinceLastPeriodCalc);
 
     setRecommendation(recommendationsData.recommendations[phaseIndex]);
 
