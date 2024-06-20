@@ -23,7 +23,7 @@ model User {
   telegramId          BigInt         @unique
   birthdate           DateTime?
   tokenBalance        Float          @default(0)
-  lastPeriodDate      DateTime?
+  lastPeriodDate      DateTime?   // TODO: delete it
   menstruations       Menstruation[]
   invitationsSent     Invitation[]   @relation("Inviter")
   invitationsReceived Invitation[]   @relation("Invitee")
@@ -32,8 +32,18 @@ model User {
   updatedAt           DateTime       @updatedAt
 
   farming       FarmingSession[]
+  balanceHistory      BalanceHistory[]
 
   @@index([telegramId], name: "telegramId_index")
+}
+
+model BalanceHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Float
+  reason    String
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model FarmingSession {

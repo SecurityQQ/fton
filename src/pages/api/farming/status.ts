@@ -37,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             'Content-Type': 'application/json',
             'x-auth-key': AUTH_KEY || '',
           },
-          body: JSON.stringify({ amount: farmingSession.totalReward }),
+          body: JSON.stringify({ amount: farmingSession.totalReward, reason: 'Farming' }),
         });
       }
 

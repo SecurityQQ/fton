@@ -1,17 +1,22 @@
 import { User } from '@prisma/client';
 import { useInitData } from '@tma.js/sdk-react';
+import axios from 'axios';
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { getUserTonPrivateKey, isUseApi, isUseTon } from '@/hooks/useTelegramStorage';
-import { derivePublicKey } from '@/lib/encryption';
-import { useTonConnect } from '../hooks/useTonConnect';
-import Toaster from '@/components/ui/Toaster';
 import { toast } from 'sonner';
 
+import Toaster from '@/components/ui/Toaster';
+import { getUserTonPrivateKey, isUseApi, isUseTon } from '@/hooks/useTelegramStorage';
+import { initBlockchainLogic } from '@/lib/contract/blockchain';
+import { getMonthPeriodData, updateMonthPeriodData } from '@/lib/contract/data';
+import { waitForAction } from '@/lib/contract/utils';
+import { derivePublicKey } from '@/lib/encryption';
+import { getFirstDayOfLastPeriod } from '@/utils/periodDates';
+
+import { useTonConnect } from '../hooks/useTonConnect';
 
 const showToast = (message: string) => {
   toast.custom((t) => <Toaster message={message} />);
 };
-
 
 type UserContextType = {
   user: User | null;
@@ -19,11 +24,11 @@ type UserContextType = {
   menstruations: Date[];
   menstruationsLoading: boolean;
   lastPeriodDate: Date | null;
-  farmingSession: any | null; // Add this line
-  farmingSessionLoading: boolean; // Add this line
+  farmingSession: any | null;
+  farmingSessionLoading: boolean;
   refetchUser: () => void;
   refetchMenstruations: () => void;
-  refetchFarmingSession: () => void; // Add this line
+  refetchFarmingSession: () => void;
   changeMenstruations: (changes: { date: Date; action: 'add' | 'delete' }[]) => Promise<void>;
 };
 
@@ -54,11 +59,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [menstruationsLoading, setMenstruationsLoading] = useState(true);
   const [lastPeriodDate, setLastPeriodDate] = useState<Date | null>(null);
 
-  const [farmingSession, setFarmingSession] = useState<any | null>(null); // Add this line
-  const [farmingSessionLoading, setFarmingSessionLoading] = useState(true); // Add this line
+  const [farmingSession, setFarmingSession] = useState<any | null>(null);
+  const [farmingSessionLoading, setFarmingSessionLoading] = useState(true);
 
   const initData = useInitData();
-  const { address, connected, wallet } = useTonConnect(); // BUGFIX: address must be fetched over SSR
+  const { address, connected, wallet } = useTonConnect();
 
   const fetchUser = async (telegramId: string): Promise<User | null> => {
     try {
@@ -70,6 +75,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       return null;
     } catch (error) {
       console.error('Failed to fetch user data:', error);
+      showToast('Failed to fetch user data');
       return null;
     }
   };
@@ -87,6 +93,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       return newUser;
     } catch (error) {
       console.error('Failed to create user:', error);
+      showToast('Failed to create user');
       return null;
     }
   };
@@ -104,6 +111,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       setUser(updatedUser);
     } catch (error) {
       console.error('Failed to update user:', error);
+      showToast('Failed to update user');
     }
   };
 
@@ -120,59 +128,47 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       setUser(updatedUser);
     } catch (error) {
       console.error('Failed to update wallet address:', error);
+      showToast('Failed to update wallet address');
     }
   };
 
-const fetchMenstruations = async (userId: string, months: number = 3) => {
-  const useApi = await isUseApi();
-  const useTon = await isUseTon();
-  const tonPrivateKey = await getUserTonPrivateKey();
-  try {
-    let dates = [];
-    if (useApi || !tonPrivateKey || !address) {
-      const response = await fetch(`/api/menstruation?userId=${userId}&months=${months}`);
-      if (response.ok) {
-        const menstruationData = await response.json();
-        dates = menstruationData.map((item: { date: string }) => new Date(item.date));
-      }
-    } else if (useTon) {
-      const storedAddress = localStorage.getItem('walletAddress') || address;
-      if (!storedAddress) {
-        console.error('No address.');
-      }
+  const fetchMenstruations = async (userId: string, months: number = 3) => {
+    const useApi = await isUseApi();
+    const useTon = await isUseTon();
+    const tonPrivateKey = await getUserTonPrivateKey();
+    try {
+      let dates = [];
+      if (useApi || tonPrivateKey == null || address == null) {
+        const response = await fetch(`/api/menstruation?userId=${userId}&months=${months}`);
+        if (response.ok) {
+          const menstruationData = await response.json();
+          dates = menstruationData.map((item: { date: string }) => new Date(item.date));
+        }
+      } else if (useTon) {
+        const storedAddress = localStorage.getItem('walletAddress') || address;
 
-      const publicKey = derivePublicKey(tonPrivateKey);
-      const response = await fetch('/api/contracts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'initAndGetMonthPeriodData',
-          userAddress: storedAddress,
-          publicKey,
-          privateKey: tonPrivateKey,
-        }),
-      });
-      if (response.status === 429) {
-        showToast('Ton Blockchain слишком нагружен, попробуйте позже или переключите режим');
-        return;
+        if (!storedAddress) {
+          console.error('No address found.');
+        }
+
+        const publicKey = derivePublicKey(tonPrivateKey);
+        await initBlockchainLogic(storedAddress!, publicKey);
+        dates = await getMonthPeriodData(storedAddress!, tonPrivateKey!);
       }
-      const { monthPeriodData } = await response.json();
-      dates = monthPeriodData.map((item: string) => new Date(item));
+      const sortedMenstruationData = dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
+      setMenstruations(sortedMenstruationData);
+
+      if (sortedMenstruationData.length > 0) {
+        const lastPeriodStart = getFirstDayOfLastPeriod(sortedMenstruationData);
+        setLastPeriodDate(lastPeriodStart);
+      }
+    } catch (error) {
+      console.error('Failed to fetch menstruation data:', error);
+      showToast('Failed to fetch menstruation data');
+    } finally {
+      setMenstruationsLoading(false);
     }
-    const sortedMenstruationData = dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
-    setMenstruations(sortedMenstruationData);
-    if (sortedMenstruationData.length > 0) {
-      const lastPeriodStart = sortedMenstruationData[0];
-      setLastPeriodDate(lastPeriodStart);
-    }
-  } catch (error) {
-    console.error('Failed to fetch menstruation data:', error);
-  } finally {
-    setMenstruationsLoading(false);
-  }
-};
+  };
 
   const fetchFarmingSession = async (userId: string) => {
     try {
@@ -184,6 +180,7 @@ const fetchMenstruations = async (userId: string, months: number = 3) => {
       return null;
     } catch (error) {
       console.error('Failed to fetch farming session data:', error);
+      showToast('Failed to fetch farming session data');
       return null;
     } finally {
       setFarmingSessionLoading(false);
@@ -191,81 +188,78 @@ const fetchMenstruations = async (userId: string, months: number = 3) => {
   };
 
   const changeMenstruations = async (changes: { date: Date; action: 'add' | 'delete' }[]) => {
-  if (!user) return;
-  const useApi = await isUseApi();
-  const useTon = await isUseTon();
-  const tonPrivateKey = await getUserTonPrivateKey();
-  try {
-    if (useApi || tonPrivateKey == null || address == null) {
-      const response = await fetch('/api/menstruation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ changes, userId: user.id }),
-      });
+    if (!user) return;
+    const useApi = await isUseApi();
+    const useTon = await isUseTon();
+    const tonPrivateKey = await getUserTonPrivateKey();
+    try {
+      if (useApi || tonPrivateKey == null || address == null) {
+        const response = await fetch('/api/menstruation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ changes, userId: user.id }),
+        });
 
-      if (!response.ok) {
-        throw new Error('Failed to update the period dates');
+        if (!response.ok) {
+          throw new Error('Failed to update the period dates');
+        }
+
+        // Update local periodDays state based on changes
+        const updatedMenstruations = [...menstruations];
+
+        changes.forEach((change) => {
+          if (change.action === 'add') {
+            updatedMenstruations.push(change.date);
+          } else if (change.action === 'delete') {
+            const index = updatedMenstruations.findIndex(
+              (periodDate) => periodDate.toDateString() === change.date.toDateString()
+            );
+            if (index !== -1) {
+              updatedMenstruations.splice(index, 1);
+            }
+          }
+        });
+
+        setMenstruations(updatedMenstruations);
+        refetchMenstruations(); // Re-fetch the menstruation data to get the updated periodDays
       }
+      if (useTon) {
+        const storedAddress = localStorage.getItem('walletAddress') || address;
+        if (!storedAddress || !tonPrivateKey) return;
 
-      // Update local periodDays state based on changes
-      const updatedMenstruations = [...menstruations];
+        if (!storedAddress) {
+          console.error('Address is undefined, but save is called');
+        } else {
+          console.log('Changing menstruations | using address: ', storedAddress);
+        }
 
-      changes.forEach((change) => {
-        if (change.action === 'add') {
-          updatedMenstruations.push(change.date);
-        } else if (change.action === 'delete') {
-          const index = updatedMenstruations.findIndex(
-            (periodDate) => periodDate.toDateString() === change.date.toDateString()
-          );
-          if (index !== -1) {
-            updatedMenstruations.splice(index, 1);
+        const publicKey = derivePublicKey(tonPrivateKey);
+        await initBlockchainLogic(storedAddress!, publicKey);
+        const result = await updateMonthPeriodData(storedAddress!, changes, tonPrivateKey!);
+
+        if (result.success) {
+          setMenstruations(result.data!);
+          refetchMenstruations();
+        } else {
+          if (result.statusCode === 429) {
+            showToast('Too many requests. Please try again later.');
+          } else {
+            showToast(result.error || 'Failed to update menstruations');
           }
         }
-      });
-
-      setMenstruations(updatedMenstruations);
-      refetchMenstruations(); // Re-fetch the menstruation data to get the updated periodDays
-    }
-    if (useTon) {
-      const storedAddress = localStorage.getItem('walletAddress') || address; // TODO: make it better :)
-      if (!storedAddress || !tonPrivateKey) return;
-
-      if (!storedAddress) {
-        console.error('address is undefined, but save is called');
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 429) {
+        console.error('Too many requests:', error);
+        showToast('Too many requests. Please try again later.');
       } else {
-        console.log('change menst | using address: ', storedAddress);
+        console.error('Failed to change menstruations:', error);
+        showToast('Failed to change menstruations');
       }
-
-      const publicKey = derivePublicKey(tonPrivateKey);
-      const response = await fetch('/api/contracts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'updateMonthPeriodData',
-          userAddress: storedAddress,
-          publicKey,
-          privateKey: tonPrivateKey,
-          changes,
-        }),
-      });
-
-      if (response.status === 429) {
-        showToast('Ton Blockchain слишком нагружен, попробуйте позже или переключите режим');
-        return;
-      }
-
-      const updatedMenstruations = await response.json();
-      setMenstruations(updatedMenstruations);
-      refetchMenstruations();
     }
-  } catch (error) {
-    console.error(error);
-  }
-};
+  };
 
   const getNullOrMissingFields = (existingUser: User, newUser: TelegramUser): string[] => {
     const missingFields: string[] = [];
@@ -328,7 +322,7 @@ const fetchMenstruations = async (userId: string, months: number = 3) => {
           await fetchMenstruations(existingUser.id);
 
           setFarmingSessionLoading(true);
-          const sessionData = await fetchFarmingSession(existingUser.id); // Fetch farming session
+          const sessionData = await fetchFarmingSession(existingUser.id);
           setFarmingSession(sessionData);
         }
       }
@@ -371,8 +365,7 @@ const fetchMenstruations = async (userId: string, months: number = 3) => {
   };
 
   const refetchFarmingSession = async () => {
-    // Add this function
-    console.log('refetchingFarmingSession');
+    console.log('Refetching farming session');
     if (user) {
       setFarmingSessionLoading(true);
       const sessionData = await fetchFarmingSession(user.id);

@@ -23,12 +23,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else if (req.method === 'PATCH') {
-    const { amount } = req.body;
+    const { amount, reason } = req.body;
+    const updateReason = reason || 'Gift From Female Community';
 
     try {
       const user = await prisma.user.update({
         where: { id: String(id) },
         data: { tokenBalance: { increment: amount } },
+      });
+
+      await prisma.balanceHistory.create({
+        data: {
+          userId: String(id),
+          amount,
+          reason: updateReason,
+        },
       });
 
       res.status(200).json(serializeUser(user));

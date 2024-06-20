@@ -1,6 +1,6 @@
 // components/ui/Toaster.tsx
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
 
 type ToasterProps = {
   message: string;
@@ -15,15 +15,13 @@ const Toaster: React.FC<ToasterProps> = ({ message, className }) => {
         'relative w-[361px] h-[54px]',
         'bg-[#FFDEED] rounded-[20px]',
         className
-      )}
-    >
+      )}>
       <span
         className={classNames(
           'w-[349px] h-[34px]',
-          'font-sf-pro-rounded font-medium text-[14px] leading-[17px] text-center',
+          'font-medium text-[14px] leading-[17px] text-center',
           'bg-clip-text text-transparent bg-gradient-to-b from-[#FF668A] to-[#FF4EB8]'
-        )}
-      >
+        )}>
         {message}
       </span>
     </div>
