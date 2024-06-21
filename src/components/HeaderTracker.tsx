@@ -85,7 +85,9 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
               openModal(
                 <TipCard
                   title="Совет дня"
-                  day={`${daysSinceLastPeriod + 1}й день цикла`}
+                  day={`${
+                    (daysSinceLastPeriod + 1) % recommendationsData.recommendations.length
+                  }й день цикла`}
                   advice={recommendation}
                   buttonText="Супер"
                   onButtonClick={closeModal}

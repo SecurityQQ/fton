@@ -1,28 +1,68 @@
-// examples/SubscribeChannelsCardExample.tsx
-import React from 'react';
+// examples/SubscribeChannelsCard.tsx
+import React, { useEffect, useState } from 'react';
 
+import ChallengeModal from '@/components/ChallengeModal';
 import CardWithMenu from '@/components/ui/CardWithMenu';
 import RewardText from '@/components/ui/RewardText';
-
-const handleClick = () => {
-  console.log('MenuItem clicked');
-};
+import { useModal } from '@/contexts/ModalContext';
+import { useUser } from '@/contexts/UserContext';
+import { ChallengeWithStatus } from '@/utils/challenges';
 
 const SubscribeChannelsCard: React.FC = () => {
-  const menuItems = [
-    {
-      image: '/anna-channel.jpg',
-      title: 'Подпишись на Huggies и стань счастливой мамой',
-      reward: '+300',
-      onClick: handleClick,
-    },
-    {
-      image: '/anna-channel.jpg',
-      title: 'Нет Вариантов не стать победителем в этой игре',
-      reward: '+300',
-      onClick: handleClick,
-    },
-  ];
+  const { user } = useUser();
+  const { openModal } = useModal();
+  const [challenges, setChallenges] = useState<ChallengeWithStatus[]>([]);
+
+  useEffect(() => {
+    const fetchChallenges = async () => {
+      try {
+        const response = await fetch(`/api/challenges/${user!.id}`);
+        const data = await response.json();
+        if (data.challenges) {
+          setChallenges(data.challenges);
+        } else {
+          console.error(data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching challenges:', error);
+      }
+    };
+
+    if (user) {
+      fetchChallenges();
+    }
+  }, [user]);
+
+  const updateChallengeStatus = (challengeId: string) => {
+    setChallenges((prevChallenges) =>
+      prevChallenges.map((challenge) =>
+        challenge.id === challengeId ? { ...challenge, isCompleted: true } : challenge
+      )
+    );
+  };
+
+  const handleOpenModal = (challenge: ChallengeWithStatus) => {
+    openModal(
+      <ChallengeModal
+        title={challenge.name}
+        description={challenge.description}
+        reward={challenge.reward}
+        refLink={challenge.refLink}
+        userId={user!.id}
+        challengeId={challenge.id}
+        telegramId={user!.telegramId.toString()} // Ensure telegramId is converted to string
+        onSuccess={() => updateChallengeStatus(challenge.id)}
+        isCompleted={challenge.isCompleted}
+      />
+    );
+  };
+
+  const menuItems = challenges.map((challenge) => ({
+    image: challenge.image,
+    title: challenge.description,
+    reward: challenge.isCompleted ? 'Выполнено' : `+${challenge.reward}`,
+    onClick: () => handleOpenModal(challenge),
+  }));
 
   const renderContent = () => (
     <>
