@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
+import { updateBalance } from '@/lib/balance';
 import prisma from '@/lib/prisma';
 import { serializeUser } from '@/lib/serializeUser';
 import withMiddleware from '@/utils/withMiddleware';
@@ -27,19 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const updateReason = reason || 'Gift From Female Community';
 
     try {
-      const user = await prisma.user.update({
-        where: { id: String(id) },
-        data: { tokenBalance: { increment: amount } },
-      });
-
-      await prisma.balanceHistory.create({
-        data: {
-          userId: String(id),
-          amount,
-          reason: updateReason,
-        },
-      });
-
+      const user = await updateBalance(String(id), amount, updateReason);
       res.status(200).json(serializeUser(user));
     } catch (error) {
       console.log(error);

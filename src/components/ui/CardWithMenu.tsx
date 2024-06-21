@@ -7,7 +7,7 @@ type MenuItemProps = {
   image: string;
   title: string;
   reward: string;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 type CardWithMenuProps = {

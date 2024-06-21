@@ -30,7 +30,9 @@ const ShareCard: React.FC = () => {
         <h4 className="text-base font-extrabold text-[var(--font-dark-primary)] sm:text-sm">
           +600 HC
         </h4>
-        <p className="text-sm font-medium text-[var(--font-dark-primary)]">Рассказать о себе</p>
+        <p className="text-sm font-medium text-[var(--font-dark-primary)]">
+          Рассказать о себе (скоро!)
+        </p>
       </div>
     </div>
   );
@@ -45,7 +47,7 @@ const InviteCard: React.FC = () => {
           +600 HC
         </h4>
         <p className="text-sm font-medium text-[var(--font-dark-primary)]">
-          Пригласить пользователя
+          Пригласить пользователя (скоро!)
         </p>
       </div>
     </div>

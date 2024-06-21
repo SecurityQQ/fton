@@ -7,7 +7,7 @@ interface MenuItemProps {
   image: string;
   title: string;
   reward: string;
-  onClick: () => void;
+  onClick?: () => void;
   color?: 'blue' | 'pink' | 'purple' | 'orange' | 'dark' | 'green';
 }
 

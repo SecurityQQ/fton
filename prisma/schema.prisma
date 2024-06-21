@@ -30,9 +30,9 @@ model User {
   socialMedia         SocialMedia[]
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
-
-  farming       FarmingSession[]
+  farming             FarmingSession[]
   balanceHistory      BalanceHistory[]
+  userChallenges      UserChallenge[]
 
   @@index([telegramId], name: "telegramId_index")
 }
@@ -42,9 +42,23 @@ model BalanceHistory {
   userId    String
   amount    Float
   reason    String
+  refLink   String?
   timestamp DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
 }
+
+model UserChallenge {
+  id        String   @id @default(cuid())
+  userId    String
+  challengeId String
+  completed Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, challengeId])
+}
+
 
 model FarmingSession {
   id            String   @id @default(cuid())
