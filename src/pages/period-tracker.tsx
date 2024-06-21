@@ -9,10 +9,8 @@ import PeriodTracking from '../components/PeriodTracking';
 import { useUser } from '../contexts/UserContext';
 
 const PeriodTracker: NextPage = () => {
-  const { user, loading, refetchUser } = useUser();
+  const { user, loading, refetchUser, lastPeriodDate } = useUser();
   const router = useRouter();
-
-  console.log('USER: ', user);
 
   const handlePeriodDateChange = () => {
     console.log('Period date change clicked');
@@ -59,7 +57,7 @@ const PeriodTracker: NextPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white text-center">
       <Head>
         <title>Period Tracker</title>
         <link rel="icon" href="/favicon.ico" />
@@ -68,7 +66,7 @@ const PeriodTracker: NextPage = () => {
       {/*todo: add popup for first session if no lastPeriodDate*/}
       {user && (
         <PeriodTracking
-          lastMenstruationDate={user.lastPeriodDate ? new Date(user.lastPeriodDate) : undefined}
+          lastMenstruationDate={lastPeriodDate ? new Date(lastPeriodDate) : undefined}
           tokenBalance={user.tokenBalance}
           onPeriodDateChange={handlePeriodDateChange}
           onStartFarming={handleStartFarming}

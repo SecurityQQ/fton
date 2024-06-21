@@ -1,0 +1,12 @@
+<svg
+  className="absolute top-0 left-0 w-full h-full"
+  viewBox="0 0 393 413"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  preserveAspectRatio="none"
+>
+  <path
+    d="M0 0H393V313.004C393 313.004 314.5 412 196.5 412C78.5 412 0 313.004 0 313.004V0Z"
+    fill="#EEF6F8"
+  />
+</svg>

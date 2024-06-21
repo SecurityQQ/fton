@@ -1,8 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
+import { updateBalance } from '@/lib/balance';
 import prisma from '@/lib/prisma';
+import { serializeUser } from '@/lib/serializeUser';
+import withMiddleware from '@/utils/withMiddleware';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
 
   if (req.method === 'GET') {
@@ -21,19 +24,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else if (req.method === 'PATCH') {
-    const { amount } = req.body;
+    const { amount, reason } = req.body;
+    const updateReason = reason || 'Gift From Female Community';
 
     try {
-      const user = await prisma.user.update({
-        where: { id: String(id) },
-        data: { tokenBalance: { increment: amount } },
-      });
-
-      res.status(200).json(user);
+      const user = await updateBalance(String(id), amount, updateReason);
+      res.status(200).json(serializeUser(user));
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else {
     res.status(405).end(); // Method Not Allowed
   }
-}
+};
+
+export default withMiddleware(handler);

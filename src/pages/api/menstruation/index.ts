@@ -1,13 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import prisma from '@/lib/prisma';
+import withMiddleware from '@/utils/withMiddleware';
 
 type Change = {
   date: string; // Use string because dates are usually sent as strings in JSON
   action: 'add' | 'delete';
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const { userId, months } = req.query;
 
@@ -104,4 +105,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else {
     res.status(405).json({ error: 'Method Not Allowed' });
   }
-}
+};
+
+export default withMiddleware(handler);

@@ -23,16 +23,55 @@ model User {
   telegramId          BigInt         @unique
   birthdate           DateTime?
   tokenBalance        Float          @default(0)
-  lastPeriodDate      DateTime?
+  lastPeriodDate      DateTime?   // TODO: delete it
   menstruations       Menstruation[]
   invitationsSent     Invitation[]   @relation("Inviter")
   invitationsReceived Invitation[]   @relation("Invitee")
   socialMedia         SocialMedia[]
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
+  farming             FarmingSession[]
+  balanceHistory      BalanceHistory[]
+  userChallenges      UserChallenge[]
 
   @@index([telegramId], name: "telegramId_index")
 }
+
+model BalanceHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Float
+  reason    String
+  refLink   String?
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model UserChallenge {
+  id        String   @id @default(cuid())
+  userId    String
+  challengeId String
+  completed Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, challengeId])
+}
+
+
+model FarmingSession {
+  id            String   @id @default(cuid())
+  userId        String
+  timeFinish    DateTime
+  totalReward   Float
+  prizeReceived Boolean  @default(false) // Short name for prize received indicator
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+
 
 
 model Menstruation {

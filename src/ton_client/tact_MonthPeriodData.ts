@@ -1,23 +1,21 @@
 import {
-  Cell,
-  Slice,
-  Address,
-  Builder,
-  beginCell,
-  ComputeError,
-  TupleItem,
-  TupleReader,
-  Dictionary,
-  contractAddress,
-  ContractProvider,
-  Sender,
-  Contract,
-  ContractABI,
-  ABIType,
   ABIGetter,
   ABIReceiver,
-  TupleBuilder,
+  ABIType,
+  Address,
+  Builder,
+  Cell,
+  Contract,
+  ContractABI,
+  ContractProvider,
+  Dictionary,
   DictionaryValue,
+  Sender,
+  Slice,
+  TupleBuilder,
+  TupleReader,
+  beginCell,
+  contractAddress,
 } from '@ton/core';
 
 export type StateInit = {
@@ -467,147 +465,238 @@ function dictValueParserChangeOwnerOk(): DictionaryValue<ChangeOwnerOk> {
   };
 }
 
-export type AddHealthDataResponse = {
-  $$type: 'AddHealthDataResponse';
+export type UpdateMonthPeriodDataResponse = {
+  $$type: 'UpdateMonthPeriodDataResponse';
   seqno: bigint;
 };
 
-export function storeAddHealthDataResponse(src: AddHealthDataResponse) {
+export function storeUpdateMonthPeriodDataResponse(src: UpdateMonthPeriodDataResponse) {
   return (builder: Builder) => {
     const b_0 = builder;
-    b_0.storeUint(1787238602, 32);
+    b_0.storeUint(1763108018, 32);
     b_0.storeUint(src.seqno, 256);
   };
 }
 
-export function loadAddHealthDataResponse(slice: Slice) {
+export function loadUpdateMonthPeriodDataResponse(slice: Slice) {
   const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 1787238602) {
+  if (sc_0.loadUint(32) !== 1763108018) {
     throw Error('Invalid prefix');
   }
   const _seqno = sc_0.loadUintBig(256);
-  return { $$type: 'AddHealthDataResponse' as const, seqno: _seqno };
+  return { $$type: 'UpdateMonthPeriodDataResponse' as const, seqno: _seqno };
 }
 
-function loadTupleAddHealthDataResponse(source: TupleReader) {
+function loadTupleUpdateMonthPeriodDataResponse(source: TupleReader) {
   const _seqno = source.readBigNumber();
-  return { $$type: 'AddHealthDataResponse' as const, seqno: _seqno };
+  return { $$type: 'UpdateMonthPeriodDataResponse' as const, seqno: _seqno };
 }
 
-function storeTupleAddHealthDataResponse(source: AddHealthDataResponse) {
+function storeTupleUpdateMonthPeriodDataResponse(source: UpdateMonthPeriodDataResponse) {
   const builder = new TupleBuilder();
   builder.writeNumber(source.seqno);
   return builder.build();
 }
 
-function dictValueParserAddHealthDataResponse(): DictionaryValue<AddHealthDataResponse> {
+function dictValueParserUpdateMonthPeriodDataResponse(): DictionaryValue<UpdateMonthPeriodDataResponse> {
   return {
     serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeAddHealthDataResponse(src)).endCell());
+      buidler.storeRef(beginCell().store(storeUpdateMonthPeriodDataResponse(src)).endCell());
     },
     parse: (src) => {
-      return loadAddHealthDataResponse(src.loadRef().beginParse());
+      return loadUpdateMonthPeriodDataResponse(src.loadRef().beginParse());
     },
   };
 }
 
-export type AddHealthData = {
-  $$type: 'AddHealthData';
+export type UpdateMonthPeriodData = {
+  $$type: 'UpdateMonthPeriodData';
   accessedAddress: Address;
-  encryptedData: string;
+  monthIndex: bigint;
+  toAdd: Dictionary<bigint, PeriodDataItem>;
+  toDelete: Dictionary<bigint, PeriodDataItem>;
 };
 
-export function storeAddHealthData(src: AddHealthData) {
+export function storeUpdateMonthPeriodData(src: UpdateMonthPeriodData) {
   return (builder: Builder) => {
     const b_0 = builder;
-    b_0.storeUint(315300219, 32);
+    b_0.storeUint(162194738, 32);
     b_0.storeAddress(src.accessedAddress);
-    b_0.storeStringRefTail(src.encryptedData);
+    b_0.storeInt(src.monthIndex, 257);
+    b_0.storeDict(src.toAdd, Dictionary.Keys.BigInt(257), dictValueParserPeriodDataItem());
+    b_0.storeDict(src.toDelete, Dictionary.Keys.BigInt(257), dictValueParserPeriodDataItem());
   };
 }
 
-export function loadAddHealthData(slice: Slice) {
+export function loadUpdateMonthPeriodData(slice: Slice) {
   const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 315300219) {
+  if (sc_0.loadUint(32) !== 162194738) {
     throw Error('Invalid prefix');
   }
   const _accessedAddress = sc_0.loadAddress();
-  const _encryptedData = sc_0.loadStringRefTail();
+  const _monthIndex = sc_0.loadIntBig(257);
+  const _toAdd = Dictionary.load(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    sc_0
+  );
+  const _toDelete = Dictionary.load(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    sc_0
+  );
   return {
-    $$type: 'AddHealthData' as const,
+    $$type: 'UpdateMonthPeriodData' as const,
     accessedAddress: _accessedAddress,
-    encryptedData: _encryptedData,
+    monthIndex: _monthIndex,
+    toAdd: _toAdd,
+    toDelete: _toDelete,
   };
 }
 
-function loadTupleAddHealthData(source: TupleReader) {
+function loadTupleUpdateMonthPeriodData(source: TupleReader) {
   const _accessedAddress = source.readAddress();
-  const _encryptedData = source.readString();
+  const _monthIndex = source.readBigNumber();
+  const _toAdd = Dictionary.loadDirect(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    source.readCellOpt()
+  );
+  const _toDelete = Dictionary.loadDirect(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    source.readCellOpt()
+  );
   return {
-    $$type: 'AddHealthData' as const,
+    $$type: 'UpdateMonthPeriodData' as const,
     accessedAddress: _accessedAddress,
-    encryptedData: _encryptedData,
+    monthIndex: _monthIndex,
+    toAdd: _toAdd,
+    toDelete: _toDelete,
   };
 }
 
-function storeTupleAddHealthData(source: AddHealthData) {
+function storeTupleUpdateMonthPeriodData(source: UpdateMonthPeriodData) {
   const builder = new TupleBuilder();
   builder.writeAddress(source.accessedAddress);
-  builder.writeString(source.encryptedData);
+  builder.writeNumber(source.monthIndex);
+  builder.writeCell(
+    source.toAdd.size > 0
+      ? beginCell()
+          .storeDictDirect(
+            source.toAdd,
+            Dictionary.Keys.BigInt(257),
+            dictValueParserPeriodDataItem()
+          )
+          .endCell()
+      : null
+  );
+  builder.writeCell(
+    source.toDelete.size > 0
+      ? beginCell()
+          .storeDictDirect(
+            source.toDelete,
+            Dictionary.Keys.BigInt(257),
+            dictValueParserPeriodDataItem()
+          )
+          .endCell()
+      : null
+  );
   return builder.build();
 }
 
-function dictValueParserAddHealthData(): DictionaryValue<AddHealthData> {
+function dictValueParserUpdateMonthPeriodData(): DictionaryValue<UpdateMonthPeriodData> {
   return {
     serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeAddHealthData(src)).endCell());
+      buidler.storeRef(beginCell().store(storeUpdateMonthPeriodData(src)).endCell());
     },
     parse: (src) => {
-      return loadAddHealthData(src.loadRef().beginParse());
+      return loadUpdateMonthPeriodData(src.loadRef().beginParse());
     },
   };
 }
 
-export type AddInternalHealthData = {
-  $$type: 'AddInternalHealthData';
-  encryptedData: string;
+export type InternalUpdateMonthPeriodData = {
+  $$type: 'InternalUpdateMonthPeriodData';
+  toAdd: Dictionary<bigint, PeriodDataItem>;
+  toDelete: Dictionary<bigint, PeriodDataItem>;
 };
 
-export function storeAddInternalHealthData(src: AddInternalHealthData) {
+export function storeInternalUpdateMonthPeriodData(src: InternalUpdateMonthPeriodData) {
   return (builder: Builder) => {
     const b_0 = builder;
-    b_0.storeUint(3663464031, 32);
-    b_0.storeStringRefTail(src.encryptedData);
+    b_0.storeUint(1624185093, 32);
+    b_0.storeDict(src.toAdd, Dictionary.Keys.BigInt(257), dictValueParserPeriodDataItem());
+    b_0.storeDict(src.toDelete, Dictionary.Keys.BigInt(257), dictValueParserPeriodDataItem());
   };
 }
 
-export function loadAddInternalHealthData(slice: Slice) {
+export function loadInternalUpdateMonthPeriodData(slice: Slice) {
   const sc_0 = slice;
-  if (sc_0.loadUint(32) !== 3663464031) {
+  if (sc_0.loadUint(32) !== 1624185093) {
     throw Error('Invalid prefix');
   }
-  const _encryptedData = sc_0.loadStringRefTail();
-  return { $$type: 'AddInternalHealthData' as const, encryptedData: _encryptedData };
+  const _toAdd = Dictionary.load(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    sc_0
+  );
+  const _toDelete = Dictionary.load(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    sc_0
+  );
+  return { $$type: 'InternalUpdateMonthPeriodData' as const, toAdd: _toAdd, toDelete: _toDelete };
 }
 
-function loadTupleAddInternalHealthData(source: TupleReader) {
-  const _encryptedData = source.readString();
-  return { $$type: 'AddInternalHealthData' as const, encryptedData: _encryptedData };
+function loadTupleInternalUpdateMonthPeriodData(source: TupleReader) {
+  const _toAdd = Dictionary.loadDirect(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    source.readCellOpt()
+  );
+  const _toDelete = Dictionary.loadDirect(
+    Dictionary.Keys.BigInt(257),
+    dictValueParserPeriodDataItem(),
+    source.readCellOpt()
+  );
+  return { $$type: 'InternalUpdateMonthPeriodData' as const, toAdd: _toAdd, toDelete: _toDelete };
 }
 
-function storeTupleAddInternalHealthData(source: AddInternalHealthData) {
+function storeTupleInternalUpdateMonthPeriodData(source: InternalUpdateMonthPeriodData) {
   const builder = new TupleBuilder();
-  builder.writeString(source.encryptedData);
+  builder.writeCell(
+    source.toAdd.size > 0
+      ? beginCell()
+          .storeDictDirect(
+            source.toAdd,
+            Dictionary.Keys.BigInt(257),
+            dictValueParserPeriodDataItem()
+          )
+          .endCell()
+      : null
+  );
+  builder.writeCell(
+    source.toDelete.size > 0
+      ? beginCell()
+          .storeDictDirect(
+            source.toDelete,
+            Dictionary.Keys.BigInt(257),
+            dictValueParserPeriodDataItem()
+          )
+          .endCell()
+      : null
+  );
   return builder.build();
 }
 
-function dictValueParserAddInternalHealthData(): DictionaryValue<AddInternalHealthData> {
+function dictValueParserInternalUpdateMonthPeriodData(): DictionaryValue<InternalUpdateMonthPeriodData> {
   return {
     serialize: (src, buidler) => {
-      buidler.storeRef(beginCell().store(storeAddInternalHealthData(src)).endCell());
+      buidler.storeRef(beginCell().store(storeInternalUpdateMonthPeriodData(src)).endCell());
     },
     parse: (src) => {
-      return loadAddInternalHealthData(src.loadRef().beginParse());
+      return loadInternalUpdateMonthPeriodData(src.loadRef().beginParse());
     },
   };
 }
@@ -656,14 +745,54 @@ function dictValueParserSetPublicKey(): DictionaryValue<SetPublicKey> {
   };
 }
 
-type HealthDataRecord_init_args = {
-  $$type: 'HealthDataRecord_init_args';
+export type PeriodDataItem = {
+  $$type: 'PeriodDataItem';
+  date: string;
+};
+
+export function storePeriodDataItem(src: PeriodDataItem) {
+  return (builder: Builder) => {
+    const b_0 = builder;
+    b_0.storeStringRefTail(src.date);
+  };
+}
+
+export function loadPeriodDataItem(slice: Slice) {
+  const sc_0 = slice;
+  const _date = sc_0.loadStringRefTail();
+  return { $$type: 'PeriodDataItem' as const, date: _date };
+}
+
+function loadTuplePeriodDataItem(source: TupleReader) {
+  const _date = source.readString();
+  return { $$type: 'PeriodDataItem' as const, date: _date };
+}
+
+function storeTuplePeriodDataItem(source: PeriodDataItem) {
+  const builder = new TupleBuilder();
+  builder.writeString(source.date);
+  return builder.build();
+}
+
+function dictValueParserPeriodDataItem(): DictionaryValue<PeriodDataItem> {
+  return {
+    serialize: (src, buidler) => {
+      buidler.storeRef(beginCell().store(storePeriodDataItem(src)).endCell());
+    },
+    parse: (src) => {
+      return loadPeriodDataItem(src.loadRef().beginParse());
+    },
+  };
+}
+
+type MonthPeriodData_init_args = {
+  $$type: 'MonthPeriodData_init_args';
   parent: Address;
   seqno: bigint;
   accessedAddress: Address;
 };
 
-function initHealthDataRecord_init_args(src: HealthDataRecord_init_args) {
+function initMonthPeriodData_init_args(src: MonthPeriodData_init_args) {
   return (builder: Builder) => {
     const b_0 = builder;
     b_0.storeAddress(src.parent);
@@ -672,18 +801,18 @@ function initHealthDataRecord_init_args(src: HealthDataRecord_init_args) {
   };
 }
 
-async function HealthDataRecord_init(parent: Address, seqno: bigint, accessedAddress: Address) {
+async function MonthPeriodData_init(parent: Address, seqno: bigint, accessedAddress: Address) {
   const __code = Cell.fromBase64(
-    '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'
+    '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'
   );
   const __system = Cell.fromBase64(
-    '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'
+    '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'
   );
   const builder = beginCell();
   builder.storeRef(__system);
   builder.storeUint(0, 1);
-  initHealthDataRecord_init_args({
-    $$type: 'HealthDataRecord_init_args',
+  initMonthPeriodData_init_args({
+    $$type: 'MonthPeriodData_init_args',
     parent,
     seqno,
     accessedAddress,
@@ -692,7 +821,7 @@ async function HealthDataRecord_init(parent: Address, seqno: bigint, accessedAdd
   return { code: __code, data: __data };
 }
 
-const HealthDataRecord_errors: { [key: number]: { message: string } } = {
+const MonthPeriodData_errors: { [key: number]: { message: string } } = {
   2: { message: `Stack undeflow` },
   3: { message: `Stack overflow` },
   4: { message: `Integer overflow` },
@@ -717,12 +846,11 @@ const HealthDataRecord_errors: { [key: number]: { message: string } } = {
   135: { message: `Code of a contract was not found` },
   136: { message: `Invalid address` },
   137: { message: `Masterchain support is not enabled for this contract` },
-  4429: { message: `Invalid sender` },
+  48525: { message: `Data array is full` },
   54404: { message: `Parent only` },
-  61782: { message: `Data already set` },
 };
 
-const HealthDataRecord_types: ABIType[] = [
+const MonthPeriodData_types: ABIType[] = [
   {
     name: 'StateInit',
     header: null,
@@ -793,42 +921,69 @@ const HealthDataRecord_types: ABIType[] = [
     ],
   },
   {
-    name: 'AddHealthDataResponse',
-    header: 1787238602,
+    name: 'UpdateMonthPeriodDataResponse',
+    header: 1763108018,
     fields: [
       { name: 'seqno', type: { kind: 'simple', type: 'uint', optional: false, format: 256 } },
     ],
   },
   {
-    name: 'AddHealthData',
-    header: 315300219,
+    name: 'UpdateMonthPeriodData',
+    header: 162194738,
     fields: [
       { name: 'accessedAddress', type: { kind: 'simple', type: 'address', optional: false } },
-      { name: 'encryptedData', type: { kind: 'simple', type: 'string', optional: false } },
+      { name: 'monthIndex', type: { kind: 'simple', type: 'int', optional: false, format: 257 } },
+      {
+        name: 'toAdd',
+        type: { kind: 'dict', key: 'int', value: 'PeriodDataItem', valueFormat: 'ref' },
+      },
+      {
+        name: 'toDelete',
+        type: { kind: 'dict', key: 'int', value: 'PeriodDataItem', valueFormat: 'ref' },
+      },
     ],
   },
   {
-    name: 'AddInternalHealthData',
-    header: 3663464031,
-    fields: [{ name: 'encryptedData', type: { kind: 'simple', type: 'string', optional: false } }],
+    name: 'InternalUpdateMonthPeriodData',
+    header: 1624185093,
+    fields: [
+      {
+        name: 'toAdd',
+        type: { kind: 'dict', key: 'int', value: 'PeriodDataItem', valueFormat: 'ref' },
+      },
+      {
+        name: 'toDelete',
+        type: { kind: 'dict', key: 'int', value: 'PeriodDataItem', valueFormat: 'ref' },
+      },
+    ],
   },
   {
     name: 'SetPublicKey',
     header: 1524430048,
     fields: [{ name: 'publicKey', type: { kind: 'simple', type: 'string', optional: false } }],
   },
+  {
+    name: 'PeriodDataItem',
+    header: null,
+    fields: [{ name: 'date', type: { kind: 'simple', type: 'string', optional: false } }],
+  },
 ];
 
-const HealthDataRecord_getters: ABIGetter[] = [
+const MonthPeriodData_getters: ABIGetter[] = [
   {
     name: 'accessedAddress',
     arguments: [],
     returnType: { kind: 'simple', type: 'address', optional: false },
   },
   {
-    name: 'encryptedData',
+    name: 'dataLength',
     arguments: [],
-    returnType: { kind: 'simple', type: 'string', optional: false },
+    returnType: { kind: 'simple', type: 'int', optional: false, format: 257 },
+  },
+  {
+    name: 'data',
+    arguments: [],
+    returnType: { kind: 'dict', key: 'int', value: 'PeriodDataItem', valueFormat: 'ref' },
   },
   {
     name: 'balance',
@@ -837,32 +992,32 @@ const HealthDataRecord_getters: ABIGetter[] = [
   },
 ];
 
-const HealthDataRecord_receivers: ABIReceiver[] = [
-  { receiver: 'internal', message: { kind: 'typed', type: 'AddInternalHealthData' } },
+const MonthPeriodData_receivers: ABIReceiver[] = [
+  { receiver: 'internal', message: { kind: 'typed', type: 'InternalUpdateMonthPeriodData' } },
 ];
 
-export class HealthDataRecord implements Contract {
+export class MonthPeriodData implements Contract {
   static async init(parent: Address, seqno: bigint, accessedAddress: Address) {
-    return await HealthDataRecord_init(parent, seqno, accessedAddress);
+    return await MonthPeriodData_init(parent, seqno, accessedAddress);
   }
 
   static async fromInit(parent: Address, seqno: bigint, accessedAddress: Address) {
-    const init = await HealthDataRecord_init(parent, seqno, accessedAddress);
+    const init = await MonthPeriodData_init(parent, seqno, accessedAddress);
     const address = contractAddress(0, init);
-    return new HealthDataRecord(address, init);
+    return new MonthPeriodData(address, init);
   }
 
   static fromAddress(address: Address) {
-    return new HealthDataRecord(address);
+    return new MonthPeriodData(address);
   }
 
   readonly address: Address;
   readonly init?: { code: Cell; data: Cell };
   readonly abi: ContractABI = {
-    types: HealthDataRecord_types,
-    getters: HealthDataRecord_getters,
-    receivers: HealthDataRecord_receivers,
-    errors: HealthDataRecord_errors,
+    types: MonthPeriodData_types,
+    getters: MonthPeriodData_getters,
+    receivers: MonthPeriodData_receivers,
+    errors: MonthPeriodData_errors,
   };
 
   private constructor(address: Address, init?: { code: Cell; data: Cell }) {
@@ -874,16 +1029,16 @@ export class HealthDataRecord implements Contract {
     provider: ContractProvider,
     via: Sender,
     args: { value: bigint; bounce?: boolean | null | undefined },
-    message: AddInternalHealthData
+    message: InternalUpdateMonthPeriodData
   ) {
     let body: Cell | null = null;
     if (
       message &&
       typeof message === 'object' &&
       !(message instanceof Slice) &&
-      message.$$type === 'AddInternalHealthData'
+      message.$$type === 'InternalUpdateMonthPeriodData'
     ) {
-      body = beginCell().store(storeAddInternalHealthData(message)).endCell();
+      body = beginCell().store(storeInternalUpdateMonthPeriodData(message)).endCell();
     }
     if (body === null) {
       throw new Error('Invalid message type');
@@ -899,10 +1054,21 @@ export class HealthDataRecord implements Contract {
     return result;
   }
 
-  async getEncryptedData(provider: ContractProvider) {
+  async getDataLength(provider: ContractProvider) {
     const builder = new TupleBuilder();
-    const source = (await provider.get('encryptedData', builder.build())).stack;
-    const result = source.readString();
+    const source = (await provider.get('dataLength', builder.build())).stack;
+    const result = source.readBigNumber();
+    return result;
+  }
+
+  async getData(provider: ContractProvider) {
+    const builder = new TupleBuilder();
+    const source = (await provider.get('data', builder.build())).stack;
+    const result = Dictionary.loadDirect(
+      Dictionary.Keys.BigInt(257),
+      dictValueParserPeriodDataItem(),
+      source.readCellOpt()
+    );
     return result;
   }
 

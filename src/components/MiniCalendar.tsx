@@ -1,5 +1,12 @@
 import React from 'react';
 
+import CalendarNumber from '@/components/ui/CalendarNumber';
+import {
+  getCalendarNumberType,
+  predictOvulationAndPeriod,
+  isFutureDate,
+} from '@/utils/periodDates';
+
 type MiniCalendarProps = {
   lastMenstruationDate: Date;
   cycleLength: number;
@@ -7,9 +14,10 @@ type MiniCalendarProps = {
 
 const MiniCalendar: React.FC<MiniCalendarProps> = ({ lastMenstruationDate, cycleLength }) => {
   const today = new Date();
-  const daysSinceLastPeriod = Math.floor(
-    (today.getTime() - new Date(lastMenstruationDate).getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const periodDays = [lastMenstruationDate]; // Assuming lastMenstruationDate is the only period day for this context
+  const firstDayOfLastPeriod = lastMenstruationDate;
+  const isEditing = false; // Assuming MiniCalendar is not in editing mode
+  const changes: { date: Date; action: 'add' | 'delete' }[] = []; // Assuming no changes for this context
 
   const generateNext7Days = () => {
     const dates = [];
@@ -34,43 +42,31 @@ const MiniCalendar: React.FC<MiniCalendarProps> = ({ lastMenstruationDate, cycle
   const orderedDayNames = getOrderedDayNames();
 
   return (
-    <div className="flex w-full items-center justify-between px-4">
+    <div className="flex w-full justify-between">
       {orderedDayNames.map((day, index) => {
-        const daysFromStartOfCycle = (daysSinceLastPeriod + index) % cycleLength;
-        const isPeriod = daysFromStartOfCycle >= 0 && daysFromStartOfCycle < 5;
-        const isOvulation = daysFromStartOfCycle >= 12 && daysFromStartOfCycle < 17;
         const date = dates[index];
+        const type = getCalendarNumberType(
+          date,
+          periodDays,
+          firstDayOfLastPeriod,
+          cycleLength,
+          today,
+          isEditing,
+          changes
+        );
+
         const isToday = date.toDateString() === today.toDateString();
 
         return (
-          <div className="mt-7 flex flex-col gap-1.5" key={index}>
+          <div className="mt-7 flex flex-col items-center gap-1.5" key={index}>
             <span
               key={index}
               className={`w-10 text-center text-calendarDays ${
-                isPeriod
-                  ? isToday
-                    ? 'text-bright-orange'
-                    : 'text-bright-orange opacity-60'
-                  : isToday
-                  ? 'text-bright-blue'
-                  : 'text-bright-blue opacity-60'
+                isToday ? 'text-bright-blue' : 'text-bright-blue opacity-60'
               }`}>
               {isToday ? 'СЕГОДНЯ' : day}
             </span>
-            <div className={`${isToday ? 'pl-2' : ''}`}>
-              <div
-                className={`pad flex size-10 items-center justify-center rounded-full ${
-                  isPeriod
-                    ? 'border border-dashed border-bright-orange bg-transparent'
-                    : isOvulation
-                    ? 'border border-dashed border-bright-blue bg-transparent'
-                    : 'bg-transparent'
-                } ${
-                  isPeriod ? 'text-bright-orange' : isOvulation ? 'text-bright-blue' : 'text-black'
-                } text-calendarNumbers`}>
-                {date.getDate()}
-              </div>
-            </div>
+            <CalendarNumber type={type} number={date.getDate()} />
           </div>
         );
       })}
