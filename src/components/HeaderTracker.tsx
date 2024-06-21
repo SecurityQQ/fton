@@ -43,7 +43,7 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
     );
     setDaysSinceLastPeriod(daysSinceLastPeriodCalc);
 
-    const phaseIndex = (daysSinceLastPeriodCalc + 24) % recommendationsData.recommendations.length; // 24 because we shifted recommendatins
+    const phaseIndex = daysSinceLastPeriodCalc % recommendationsData.recommendations.length; // 24 because we shifted recommendatins
 
     setRecommendation(recommendationsData.recommendations[phaseIndex]);
 
@@ -85,7 +85,7 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
               openModal(
                 <TipCard
                   title="Совет дня"
-                  day={`${daysSinceLastPeriod}й день цикла`}
+                  day={`${daysSinceLastPeriod + 1}й день цикла`}
                   advice={recommendation}
                   buttonText="Супер"
                   onButtonClick={closeModal}
