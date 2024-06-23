@@ -30,7 +30,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [locale, setLocale] = useState('en'); // Default to 'en' if not set
   const [messages, setMessages] = useState({});
   const [loading, setLoading] = useState(true);
-  const [languageCode, setLanguageCode] = useState('');
   const [errorCode, setErrorCode] = useState('');
 
   useEffect(() => {
@@ -50,44 +49,35 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
 
     // Extract language_code from Telegram WebApp and set locale
-
     try {
       const params = new URLSearchParams(window.Telegram.WebApp.initData);
       const userParam = params.get('user');
-      let userObj;
-      let lC;
-
       if (userParam) {
-        userObj = JSON.parse(decodeURIComponent(userParam));
-        lC = userObj.language_code || 'en';
+        const userObj = JSON.parse(decodeURIComponent(userParam));
+        setLocale(userObj.language_code || 'en');
       } else {
-        lC = 'en';
+        setLocale('en');
         setErrorCode(`No userParam in params: "${params}"`);
       }
-
-      setLanguageCode(lC);
-      setLocale(lC);
     } catch (error) {
       console.error('Error parsing initData:', error);
       setErrorCode(`${error}`);
       setLocale('en');
-      setLoading(false);
     }
+  }, []);
 
-    // setLanguageCode(local);
-    // setLocale('en');
-
-    // Fetch the appropriate messages based on the determined languageCode
+  useEffect(() => {
+    // Fetch the appropriate messages based on the determined locale
     import(`../locales/${locale}/common.json`)
       .then((msgs) => {
         setMessages(msgs.default);
         setLoading(false);
       })
-      .catch(() => {
-        // Handle error in case locale file is not found
+      .catch((error) => {
+        console.error('Error loading locale messages:', error);
         setLoading(false);
       });
-  }, []);
+  }, [locale]);
 
   if (!isHashValid) {
     return null;
