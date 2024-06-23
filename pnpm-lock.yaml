@@ -53,6 +53,9 @@ importers:
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
+      i18next:
+        specifier: ^23.11.5
+        version: 23.11.5
       i18next-http-backend:
         specifier: ^2.5.2
         version: 2.5.2
@@ -1473,6 +1476,9 @@ packages:
 
   i18next-http-backend@2.5.2:
     resolution: {integrity: sha512-+K8HbDfrvc1/2X8jpb7RLhI9ZxBDpx3xogYkQwGKlWAUXLSEGXzgdt3EcUjLlBCdMwdQY+K+EUF6oh8oB6rwHw==}
+
+  i18next@23.11.5:
+    resolution: {integrity: sha512-41pvpVbW9rhZPk5xjCX2TPJi2861LEig/YRhUkY+1FQ2IQPS0bKUDYnEqY8XPPbB48h1uIwLnP9iiEfuSl20CA==}
 
   ignore@5.3.1:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
@@ -4082,6 +4088,10 @@ snapshots:
       cross-fetch: 4.0.0
     transitivePeerDependencies:
       - encoding
+
+  i18next@23.11.5:
+    dependencies:
+      '@babel/runtime': 7.24.7
 
   ignore@5.3.1: {}
 
