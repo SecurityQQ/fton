@@ -38,7 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try {
-      const messages = await import(`../../locales/${locale}/common.json`);
+      const messages = await import(`../../../locales/${locale}/common.json`);
       const text = getNestedValue(messages.default, 'telegram.start_message');
       const buttonText = getNestedValue(messages.default, 'telegram.button_text');
 
