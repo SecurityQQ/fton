@@ -7,7 +7,7 @@ import { Roboto, Roboto_Mono } from 'next/font/google';
 import Head from 'next/head';
 import { IntlProvider } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { Toaster, toast } from 'sonner';
+import { Toaster } from 'sonner';
 
 import { ModalProvider } from '../contexts/ModalContext';
 import { UserProvider } from '../contexts/UserContext';
@@ -24,6 +24,8 @@ const ROBOTO_MONO_TTF = Roboto_Mono({
   variable: '--font-roboto-mono',
   subsets: ['latin'], // Specify the subset(s) you need
 });
+
+const allowedLocales = ['en', 'ru'];
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [isHashValid, setIsHashValid] = useState(false);
@@ -54,7 +56,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       const userParam = params.get('user');
       if (userParam) {
         const userObj = JSON.parse(decodeURIComponent(userParam));
-        setLocale(userObj.language_code || 'en');
+        const userLocale = userObj.language_code || 'en';
+        setLocale(allowedLocales.includes(userLocale) ? userLocale : 'en');
       } else {
         setLocale('en');
         setErrorCode(`No userParam in params: "${params}"`);
@@ -100,9 +103,6 @@ function MyApp({ Component, pageProps }: AppProps) {
             <UserProvider>
               <ModalProvider>
                 <Toaster />
-                <p>{`LC: ${locale}`}</p>
-                <p>{`Error Code: ${errorCode}`}</p>
-                <p>{`Data: ${window.Telegram.WebApp.initData}`}</p>
                 <Component {...pageProps} />
               </ModalProvider>
             </UserProvider>
