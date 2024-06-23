@@ -52,7 +52,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     // Extract language_code from Telegram WebApp and set locale
 
     try {
-      const params = new URLSearchParams(window.Telegram.WebApp.initDataRaw);
+      const params = new URLSearchParams(window.Telegram.WebApp.initData);
       const userParam = params.get('user');
       let userObj;
       let lC;
@@ -62,7 +62,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         lC = userObj.language_code || 'en';
       } else {
         lC = 'en';
-        console.error(`No userParam in params: "${params}"`);
+        setErrorCode(`No userParam in params: "${params}"`);
       }
 
       setLanguageCode(lC);
