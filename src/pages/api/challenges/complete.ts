@@ -51,12 +51,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         });
       }
 
-      await updateBalance(
-        userId,
-        challenge.reward,
-        `Completed challenge: ${challenge.name}`,
-        challenge.refLink
-      );
+      await updateBalance(userId, challenge.reward, `${challenge.name}`, challenge.refLink);
 
       res.status(200).json({ message: 'Challenge completed and reward granted' });
     } catch (error) {

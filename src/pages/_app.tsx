@@ -5,8 +5,10 @@ import axios from 'axios';
 import type { AppProps } from 'next/app';
 import { Roboto, Roboto_Mono } from 'next/font/google';
 import Head from 'next/head';
+import { IntlProvider } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { Toaster, toast } from 'sonner'
+import { Toaster, toast } from 'sonner';
+
 import { ModalProvider } from '../contexts/ModalContext';
 import { UserProvider } from '../contexts/UserContext';
 import { setupMockTelegramEnv } from '../lib/mockEnv'; // Ensure the path is correct
@@ -25,6 +27,9 @@ const ROBOTO_MONO_TTF = Roboto_Mono({
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [isHashValid, setIsHashValid] = useState(false);
+  const [locale, setLocale] = useState('ru');
+  const [messages, setMessages] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
@@ -41,10 +46,24 @@ function MyApp({ Component, pageProps }: AppProps) {
       // For development, set hash as valid to debug locally
       setIsHashValid(true);
     }
+
+    // Extract language_code from Telegram WebApp and set locale
+    const languageCode = window.Telegram.WebApp.initDataUnsafe.user?.language_code || 'en';
+    setLocale(languageCode);
+
+    // Fetch the appropriate messages based on the determined languageCode
+    import(`../locales/${languageCode}/common.json`).then((msgs) => {
+      setMessages(msgs.default);
+      setLoading(false);
+    });
   }, []);
 
   if (!isHashValid) {
     return null;
+  }
+
+  if (loading) {
+    return <div>Loading...</div>; // or any loading spinner/component
   }
 
   const manifestUrl = process.env.NEXT_PUBLIC_MANIFEST_URL;
@@ -54,9 +73,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <style>{`body { font-family: var(${ROBOTO_TTF.variable}), var(${ROBOTO_MONO_TTF.variable}); }`}</style>
       </Head>
-      <body className={`${ROBOTO_TTF.variable} ${ROBOTO_MONO_TTF.variable}`}>
+      <IntlProvider messages={messages} locale={locale}>
         <TonConnectUIProvider manifestUrl={manifestUrl}>
-          {/*<TonConnectButton className="hidden" />*/}
           <SDKProvider acceptCustomStyles>
             <UserProvider>
               <ModalProvider>
@@ -66,7 +84,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             </UserProvider>
           </SDKProvider>
         </TonConnectUIProvider>
-      </body>
+      </IntlProvider>
     </>
   );
 }

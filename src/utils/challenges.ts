@@ -17,8 +17,8 @@ export interface ChallengeWithStatus extends Challenge {
 const challenges: Challenge[] = [
   {
     id: '1',
-    name: 'Подпишись на FemaleTon',
-    description: 'Telegram-канал проекта с апдейтами продукта и новостями в сфере Femtech',
+    name: 'challenges.challenge1.name',
+    description: 'challenges.challenge1.description',
     reward: 300,
     refLink: 'https://t.me/femaleton',
     image: '/images/femaleton.jpg',
@@ -26,9 +26,8 @@ const challenges: Challenge[] = [
   },
   {
     id: '2',
-    name: 'Подпишись на Women’s HealthQlub',
-    description:
-      'Наталья Молчанова — Автор канала для женщин об управлении капиталом здоровья и качеством жизни',
+    name: 'challenges.challenge2.name',
+    description: 'challenges.challenge2.description',
     reward: 300,
     refLink: 'https://t.me/+z3Kw2MCvEsVkNzcy',
     image: '/images/womenshealth.jpg',
@@ -36,8 +35,8 @@ const challenges: Challenge[] = [
   },
   {
     id: '3',
-    name: 'Подпишись на Burning Anna',
-    description: 'Сооснователь проекта Female TON, продакт-менеджер, рассказывает про AI и web3',
+    name: 'challenges.challenge3.name',
+    description: 'challenges.challenge3.description',
     reward: 300,
     refLink: 'https://t.me/burninganna',
     image: '/images/anna-channel.jpg',

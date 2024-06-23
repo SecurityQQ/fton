@@ -1,5 +1,5 @@
-// components/Farming.tsx
 import { MessageSquareHeart, Rss, UserPlus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import React, { useEffect, useState } from 'react';
 
 import FarmingTracker from '@/components/ui/FarmingTracker';
@@ -9,46 +9,45 @@ const cardClassName =
   'flex flex-col justify-between items-center p-3 gap-2 bg-[var(--font-dark-secondary)] rounded-[4px] flex-1';
 
 const SubscribeCard: React.FC = () => {
+  const t = useTranslations('farming.subscribe_card');
   return (
     <div className={`${cardClassName} rounded-[4px_4px_4px_20px]`}>
       <Rss className="size-5 text-[var(--font-pink-primary)]" />
       <div className="flex grow flex-col items-center text-center">
         <h4 className="text-base font-extrabold text-[var(--font-dark-primary)] sm:text-sm">
-          +300 HC
+          {t('reward')}
         </h4>
-        <p className="text-sm font-medium text-[var(--font-dark-primary)]">Подписаться на каналы</p>
+        <p className="text-sm font-medium text-[var(--font-dark-primary)]">{t('description')}</p>
       </div>
     </div>
   );
 };
 
 const ShareCard: React.FC = () => {
+  const t = useTranslations('farming.share_card');
   return (
     <div className={cardClassName}>
       <MessageSquareHeart className="size-5 text-[var(--font-blue-primary)]" />
       <div className="flex grow flex-col items-center text-center">
         <h4 className="text-base font-extrabold text-[var(--font-dark-primary)] sm:text-sm">
-          +600 HC
+          {t('reward')}
         </h4>
-        <p className="text-sm font-medium text-[var(--font-dark-primary)]">
-          Рассказать о себе (скоро!)
-        </p>
+        <p className="text-sm font-medium text-[var(--font-dark-primary)]">{t('description')}</p>
       </div>
     </div>
   );
 };
 
 const InviteCard: React.FC = () => {
+  const t = useTranslations('farming.invite_card');
   return (
     <div className={`${cardClassName} rounded-[4px_4px_20px_4px]`}>
       <UserPlus className="size-5 text-[var(--font-orange-primary)]" />
       <div className="flex grow flex-col items-center text-center">
         <h4 className="text-base font-extrabold text-[var(--font-dark-primary)] sm:text-sm">
-          +600 HC
+          {t('reward')}
         </h4>
-        <p className="text-sm font-medium text-[var(--font-dark-primary)]">
-          Пригласить пользователя (скоро!)
-        </p>
+        <p className="text-sm font-medium text-[var(--font-dark-primary)]">{t('description')}</p>
       </div>
     </div>
   );

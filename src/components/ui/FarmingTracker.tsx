@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import React, { useState, useEffect } from 'react';
 
 import Button from '@/components/ui/Button';
@@ -26,6 +27,7 @@ const FarmingTracker: React.FC<FarmingTrackerProps> = ({
   setIsFarming,
   onFinishFarming,
 }) => {
+  const t = useTranslations('farming_tracker');
   const [timeLeft, setTimeLeft] = useState(0);
   const [farmingCounter, setFarmingCounter] = useState(Math.round(tokenBalance) || 0);
   const [previousCounter, setPreviousCounter] = useState(Math.round(tokenBalance) || 0);
@@ -108,11 +110,11 @@ const FarmingTracker: React.FC<FarmingTrackerProps> = ({
       <div className="flex w-full max-w-[313px] flex-col items-center gap-2 p-0">
         <div className="flex flex-row items-center gap-2 p-0">
           {!isFarming && (
-            <h3 className="text-gradient-purple text-base font-medium">Баланс заботы к себе</h3>
+            <h3 className="text-gradient-purple text-base font-medium">{t('self_care_balance')}</h3>
           )}
           {isFarming && (
             <h3 className="text-gradient-purple text-base font-medium">
-              Добываем заботу: {`${rewardRatePerHour.toFixed(1)} в час`}
+              {t('farming_care', { rate: rewardRatePerHour.toFixed(1) })}
             </h3>
           )}
         </div>
@@ -125,23 +127,14 @@ const FarmingTracker: React.FC<FarmingTrackerProps> = ({
       </div>
       {isFarming && (
         <Button type="purple" subtype="light">
-          Следующая забота через {formatTime(timeLeft)}
+          {t('next_care_in', { time: formatTime(timeLeft) })}
         </Button>
       )}
       {!isFarming && (
         <Button type="purple" onClick={handleStartFarming}>
-          Получить дневную заботу
+          {t('get_daily_care')}
         </Button>
       )}
-      {/*<div className="flex flex-row justify-center p-0 gap-1.5 w-full">
-        <HorizontalButton 
-          type="purpleSecondary" 
-          leftText="ПОДРОБНЕЕ" 
-          rightText="ИСТОРИЯ" 
-          leftOnClick={() => onViewInfo('details')} 
-          rightOnClick={() => onViewInfo('history')} 
-        />
-      </div>*/}
     </div>
   );
 };
