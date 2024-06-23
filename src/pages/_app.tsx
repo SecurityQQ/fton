@@ -110,7 +110,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <UserProvider>
               <ModalProvider>
                 <Toaster />
-                <p>{`LC: ${languageCode}`}</p>
+                <p>{`LC: ${locale}`}</p>
                 <p>{`Error Code: ${errorCode}`}</p>
                 <p>{`Data: ${window.Telegram.WebApp.initData}`}</p>
                 <Component {...pageProps} />
