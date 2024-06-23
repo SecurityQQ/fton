@@ -1,10 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import fetch from 'node-fetch';
 
+import i18n from '@/utils/i18nBackend';
+
 export interface TelegramMessage {
   message_id: number;
   chat: {
     id: number;
+  };
+  from: {
+    language_code: string;
   };
   text: string;
 }
@@ -17,19 +22,19 @@ export interface TelegramResponse<T> {
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.BOT_TOKEN}`;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // Note: must be public, available without middleware
   if (req.method === 'POST') {
     const { message, callback_query } = req.body;
 
+    let locale = 'en'; // default locale
+    if (message && message.from && message.from.language_code) {
+      locale = message.from.language_code;
+    }
+
+    await i18n.changeLanguage(locale);
+
     if (message && message.text === '/start') {
       const chatId = message.chat.id;
-      const text = `Дорогая,
-
-💡 Удобно: не нужно отдельное приложение
-🔒 Безопасно: данные зашифрованы смартконтрактом
-🌿 Умно: Персональные рекомендации по well-being на основе цикла через бота
-
-С любовью, твоя команда @femaleton`;
+      const text = i18n.t('telegram.start_message');
 
       const sentMessage = (await sendMessage(chatId, text)) as TelegramResponse<TelegramMessage>;
       if (sentMessage.ok) {
