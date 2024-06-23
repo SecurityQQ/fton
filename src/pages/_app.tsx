@@ -31,6 +31,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [messages, setMessages] = useState({});
   const [loading, setLoading] = useState(true);
   const [languageCode, setLanguageCode] = useState('');
+  const [errorCode, setErrorCode] = useState('');
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
@@ -50,19 +51,31 @@ function MyApp({ Component, pageProps }: AppProps) {
 
     // Extract language_code from Telegram WebApp and set locale
 
-    const params = new URLSearchParams(window.Telegram.WebApp.initData);
-    const userParam = params.get('user');
-    let userObj;
-    let local;
-    if (userParam) {
-      userObj = JSON.parse(userParam);
-      local = userObj.get('language_code') || 'n/a';
-    } else {
-      local = `no userParam in params: "${params}"`;
+    try {
+      const params = new URLSearchParams(window.Telegram.WebApp.initDataRaw);
+      const userParam = params.get('user');
+      let userObj;
+      let lC;
+
+      if (userParam) {
+        userObj = JSON.parse(decodeURIComponent(userParam));
+        lC = userObj.language_code || 'en';
+      } else {
+        lC = 'en';
+        console.error(`No userParam in params: "${params}"`);
+      }
+
+      setLanguageCode(lC);
+      setLocale(lC);
+    } catch (error) {
+      console.error('Error parsing initData:', error);
+      setErrorCode(`${error}`);
+      setLocale('en');
+      setLoading(false);
     }
 
-    setLanguageCode(local);
-    setLocale('en');
+    // setLanguageCode(local);
+    // setLocale('en');
 
     // Fetch the appropriate messages based on the determined languageCode
     import(`../locales/${locale}/common.json`)
@@ -98,6 +111,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <ModalProvider>
                 <Toaster />
                 <p>{`LC: ${languageCode}`}</p>
+                <p>{`Error Code: ${errorCode}`}</p>
                 <p>{`Data: ${window.Telegram.WebApp.initData}`}</p>
                 <Component {...pageProps} />
               </ModalProvider>
