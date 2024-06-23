@@ -6,6 +6,9 @@ export interface TelegramMessage {
   chat: {
     id: number;
   };
+  from: {
+    language_code: string;
+  };
   text: string;
 }
 
@@ -15,35 +18,54 @@ export interface TelegramResponse<T> {
 }
 
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.BOT_TOKEN}`;
+const allowedLocales = ['en', 'ru'];
+
+function getNestedValue(obj: any, keyPath: string): any {
+  return keyPath.split('.').reduce((acc, key) => acc && acc[key], obj);
+}
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // Note: must be public, available without middleware
   if (req.method === 'POST') {
     const { message, callback_query } = req.body;
 
-    if (message && message.text === '/start') {
-      const chatId = message.chat.id;
-      const text = `Дорогая,
-
-💡 Удобно: не нужно отдельное приложение
-🔒 Безопасно: данные зашифрованы смартконтрактом
-🌿 Умно: Персональные рекомендации по well-being на основе цикла через бота
-
-С любовью, твоя команда @femaleton`;
-
-      const sentMessage = (await sendMessage(chatId, text)) as TelegramResponse<TelegramMessage>;
-      if (sentMessage.ok) {
-        await pinMessage(chatId, sentMessage.result.message_id);
-      }
+    let locale = 'en'; // default locale
+    if (message && message.from && message.from.language_code) {
+      locale = message.from.language_code;
     }
 
-    res.status(200).send('OK');
+    if (!allowedLocales.includes(locale)) {
+      locale = 'en';
+    }
+
+    try {
+      const messages = await import(`../../../locales/${locale}/common.json`);
+      const text = getNestedValue(messages.default, 'telegram.start_message');
+      const buttonText = getNestedValue(messages.default, 'telegram.button_text');
+
+      if (message && message.text === '/start') {
+        const chatId = message.chat.id;
+
+        const sentMessage = (await sendMessage(
+          chatId,
+          text,
+          buttonText
+        )) as TelegramResponse<TelegramMessage>;
+        if (sentMessage.ok) {
+          await pinMessage(chatId, sentMessage.result.message_id);
+        }
+      }
+
+      res.status(200).send('OK');
+    } catch (error) {
+      console.error('Error loading locale messages:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
   } else {
     res.status(405).send('Method Not Allowed');
   }
 };
 
-const sendMessage = async (chatId: number, text: string) => {
+const sendMessage = async (chatId: number, text: string, buttonText: string) => {
   const url = `${TELEGRAM_API}/sendMessage`;
   const response = await fetch(url, {
     method: 'POST',
@@ -57,7 +79,7 @@ const sendMessage = async (chatId: number, text: string) => {
         inline_keyboard: [
           [
             {
-              text: '🌀 Tracker',
+              text: buttonText,
               url: 'https://t.me/FemaleTonBot/tracker',
             },
           ],

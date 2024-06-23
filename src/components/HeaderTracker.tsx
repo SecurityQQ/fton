@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import React, { useEffect, useState } from 'react';
 
 import TipCard from '@/components/TipCard';
@@ -10,7 +11,6 @@ import {
 
 import MiniCalendar from './MiniCalendar';
 import Button from './ui/Button';
-import recommendationsData from '../assets/recommendations.json';
 import { useModal } from '../contexts/ModalContext';
 
 type HeaderSectionProps = {
@@ -23,6 +23,7 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
   onPeriodDateChange,
 }) => {
   const { openModal, closeModal } = useModal();
+  const t = useTranslations();
 
   const [recommendation, setRecommendation] = useState<string>('');
   const [daysSinceLastPeriod, setDaysSinceLastPeriod] = useState<number>(0);
@@ -32,7 +33,7 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
 
   useEffect(() => {
     if (!lastMenstruationDate) {
-      setRecommendation('Чтобы воспользоваться трекером, обновите дату последних месячных');
+      setRecommendation(t('header_tracker.no_last_period_date'));
       setNextEvent(DefaultEvent);
       return;
     }
@@ -43,9 +44,9 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
     );
     setDaysSinceLastPeriod(daysSinceLastPeriodCalc);
 
-    const phaseIndex = daysSinceLastPeriodCalc % recommendationsData.recommendations.length; // 24 because we shifted recommendatins
+    const phaseIndex = daysSinceLastPeriodCalc % t('header_tracker.recommendations').length;
 
-    setRecommendation(recommendationsData.recommendations[phaseIndex]);
+    setRecommendation(t(`header_tracker.recommendations.${phaseIndex}`));
 
     const calculatedEvent = calculateNextEvent(daysSinceLastPeriodCalc, cycleLength);
     setNextEvent(calculatedEvent);
@@ -63,11 +64,14 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
           </div>
         ) : null}
         <div className="mb-4 w-full max-w-md p-2 text-center">
-          <p className={`${nextEvent.pregnancyChanceColor} text-lg`}>{nextEvent.pregnancyChance}</p>
-          <p className="text-xl text-[var(--font-dark-primary)]">{nextEvent.eventMessage}</p>
+          <p className={`${nextEvent.pregnancyChanceColor} text-lg`}>
+            {t(nextEvent.pregnancyChance)}
+          </p>
+          <p className="text-xl text-[var(--font-dark-primary)]">{t(nextEvent.eventMessage)}</p>
           {lastMenstruationDate && (
             <h2 className={`mt-2 text-5xl font-bold ${nextEvent.eventColor}`}>
-              {nextEvent.daysUntilNextEvent} {getDayLabel(nextEvent.daysUntilNextEvent)}
+              {nextEvent.daysUntilNextEvent}{' '}
+              {t('header_tracker.day_label', { days: nextEvent.daysUntilNextEvent })}
             </h2>
           )}
           <Button
@@ -75,7 +79,7 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
             type={nextEvent.buttonType}
             subtype="primary"
             className="mx-auto my-2 w-fit min-w-[80%] px-4">
-            {nextEvent.buttonText}
+            {t(nextEvent.buttonText)}
           </Button>
           <Button
             type={nextEvent.buttonType}
@@ -84,17 +88,17 @@ const HeaderTracker: React.FC<HeaderSectionProps> = ({
             onClick={() =>
               openModal(
                 <TipCard
-                  title="Совет дня"
-                  day={`${
-                    (daysSinceLastPeriod + 1) % recommendationsData.recommendations.length
-                  }й день цикла`}
+                  title={t('header_tracker.tip_of_the_day')}
+                  day={t('header_tracker.day_of_cycle', {
+                    day: (daysSinceLastPeriod + 1) % t.raw('header_tracker.recommendations').length,
+                  })}
                   advice={recommendation}
-                  buttonText="Супер"
+                  buttonText={t('header_tracker.tip_button_text')}
                   onButtonClick={closeModal}
                 />
               )
             }>
-            СМОТРЕТЬ СОВЕТ ДНЯ
+            {t('header_tracker.view_tip_of_the_day')}
           </Button>
         </div>
       </div>

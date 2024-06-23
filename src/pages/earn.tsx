@@ -2,6 +2,7 @@ import { AppRoot, SegmentedControl } from '@telegram-apps/telegram-ui';
 import { TonConnectButton } from '@tonconnect/ui-react';
 import { Check, ChevronRight, Server as ServerIcon, Star, Wallet } from 'lucide-react';
 import Head from 'next/head';
+import { useTranslations } from 'next-intl';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { initBlockchainLogic, isContractDeployed } from '@/lib/contract/blockchain';
@@ -19,10 +20,11 @@ const EarnPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
-  const [copySuccess, setCopySuccess] = useState('Скопировать');
+  const [copySuccess, setCopySuccess] = useState<string>('');
   const selectedLoadingStarted = useRef(false);
   const privateLoadingStarted = useRef(false);
   const privateKey = useRef<string | null>(null);
+  const t = useTranslations('earn');
 
   useEffect(() => {
     const checkBlockchainInited = async () => {
@@ -120,13 +122,13 @@ const EarnPage: React.FC = () => {
     if (privateKey.current != null) {
       navigator.clipboard.writeText(privateKey.current!).then(
         () => {
-          setCopySuccess('Скопировано!');
+          setCopySuccess(t('copy_success'));
           setTimeout(() => {
-            setCopySuccess('Копировать');
+            setCopySuccess(t('copy'));
           }, 2000);
         },
         () => {
-          setCopySuccess('Не получилось скопировать!');
+          setCopySuccess(t('copy_failed'));
         }
       );
     }
@@ -153,10 +155,9 @@ const EarnPage: React.FC = () => {
       </Head>
 
       <main className="flex w-full flex-1 flex-col items-center justify-center space-y-4 px-4 text-center">
-        {/*<span className="text-xs text-gray-500">5</span>*/}
         <div className="flex w-full max-w-lg items-center justify-between rounded-3xl bg-pink-100 p-4">
           <Wallet className="text-pink-500" size={32} />
-          <p className="mx-4 flex-1 text-header2 text-deep-dark">Подключи свой кошелек</p>
+          <p className="mx-4 flex-1 text-header2 text-deep-dark">{t('connect_wallet')}</p>
           <TonConnectButton />
         </div>
 
@@ -164,8 +165,8 @@ const EarnPage: React.FC = () => {
           <div className="flex w-full max-w-lg flex-col items-center justify-center rounded-3xl bg-green-100 p-4">
             <div className="flex w-full items-center justify-between">
               <Check className="text-green-500" size={32} />
-              <p className="text-lg font-semibold text-green-500">Свой аккаунт в Blockchain TON</p>
-              <p className="text-xl font-semibold text-green-500">+ 1 000 FHC</p>
+              <p className="text-lg font-semibold text-green-500">{t('account_blockchain')}</p>
+              <p className="text-xl font-semibold text-green-500">{t('token_balance')}</p>
             </div>
           </div>
         ) : (
@@ -178,12 +179,10 @@ const EarnPage: React.FC = () => {
               ) : (
                 <Star className="text-blue-500" size={32} />
               )}
-              <p className="mx-4 flex-1 text-header2 text-deep-dark">
-                Создай свой аккаунт в Blockchain TON (около 30 секунд)
-              </p>
+              <p className="mx-4 flex-1 text-header2 text-deep-dark">{t('init_blockchain')}</p>
               <ChevronRight className="text-blue-500" size={24} />
             </div>
-            <p className="mt-2 text-xl font-semibold text-blue-500">+ 1 000 FHC</p>
+            <p className="mt-2 text-xl font-semibold text-blue-500">{t('token_balance')}</p>
           </div>
         )}
         {!isBlockchainInited ? (
@@ -192,7 +191,7 @@ const EarnPage: React.FC = () => {
           <div className="flex w-full max-w-lg flex-col items-center justify-center">
             <div className="mb-4 flex w-full max-w-lg items-center justify-between rounded-3xl bg-purple-100 p-4">
               <ServerIcon className="text-purple-500" size={32} />
-              <p className="mx-4 flex-1 text-header2 text-deep-dark">Где хранить данные?</p>
+              <p className="mx-4 flex-1 text-header2 text-deep-dark">{t('data_storage')}</p>
               <AppRoot>
                 <SegmentedControl className="relative mx-auto flex max-w-lg justify-between overflow-hidden rounded-lg bg-white p-3 shadow-md">
                   <SegmentedControl.Item
@@ -206,7 +205,7 @@ const EarnPage: React.FC = () => {
                       className={`block cursor-pointer p-2 font-semibold transition-colors duration-200 ${
                         selected === 0 ? 'text-white' : ''
                       }`}>
-                      Сервер
+                      {t('server')}
                     </label>
                     <input
                       className="absolute inset-0 size-full cursor-pointer opacity-0"
@@ -225,7 +224,7 @@ const EarnPage: React.FC = () => {
                       className={`block cursor-pointer p-2 font-semibold transition-colors duration-200 ${
                         selected === 2 ? 'text-white' : ''
                       }`}>
-                      TON
+                      {t('ton')}
                     </label>
                     <input
                       className="absolute inset-0 size-full cursor-pointer opacity-0"
@@ -236,13 +235,10 @@ const EarnPage: React.FC = () => {
               </AppRoot>
             </div>
             <div>
-              <div>Скопировать приватный ключ:</div>
-              <button onClick={copyToPrivateKey}>{copySuccess}</button>
+              <div>{t('copy_key')}</div>
+              <button onClick={copyToPrivateKey}>{copySuccess || t('copy')}</button>
             </div>
-            <span className="text-xs text-gray-500">
-              Приватный ключ используется для шифрования ваших данных в блокчейне TON. Доступ к
-              ключу есть только у тебя. Позже мы добавим возможность импорта ключа
-            </span>
+            <span className="text-xs text-gray-500">{t('private_key_info')}</span>
           </div>
         )}
       </main>

@@ -1,0 +1,181 @@
+{
+  "home": {
+    "titles": {
+      "main": "Female TON",
+      "feature1": "Pelacak Kesehatan Wanita",
+      "feature2": "Anonimitas",
+      "feature3": "Dapatkan token"
+    },
+    "descriptions": {
+      "feature1": "Lacak siklusmu langsung di Telegram",
+      "feature2": "Fitur enkripsi dengan kontrak pintar memastikan bahwa data hanya milikmu",
+      "feature3": "Untuk menjaga kesehatanmu, berpartisipasi dalam program loyalitas, dan berlangganan ke channel dokter"
+    },
+    "buttons": {
+      "continue": "Lanjutkan"
+    }
+  },
+  "header_tracker": {
+    "no_last_period_date": "Untuk menggunakan pelacak, perbarui tanggal terakhir menstruasimu",
+    "tip_of_the_day": "Tip hari ini",
+    "day_of_cycle": "{day} hari dari siklus",
+    "tip_button_text": "Bagus",
+    "view_tip_of_the_day": "LIHAT TIP HARI INI",
+    "menstruation_message": "Menstruasi akan dimulai",
+    "ovulation_message": "Ovulasi dalam",
+    "menstruation_start_message": "Menstruasi mungkin akan dimulai dan akan berlangsung selama",
+    "menstruation_coming_message": "Menstruasi dalam",
+    "pregnancy_chance": "Ada kemungkinan untuk hamil",
+    "high_pregnancy_chance": "Kemungkinan tinggi untuk hamil",
+    "low_pregnancy_chance": "Kemungkinan rendah untuk hamil",
+    "change_dates_button": "UBAH TANGGAL MENSTRUASI",
+    "open_calendar_button": "BUKA KALENDER",
+    "mark_menstruation_button": "TANDAI MENSTRUASI",
+    "default_event_message": "Tanggal menstruasi terakhir tidak ditentukan",
+    "day_label": "{days, plural, one {hari} few {hari} many {hari} other {hari}}",
+    "recommendations": [
+      "Hari ini adalah hari pertama menstruasimu, sayang. Manjakan dirimu dengan mandi air hangat dan cokelat! 🍫",
+      "Hari ini adalah hari yang nyaman: kenakan pakaian yang nyaman, tonton serial, dan rileks",
+      "Hari ini adalah hari yoga dan smoothie! Peregangan ringan dan minuman lezat dengan bayam 🧘‍♀️",
+      "Hari ini adalah hari film! Bungkus dirimu dalam selimut, tonton film, dan makan popcorn 🍿",
+      "Hari terakhir! Dapatkan manicure, masker wajah, dan manjakan dirimu dengan perawatan diri 💅",
+      "Hari ini adalah hari yang aktif! Jalan-jalan di taman atau kelas dansa untuk energi 🌳",
+      "Hari ini mulailah hobi atau proyek, makan sayuran dan protein untuk energi",
+      "Hari ini manjakan dirimu dengan makanan penutup dan aktivitas favoritmu, rileks dan nikmati 🍰",
+      "Hari ini adalah hari spa! Masker pelembap dan kulit bercahaya, nikmati ✨",
+      "Hari ini adalah hari kecantikan! Berpakaianlah, meski hanya untuk dirimu sendiri, rencanakan kencan 💃",
+      "Hari ini adalah hari latihan! Rasakan kekuatan dan makan antioksidan 🏋️‍♀️",
+      "Hari ini adalah hari kreativitas! Menulis, menggambar, terlibat dalam sesuatu yang menginspirasi 🎨",
+      "Hari ini rileks! Pijat atau mandi dengan lilin sebelum ovulasi 🛀",
+      "Hari ini adalah ovulasi! Nikmati romansa atau kesenangan sendiri ❤️",
+      "Hari ini adalah yoga! Tetap tenang dan seimbangkan emosimu 🧘‍♀️",
+      "Hari ini adalah hari teh dan serat! Minum teh herbal dan makan makanan untuk mengurangi kembung ☕",
+      "Hari ini adalah hari perawatan kulit! Masker pelembap dan banyak air untuk kilau 💧",
+      "Hari ini adalah meditasi! Latih meditasi atau pernapasan dalam untuk ketenangan 🧘",
+      "Hari ini adalah makan malam! Temui teman atau keluarga untuk mengangkat semangatmu 🍽️",
+      "Hari ini adalah kreativitas! Terlibat dalam kerajinan atau dekorasi untuk kreativitas ✂️",
+      "Hari ini adalah istirahat! Dengarkan tubuhmu, rileks dengan buku atau film bagus 📚",
+      "Hari ini adalah hari sup! Makan sup atau stew yang hangat untuk kenyamanan dan nutrisi 🍲",
+      "Hari ini adalah hari mandi! Mandi relaksasi dengan lavender untuk ketenangan 🛀",
+      "Hari ini adalah hari jurnal! Tulis di jurnal atau berjalan-jalan di alam untuk harmoni 🌿",
+      "Hari ini adalah hari persiapan! Persiapkan produk menstruasi favoritmu",
+      "Hari ini adalah yoga ringan! Olahraga dan hidrasi untuk meredakan nyeri pramenstruasi 🧘‍♀️",
+      "Hari ini adalah kenyamanan! Rileks di rumah dengan minuman hangat dan acara favoritmu ☕",
+      "Hari ini adalah perawatan diri! Renungkan dan tetapkan tujuan untuk bulan depan 🌟"
+    ]
+  },
+
+  "mini_calendar": {
+    "today": "HARI INI",
+    "day_names": ["S", "S", "R", "K", "J", "S", "M"]
+  },
+
+  "farming_tracker": {
+    "self_care_balance": "Saldo Perawatan Diri",
+    "farming_care": "Perawatan Bertani: {rate} per menit",
+    "next_care_in": "Perawatan berikutnya dalam {time}",
+    "get_daily_care": "Dapatkan Perawatan Harian"
+  },
+
+  "subscribe_channels_card": {
+    "title": "Berlangganan ke Channel",
+    "reward_text": "+ 300",
+    "description": "Dapatkan Fem Coin dan tukarkan dengan token lain atau dapatkan diskon untuk konsultasi dan banyak lagi",
+    "completed": "Selesai"
+  },
+
+  "farming": {
+    "subscribe_card": {
+      "reward": "+300 HC",
+      "description": "Berlangganan ke channel"
+    },
+    "share_card": {
+      "reward": "+600 HC",
+      "description": "Bagikan tentang dirimu (segera hadir!)"
+    },
+    "invite_card": {
+      "reward": "+600 HC",
+      "description": "Undang pengguna (segera hadir!)"
+    }
+  },
+
+  "navigation": {
+    "home": "Beranda",
+    "calendar": "Kalender",
+    "earn": "Dapatkan"
+  },
+
+  "calendar": {
+    "week_days": {
+      "0": "S",
+      "1": "S",
+      "2": "R",
+      "3": "K",
+      "4": "J",
+      "5": "S",
+      "6": "M"
+    },
+    "month_names": {
+      "0": "Januari",
+      "1": "Februari",
+      "2": "Maret",
+      "3": "April",
+      "4": "Mei",
+      "5": "Juni",
+      "6": "Juli",
+      "7": "Agustus",
+      "8": "September",
+      "9": "Oktober",
+      "10": "November",
+      "11": "Desember"
+    },
+    "cancel": "Batal",
+    "save": "Simpan",
+    "saving_to_blockchain": "Menyimpan data ke blockchain (hingga 30 detik)",
+    "saving_data": "Menyimpan data",
+    "edit_period_dates": "Edit Tanggal Menstruasi"
+  },
+
+  "earn": {
+    "connect_wallet": "Hubungkan dompetmu",
+    "init_blockchain": "Buat akunmu di Blockchain TON (sekitar 30 detik)",
+    "account_blockchain": "Akunmu di Blockchain TON",
+    "token_balance": "+ 1 000 FHC",
+    "copy_key": "Salin kunci pribadi:",
+    "copy_success": "Disalin!",
+    "copy": "Salin",
+    "copy_failed": "Gagal menyalin!",
+    "data_storage": "Di mana menyimpan data?",
+    "server": "Server",
+    "ton": "TON",
+    "private_key_info": "Kunci pribadi digunakan untuk mengenkripsi data di blockchain TON. Hanya kamu yang memiliki akses ke kunci tersebut. Nanti kami akan menambahkan kemungkinan impor kunci."
+  },
+
+  "challenges": {
+    "challenge1": {
+      "name": "Berlangganan ke FemaleTon",
+      "description": "Channel Telegram dengan pembaruan produk dan berita di bidang Femtech"
+    },
+    "challenge2": {
+      "name": "Berlangganan ke Women’s HealthQlub",
+      "description": "Natalia Molchanova — Penulis channel untuk wanita tentang mengelola modal kesehatan dan kualitas hidup"
+    },
+    "challenge3": {
+      "name": "Berlangganan ke Burning Anna",
+      "description": "Co-founder proyek Female TON, manajer produk, membahas AI dan web3"
+    }
+  },
+
+  "challenge_modal": {
+    "check_reward": "Periksa Reward",
+    "subscribe": "Berlangganan",
+    "reward_received": "✓ Reward Diterima",
+    "go_to_channel": "Pergi ke Channel",
+    "reward_failed": "Gagal mendapatkan reward"
+  },
+
+  "telegram": {
+    "start_message": "Dear,\n\n💡 Nyaman: tidak perlu aplikasi terpisah\n🔒 Aman: data dienkripsi dengan kontrak pintar\n🌿 Pintar: Rekomendasi kesejahteraan pribadi berdasarkan siklusmu melalui bot\n\nDengan cinta, tim @femaletonmu",
+    "button_text": "🌀 Open Tracker"
+  }
+}

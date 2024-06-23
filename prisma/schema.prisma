@@ -22,7 +22,7 @@ model User {
   telegramHandle      String?
   telegramId          BigInt         @unique
   birthdate           DateTime?
-  tokenBalance        Float          @default(0)
+  tokenBalance        Float          @default(1000)
   lastPeriodDate      DateTime?   // TODO: delete it
   menstruations       Menstruation[]
   invitationsSent     Invitation[]   @relation("Inviter")

@@ -1,0 +1,181 @@
+{
+  "home": {
+    "titles": {
+      "main": "Female TON",
+      "feature1": "Gesundheitstracker für Frauen",
+      "feature2": "Anonymität",
+      "feature3": "Token verdienen"
+    },
+    "descriptions": {
+      "feature1": "Verfolge deinen Zyklus direkt in Telegram",
+      "feature2": "Die Verschlüsselungsfunktion mit Smart Contracts stellt sicher, dass die Daten nur dir gehören",
+      "feature3": "Für die Pflege deiner Gesundheit, Teilnahme an Treueprogrammen und Abonnieren von Arztkanälen"
+    },
+    "buttons": {
+      "continue": "Weiter"
+    }
+  },
+  "header_tracker": {
+    "no_last_period_date": "Um den Tracker zu verwenden, aktualisiere das Datum deiner letzten Periode",
+    "tip_of_the_day": "Tipp des Tages",
+    "day_of_cycle": "{day}. Tag des Zyklus",
+    "tip_button_text": "Super",
+    "view_tip_of_the_day": "TIPP DES TAGES ANSEHEN",
+    "menstruation_message": "Die Menstruation beginnt",
+    "ovulation_message": "Ovulation in",
+    "menstruation_start_message": "Die Menstruation könnte beginnen und dauert",
+    "menstruation_coming_message": "Menstruation in",
+    "pregnancy_chance": "Es besteht die Möglichkeit schwanger zu werden",
+    "high_pregnancy_chance": "Hohe Wahrscheinlichkeit schwanger zu werden",
+    "low_pregnancy_chance": "Geringe Wahrscheinlichkeit schwanger zu werden",
+    "change_dates_button": "PERIODENDATEN ÄNDERN",
+    "open_calendar_button": "KALENDER ÖFFNEN",
+    "mark_menstruation_button": "PERIODE MARKIEREN",
+    "default_event_message": "Datum der letzten Periode nicht angegeben",
+    "day_label": "{days, plural, one {Tag} few {Tage} many {Tagen} other {Tage}}",
+    "recommendations": [
+      "Heute ist der erste Tag deiner Periode, liebe. Gönne dir ein heißes Bad und Schokolade! 🍫",
+      "Heute ist ein gemütlicher Tag: Trage bequeme Kleidung, schaue Serien und entspanne dich",
+      "Heute ist Yoga- und Smoothie-Tag! Leichtes Dehnen und ein leckerer Drink mit Spinat 🧘‍♀️",
+      "Heute ist Filmtag! Kuschel dich in eine Decke, schaue einen Film und genieße Popcorn 🍿",
+      "Letzter Tag! Lass dir eine Maniküre machen, eine Gesichtsmaske und gönne dir etwas Selbstpflege 💅",
+      "Heute ist ein aktiver Tag! Ein Spaziergang im Park oder ein Tanzkurs für Energie 🌳",
+      "Heute beginne ein Hobby oder Projekt, esse Gemüse und Protein für Energie",
+      "Heute gönne dir ein Dessert und deine Lieblingsaktivität, entspanne und genieße 🍰",
+      "Heute ist Spa-Tag! Eine feuchtigkeitsspendende Maske und strahlende Haut, genieße ✨",
+      "Heute ist Schönheitstag! Zieh dich schick an, auch wenn es nur für dich ist, plane ein Date 💃",
+      "Heute ist Workout-Tag! Fühle dich stark und esse Antioxidantien 🏋️‍♀️",
+      "Heute ist Kreativitätstag! Schreibe, zeichne, beschäftige dich mit etwas Inspirierendem 🎨",
+      "Heute entspanne! Eine Massage oder ein Bad mit Kerzen vor der Ovulation 🛀",
+      "Heute ist Ovulation! Genieße Romantik oder Solo-Vergnügen ❤️",
+      "Heute ist Yoga! Bleibe ruhig und balanciere deine Emotionen 🧘‍♀️",
+      "Heute ist Tee- und Ballaststofftag! Trinke Kräutertee und esse Lebensmittel, um Blähungen zu reduzieren ☕",
+      "Heute ist Hautpflegetag! Eine feuchtigkeitsspendende Maske und viel Wasser für strahlende Haut 💧",
+      "Heute ist Meditation! Übe Meditation oder tiefes Atmen für Ruhe 🧘",
+      "Heute ist Dinner! Triff Freunde oder Familie, um deine Stimmung zu heben 🍽️",
+      "Heute ist Kreativität! Beschäftige dich mit Handwerk oder Dekoration für Kreativität ✂️",
+      "Heute ist Ruhetag! Höre auf deinen Körper, entspanne mit einem guten Buch oder Film 📚",
+      "Heute ist Suppentag! Esse eine herzhafte Suppe oder Eintopf für Komfort und Nährstoffe 🍲",
+      "Heute ist Badetag! Ein entspannendes Bad mit Lavendel für Ruhe 🛀",
+      "Heute ist Tagebuchtag! Führe ein Tagebuch oder mache einen Spaziergang in der Natur für Harmonie 🌿",
+      "Heute ist Vorbereitungstag! Vorräte deiner Lieblingsmenstrualprodukte aufstocken",
+      "Heute ist leichtes Yoga! Bewegung und Hydration zur Linderung von prämenstruellen Schmerzen 🧘‍♀️",
+      "Heute ist Gemütlichkeit! Entspanne zu Hause mit einem warmen Getränk und deiner Lieblingsserie ☕",
+      "Heute ist Selbstpflege! Reflektiere und setze Ziele für den nächsten Monat 🌟"
+    ]
+  },
+
+  "mini_calendar": {
+    "today": "HEUTE",
+    "day_names": ["M", "D", "M", "D", "F", "S", "S"]
+  },
+
+  "farming_tracker": {
+    "self_care_balance": "Selbstpflege-Guthaben",
+    "farming_care": "Pflegefarm: {rate} pro Minute",
+    "next_care_in": "Nächste Pflege in {time}",
+    "get_daily_care": "Tägliche Pflege erhalten"
+  },
+
+  "subscribe_channels_card": {
+    "title": "Kanäle abonnieren",
+    "reward_text": "+ 300",
+    "description": "Verdiene Fem Coin und tausche sie gegen andere Tokens oder erhalte Rabatte auf Konsultationen und vieles mehr",
+    "completed": "Abgeschlossen"
+  },
+
+  "farming": {
+    "subscribe_card": {
+      "reward": "+300 HC",
+      "description": "Kanäle abonnieren"
+    },
+    "share_card": {
+      "reward": "+600 HC",
+      "description": "Teile über dich selbst (kommt bald!)"
+    },
+    "invite_card": {
+      "reward": "+600 HC",
+      "description": "Lade einen Benutzer ein (kommt bald!)"
+    }
+  },
+
+  "navigation": {
+    "home": "Startseite",
+    "calendar": "Kalender",
+    "earn": "Verdienen"
+  },
+
+  "calendar": {
+    "week_days": {
+      "0": "M",
+      "1": "D",
+      "2": "M",
+      "3": "D",
+      "4": "F",
+      "5": "S",
+      "6": "S"
+    },
+    "month_names": {
+      "0": "Januar",
+      "1": "Februar",
+      "2": "März",
+      "3": "April",
+      "4": "Mai",
+      "5": "Juni",
+      "6": "Juli",
+      "7": "August",
+      "8": "September",
+      "9": "Oktober",
+      "10": "November",
+      "11": "Dezember"
+    },
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "saving_to_blockchain": "Speichern der Daten auf der Blockchain (bis zu 30 Sekunden)",
+    "saving_data": "Daten speichern",
+    "edit_period_dates": "Periodendaten bearbeiten"
+  },
+
+  "earn": {
+    "connect_wallet": "Verbinde dein Wallet",
+    "init_blockchain": "Erstelle dein Konto in der Blockchain TON (ca. 30 Sekunden)",
+    "account_blockchain": "Dein Konto in der Blockchain TON",
+    "token_balance": "+ 1 000 FHC",
+    "copy_key": "Privaten Schlüssel kopieren:",
+    "copy_success": "Kopiert!",
+    "copy": "Kopieren",
+    "copy_failed": "Kopieren fehlgeschlagen!",
+    "data_storage": "Wo sollen Daten gespeichert werden?",
+    "server": "Server",
+    "ton": "TON",
+    "private_key_info": "Der private Schlüssel wird verwendet, um deine Daten in der TON-Blockchain zu verschlüsseln. Nur du hast Zugriff auf den Schlüssel. Später fügen wir die Möglichkeit des Schlüsselimports hinzu."
+  },
+
+  "challenges": {
+    "challenge1": {
+      "name": "Abonniere FemaleTon",
+      "description": "Telegram-Kanal mit Produktupdates und Neuigkeiten im Femtech-Bereich"
+    },
+    "challenge2": {
+      "name": "Abonniere Women’s HealthQlub",
+      "description": "Natalia Molchanova — Autorin des Kanals für Frauen über das Management von Gesundheitskapital und Lebensqualität"
+    },
+    "challenge3": {
+      "name": "Abonniere Burning Anna",
+      "description": "Mitbegründerin des Female TON-Projekts, Produktmanagerin, spricht über KI und Web3"
+    }
+  },
+
+  "challenge_modal": {
+    "check_reward": "Belohnung überprüfen",
+    "subscribe": "Abonnieren",
+    "reward_received": "✓ Belohnung erhalten",
+    "go_to_channel": "Zum Kanal gehen",
+    "reward_failed": "Belohnung konnte nicht erhalten werden"
+  },
+
+  "telegram": {
+    "start_message": "Liebe,\n\n💡 Bequem: keine separate App erforderlich\n🔒 Sicher: Daten sind mit einem Smart Contract verschlüsselt\n🌿 Intelligente: Personalisierte Empfehlungen zum Wohlbefinden basierend auf deinem Zyklus über den Bot\n\nMit Liebe, dein @femaleton Team",
+    "button_text": "🌀 Tracker öffnen"
+  }
+}

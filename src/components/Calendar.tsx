@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 
 import Loader from '@/components/Loader';
@@ -39,6 +40,7 @@ const Calendar: React.FC<CalendarProps> = ({
   const [changes, setChanges] = useState<{ date: Date; action: 'add' | 'delete' }[]>([]);
   const [firstDayOfLastPeriod, setFirstDayOfLastPeriod] = useState<Date | null>(null);
   const today = new Date();
+  const t = useTranslations('calendar');
 
   useEffect(() => {
     const initialMonths = [];
@@ -98,21 +100,29 @@ const Calendar: React.FC<CalendarProps> = ({
     }
   };
 
-  const weekDays = ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'];
+  const weekDays = [
+    t('week_days.0'),
+    t('week_days.1'),
+    t('week_days.2'),
+    t('week_days.3'),
+    t('week_days.4'),
+    t('week_days.5'),
+    t('week_days.6'),
+  ];
 
   const monthNames = [
-    'Январь',
-    'Февраль',
-    'Март',
-    'Апрель',
-    'Май',
-    'Июнь',
-    'Июль',
-    'Август',
-    'Сентябрь',
-    'Октябрь',
-    'Ноябрь',
-    'Декабрь',
+    t('month_names.0'),
+    t('month_names.1'),
+    t('month_names.2'),
+    t('month_names.3'),
+    t('month_names.4'),
+    t('month_names.5'),
+    t('month_names.6'),
+    t('month_names.7'),
+    t('month_names.8'),
+    t('month_names.9'),
+    t('month_names.10'),
+    t('month_names.11'),
   ];
 
   const renderCalendar = () => {
@@ -184,15 +194,15 @@ const Calendar: React.FC<CalendarProps> = ({
         </div>
       </div>
 
-      <div className="bg-telegram-bg mt-[56px] flex h-full flex-col items-center gap-2 overflow-y-scroll">
+      <div className="bg-telegram-bg mt-[56px] flex h-full flex-col items-center gap-2 overflow-y-scroll pb-20 pt-4">
         {renderCalendar()}
         {isSaving && <Loader />}
         <div className="fixed bottom-[91px]">
           {isEditing ? (
             <HorizontalButton
               type="blue"
-              leftText="Отмена"
-              rightText="Сохранить"
+              leftText={t('cancel')}
+              rightText={t('save')}
               leftOnClick={handleCancelChanges}
               rightOnClick={handleSaveChanges}
             />
@@ -200,9 +210,9 @@ const Calendar: React.FC<CalendarProps> = ({
             <Button type={isSaving ? 'ghost' : 'blue'} subtype="primary" onClick={onEdit}>
               {isSaving
                 ? useTon
-                  ? 'Сохраняем данные в блокчейн (до 30 секунд)'
-                  : 'Сохраняем данные'
-                : 'ИЗМЕНИТЬ ДАТЫ МЕСЯЧНЫХ'}
+                  ? t('saving_to_blockchain')
+                  : t('saving_data')
+                : t('edit_period_dates')}
             </Button>
           )}
         </div>
@@ -211,6 +221,6 @@ const Calendar: React.FC<CalendarProps> = ({
   );
 };
 
-// BUGFIX: condition isSaving for button names do not work
-
 export default Calendar;
+
+// BUGFIX: condition isSaving for button names do not work

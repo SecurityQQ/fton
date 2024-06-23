@@ -1,5 +1,3 @@
-// utils/periodDates.ts
-
 export const daysInMonth = (date: Date): number =>
   new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 
@@ -111,6 +109,7 @@ export const getCalendarNumberType = (
 };
 
 export const getDayLabel = (days: number) => {
+  // TODO: delete, deprecated method
   if (days === 1) return 'день';
   if (days >= 2 && days <= 4) return 'дня';
   return 'дней';
@@ -131,68 +130,68 @@ export const calculateNextEvent = (daysSinceLastPeriod: number, cycleLength: num
   if (daysSinceLastPeriod < 5) {
     return {
       eventName: 'menstruation',
-      eventMessage: 'Месячные будут',
+      eventMessage: 'header_tracker.menstruation_message',
       daysUntilNextEvent: 5 - daysSinceLastPeriod,
-      pregnancyChance: 'Есть вероятность забеременеть',
+      pregnancyChance: 'header_tracker.pregnancy_chance',
       eventColor: 'text-gradient-pink',
       pregnancyChanceColor: 'text-[var(--font-pink-primary)]',
       buttonType: 'pink' as CalendarEventButtonType,
-      buttonText: 'ИЗМЕНИТЬ ДАТЫ МЕСЯЧНЫХ',
+      buttonText: 'header_tracker.change_dates_button',
     };
   } else if (daysSinceLastPeriod >= 12 && daysSinceLastPeriod < 17) {
     return {
       eventName: 'ovulation',
-      eventMessage: 'Овуляция через',
+      eventMessage: 'header_tracker.ovulation_message',
       daysUntilNextEvent: 17 - daysSinceLastPeriod,
-      pregnancyChance: 'Высокая вероятность забеременеть',
+      pregnancyChance: 'header_tracker.high_pregnancy_chance',
       eventColor: 'text-gradient-blue',
       pregnancyChanceColor: 'text-[var(--font-blue-primary)]',
       buttonType: 'blue' as CalendarEventButtonType,
-      buttonText: 'ОТКРЫТЬ КАЛЕНДАРЬ',
+      buttonText: 'header_tracker.open_calendar_button',
     };
   } else if (daysSinceLastPeriod >= 28 && daysSinceLastPeriod % cycleLength <= 5) {
     return {
       eventName: 'menstruation',
-      eventMessage: 'Месячные могут начаться и будут',
+      eventMessage: 'header_tracker.menstruation_start_message',
       daysUntilNextEvent: 5 - (daysSinceLastPeriod % cycleLength),
-      pregnancyChance: 'Низкая вероятность забеременеть',
+      pregnancyChance: 'header_tracker.low_pregnancy_chance',
       eventColor: 'text-gradient-pink',
       pregnancyChanceColor: 'text-[var(--font-pink-primary)]',
       buttonType: 'pink' as CalendarEventButtonType,
-      buttonText: 'ОТМЕТИТЬ МЕСЯЧНЫЕ',
+      buttonText: 'header_tracker.mark_menstruation_button',
     };
   } else if (daysUntilNextPeriod <= 5) {
     return {
       eventName: 'menstruation',
-      eventMessage: 'Месячные через',
+      eventMessage: 'header_tracker.menstruation_coming_message',
       daysUntilNextEvent: daysUntilNextPeriod,
-      pregnancyChance: 'Низкая вероятность забеременеть',
+      pregnancyChance: 'header_tracker.low_pregnancy_chance',
       eventColor: 'text-gradient-pink',
       pregnancyChanceColor: 'text-[var(--font-pink-primary)]',
       buttonType: 'pink' as CalendarEventButtonType,
-      buttonText: 'ОТМЕТИТЬ МЕСЯЧНЫЕ',
+      buttonText: 'header_tracker.mark_menstruation_button',
     };
   } else {
     return {
       eventName: 'default',
-      eventMessage: 'Месячные через',
+      eventMessage: 'header_tracker.menstruation_coming_message',
       daysUntilNextEvent: daysUntilNextPeriod,
-      pregnancyChance: 'Низкая вероятность забеременеть',
+      pregnancyChance: 'header_tracker.low_pregnancy_chance',
       eventColor: 'text-[var(--font-dark-primary)]',
       pregnancyChanceColor: 'text-[var(--font-dark-primary)]',
       buttonType: 'pink' as CalendarEventButtonType,
-      buttonText: 'ОТКРЫТЬ КАЛЕНДАРЬ',
+      buttonText: 'header_tracker.open_calendar_button',
     };
   }
 };
 
 export const DefaultEvent = {
-  eventName: 'Чтобы воспользоваться приложением введите дату',
-  eventMessage: 'Дата последних месячных не указана',
+  eventName: 'default',
+  eventMessage: 'header_tracker.default_event_message',
   daysUntilNextEvent: 0,
   pregnancyChance: '',
   eventColor: 'text-[var(--font-dark-primary)]',
   pregnancyChanceColor: 'text-[var(--font-dark-primary)]',
   buttonType: 'dark' as CalendarEventButtonType,
-  buttonText: 'ОТКРЫТЬ КАЛЕНДАРЬ',
+  buttonText: 'header_tracker.open_calendar_button',
 };

@@ -1,0 +1,183 @@
+{
+  "home": {
+    "titles": {
+      "main": "Female TON",
+      "feature1": "Suivi de la santé des femmes",
+      "feature2": "Anonymat",
+      "feature3": "Gagnez des jetons"
+    },
+    "descriptions": {
+      "feature1": "Suivez votre cycle directement dans Telegram",
+      "feature2": "La fonction de cryptage avec des contrats intelligents garantit que les données n'appartiennent qu'à vous",
+      "feature3": "Pour prendre soin de votre santé, participer à des programmes de fidélité et s'abonner aux chaînes de médecins"
+    },
+    "buttons": {
+      "continue": "Continuer"
+    }
+  },
+  "header_tracker": {
+    "no_last_period_date": "Pour utiliser le tracker, mettez à jour la date de votre dernière période",
+    "tip_of_the_day": "Conseil du jour",
+    "day_of_cycle": "{day}ème jour du cycle",
+    "tip_button_text": "Génial",
+    "view_tip_of_the_day": "VOIR LE CONSEIL DU JOUR",
+    "menstruation_message": "Les menstruations commenceront",
+    "ovulation_message": "Ovulation dans",
+    "menstruation_start_message": "Les menstruations peuvent commencer et dureront pendant",
+    "menstruation_coming_message": "Menstruations dans",
+    "pregnancy_chance": "Il y a une chance de tomber enceinte",
+    "high_pregnancy_chance": "Haute chance de tomber enceinte",
+    "low_pregnancy_chance": "Faible chance de tomber enceinte",
+    "change_dates_button": "MODIFIER LES DATES DE PÉRIODE",
+    "open_calendar_button": "OUVRIR LE CALENDRIER",
+    "mark_menstruation_button": "MARQUER LA PÉRIODE",
+    "default_event_message": "Date de la dernière période non spécifiée",
+    "day_label": "{days, plural, one {jour} few {jours} many {jours} other {jours}}",
+    "recommendations": [
+      "Aujourd'hui est le premier jour de vos règles, chère. Offrez-vous un bain chaud et du chocolat! 🍫",
+      "Aujourd'hui est une journée confortable : portez des vêtements confortables, regardez des séries et détendez-vous",
+      "Aujourd'hui est une journée de yoga et de smoothie! Légers étirements et une boisson savoureuse avec des épinards 🧘‍♀️",
+      "Aujourd'hui est une journée cinéma! Enveloppez-vous dans une couverture, regardez un film et mangez du pop-corn 🍿",
+      "Dernier jour! Faites-vous une manucure, un masque facial et offrez-vous des soins personnels 💅",
+      "Aujourd'hui est une journée active! Une promenade dans le parc ou un cours de danse pour l'énergie 🌳",
+      "Aujourd'hui commencez un hobby ou un projet, mangez des légumes et des protéines pour l'énergie",
+      "Aujourd'hui offrez-vous un dessert et une activité favorite, détendez-vous et profitez 🍰",
+      "Aujourd'hui est une journée spa! Un masque hydratant et une peau éclatante, profitez ✨",
+      "Aujourd'hui est une journée beauté! Habillez-vous, même si c'est juste pour vous, planifiez un rendez-vous 💃",
+      "Aujourd'hui est une journée d'entraînement! Sentez-vous fort et mangez des antioxydants 🏋️‍♀️",
+      "Aujourd'hui est une journée de créativité! Écrivez, dessinez, engagez-vous dans quelque chose d'inspirant 🎨",
+      "Aujourd'hui détendez-vous! Un massage ou un bain avec des bougies avant l'ovulation 🛀",
+      "Aujourd'hui est l'ovulation! Profitez de la romance ou du plaisir en solo ❤️",
+      "Aujourd'hui est une journée de yoga! Restez calme et équilibré vos émotions 🧘‍♀️",
+      "Aujourd'hui est une journée de thé et de fibres! Buvez du thé aux herbes et mangez des aliments pour réduire les ballonnements ☕",
+      "Aujourd'hui est une journée de soins de la peau! Un masque hydratant et beaucoup d'eau pour un éclat 💧",
+      "Aujourd'hui est une journée de méditation! Pratiquez la méditation ou la respiration profonde pour la calme 🧘",
+      "Aujourd'hui est un dîner! Rencontrez des amis ou de la famille pour remonter le moral 🍽️",
+      "Aujourd'hui est une journée de créativité! Engagez-vous dans des travaux manuels ou la décoration pour la créativité ✂️",
+      "Aujourd'hui reposez-vous! Écoutez votre corps, détendez-vous avec un bon livre ou un film 📚",
+      "Aujourd'hui est une journée de soupe! Mangez une soupe ou un ragoût copieux pour le confort et la nutrition 🍲",
+      "Aujourd'hui est une journée de bain! Un bain relaxant avec de la lavande pour le calme 🛀",
+      "Aujourd'hui est une journée de journal! Tenez un journal ou faites une promenade dans la nature pour l'harmonie 🌿",
+      "Aujourd'hui est une journée de préparation! Faites le plein de vos produits menstruels préférés",
+      "Aujourd'hui est un yoga léger! Exercice et hydratation pour soulager la douleur prémenstruelle 🧘‍♀️",
+      "Aujourd'hui est la convivialité! Détendez-vous à la maison avec une boisson chaude et votre émission préférée ☕",
+      "Aujourd'hui est une journée de soins personnels! Réfléchissez et fixez des objectifs pour le mois prochain 🌟"
+    ]
+  },
+
+"mini_calendar": {
+    "today": "AUJOURD'HUI",
+    "day_names": ["L", "M", "M", "J", "V", "S", "D"]
+},
+
+
+
+"farming_tracker": {
+    "self_care_balance": "Équilibre des soins personnels",
+    "farming_care": "Soins agricoles : {rate} par minute",
+    "next_care_in": "Prochain soin dans {time}",
+    "get_daily_care": "Obtenez des soins quotidiens"
+},
+
+"subscribe_channels_card": {
+    "title": "Abonnez-vous aux chaînes",
+    "reward_text": "+ 300",
+    "description": "Gagnez Fem Coin et échangez-le contre d'autres jetons ou obtenez des réductions sur les consultations et bien plus encore",
+    "completed": "Terminé"
+},
+
+"farming": {
+    "subscribe_card": {
+      "reward": "+300 HC",
+      "description": "Abonnez-vous aux chaînes"
+    },
+    "share_card": {
+      "reward": "+600 HC",
+      "description": "Parlez de vous (à venir !)"
+    },
+    "invite_card": {
+      "reward": "+600 HC",
+      "description": "Invitez un utilisateur (à venir !)"
+    }
+  },
+
+  "navigation": {
+    "home": "Accueil",
+    "calendar": "Calendrier",
+    "earn": "Gagner"
+  },
+
+"calendar": {
+    "week_days": {
+      "0": "L",
+      "1": "M",
+      "2": "M",
+      "3": "J",
+      "4": "V",
+      "5": "S",
+      "6": "D"
+    },
+    "month_names": {
+      "0": "Janvier",
+      "1": "Février",
+      "2": "Mars",
+      "3": "Avril",
+      "4": "Mai",
+      "5": "Juin",
+      "6": "Juillet",
+      "7": "Août",
+      "8": "Septembre",
+      "9": "Octobre",
+      "10": "Novembre",
+      "11": "Décembre"
+    },
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saving_to_blockchain": "Enregistrement des données sur la blockchain (jusqu'à 30 secondes)",
+    "saving_data": "Enregistrement des données",
+    "edit_period_dates": "Modifier les dates de période"
+  },
+
+"earn": {
+    "connect_wallet": "Connectez votre portefeuille",
+    "init_blockchain": "Créez votre compte sur la Blockchain TON (environ 30 secondes)",
+    "account_blockchain": "Votre compte sur la Blockchain TON",
+    "token_balance": "+ 1 000 FHC",
+    "copy_key": "Copier la clé privée:",
+    "copy_success": "Copié!",
+    "copy": "Copier",
+    "copy_failed": "Échec de la copie!",
+    "data_storage": "Où stocker les données?",
+    "server": "Serveur",
+    "ton": "TON",
+    "private_key_info": "La clé privée est utilisée pour chiffrer vos données dans la blockchain TON. Vous seul avez accès à la clé. Plus tard, nous ajouterons la possibilité d'importer la clé."
+},
+
+"challenges": {
+    "challenge1": {
+      "name": "Abonnez-vous à FemaleTon",
+      "description": "Chaîne Telegram avec des mises à jour de produits et des actualités dans le domaine de la Femtech"
+    },
+    "challenge2": {
+      "name": "Abonnez-vous à Women’s HealthQlub",
+      "description": "Natalia Molchanova — Auteur de la chaîne pour les femmes sur la gestion du capital santé et la qualité de vie"
+    },
+    "challenge3": {
+      "name": "Abonnez-vous à Burning Anna",
+      "description": "Cofondatrice du projet Female TON, chef de produit, parle d'IA et de web3"
+    }
+  },
+
+   "challenge_modal": {
+    "check_reward": "Vérifier la récompense",
+    "subscribe": "S'abonner",
+    "reward_received": "✓ Récompense reçue",
+    "go_to_channel": "Aller à la chaîne",
+    "reward_failed": "Échec de la récupération de la récompense"
+  },
+
+  "telegram": {
+    "start_message": "Chère,\n\n💡 Pratique : pas besoin d'une application séparée\n🔒 Sécurisé : les données sont cryptées avec un contrat intelligent\n🌿 Intelligent : recommandations de bien-être personnalisées basées sur votre cycle via le bot\n\nAvec amour, votre équipe @femaleton",
+    "button_text": "🌀 Ouvrir le tracker"
+  }
+}

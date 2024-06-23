@@ -1,0 +1,186 @@
+{
+  "home": {
+    "titles": {
+      "main": "Female TON",
+      "feature1": "Women's Health Tracker",
+      "feature2": "Anonymity",
+      "feature3": "Earn tokens"
+    },
+    "descriptions": {
+      "feature1": "Track your cycle directly in Telegram",
+      "feature2": "The encryption feature with smart contracts ensures that the data belongs only to you",
+      "feature3": "For taking care of your health, participating in loyalty programs, and subscribing to doctors' channels"
+    },
+    "buttons": {
+      "continue": "Continue"
+    }
+  },
+  "header_tracker": {
+    "no_last_period_date": "To use the tracker, update the date of your last period",
+    "tip_of_the_day": "Tip of the day",
+    "day_of_cycle": "{day}th day of the cycle",
+    "tip_button_text": "Great",
+    "view_tip_of_the_day": "VIEW TIP OF THE DAY",
+    "menstruation_message": "Menstruation will start",
+    "ovulation_message": "Ovulation in",
+    "menstruation_start_message": "Menstruation may start and will last for",
+    "menstruation_coming_message": "Menstruation in",
+    "pregnancy_chance": "There is a chance of getting pregnant",
+    "high_pregnancy_chance": "High chance of getting pregnant",
+    "low_pregnancy_chance": "Low chance of getting pregnant",
+    "change_dates_button": "CHANGE PERIOD DATES",
+    "open_calendar_button": "OPEN CALENDAR",
+    "mark_menstruation_button": "MARK PERIOD",
+    "default_event_message": "Date of last period is not specified",
+    "day_label": "{days, plural, one {day} few {days} many {days} other {days}}",
+    "recommendations": [
+      "Today is the first day of your period, dear. Treat yourself to a hot bath and chocolate! 🍫",
+      "Today is a comfortable day: wear cozy clothes, watch series, and relax",
+      "Today is yoga and smoothie day! Light stretching and a tasty drink with spinach 🧘‍♀️",
+      "Today is movie day! Wrap yourself in a blanket, watch a movie, and eat popcorn 🍿",
+      "Last day! Get a manicure, a face mask, and treat yourself to some self-care 💅",
+      "Today is an active day! A walk in the park or a dance class for energy 🌳",
+      "Today start a hobby or project, eat vegetables and protein for energy",
+      "Today treat yourself to a dessert and favorite activity, relax and enjoy 🍰",
+      "Today is spa day! A moisturizing mask and glowing skin, enjoy ✨",
+      "Today is beauty day! Dress up, even if it's just for yourself, plan a date 💃",
+      "Today is workout day! Feel strong and eat antioxidants 🏋️‍♀️",
+      "Today is creativity day! Write, draw, engage in something inspiring 🎨",
+      "Today relax! A massage or bath with candles before ovulation 🛀",
+      "Today is ovulation! Enjoy romance or solo pleasure ❤️",
+      "Today is yoga! Stay calm and balance your emotions 🧘‍♀️",
+      "Today is tea and fiber day! Drink herbal tea and eat foods to reduce bloating ☕",
+      "Today is skincare day! A moisturizing mask and lots of water for a glow 💧",
+      "Today is meditation! Practice meditation or deep breathing for calmness 🧘",
+      "Today is dinner! Meet friends or family to lift your spirits 🍽️",
+      "Today is creativity! Engage in crafts or decor for creativity ✂️",
+      "Today is rest! Listen to your body, relax with a good book or movie 📚",
+      "Today is soup day! Eat a hearty soup or stew for comfort and nutrition 🍲",
+      "Today is bath day! A relaxing bath with lavender for calmness 🛀",
+      "Today is journal day! Keep a journal or take a nature walk for harmony 🌿",
+      "Today is preparation day! Stock up on your favorite menstrual products",
+      "Today is light yoga! Exercise and hydration to ease premenstrual pain 🧘‍♀️",
+      "Today is coziness! Relax at home with a warm drink and your favorite show ☕",
+      "Today is self-care! Reflect and set goals for the next month 🌟"
+    ]
+  },
+
+"mini_calendar": {
+    "today": "TODAY",
+    "day_names": ["M", "T", "W", "T", "F", "S", "S"]
+},
+
+
+
+"farming_tracker": {
+    "self_care_balance": "Self-care Balance",
+    "farming_care": "Farming Care: {rate} per minute",
+    "next_care_in": "Next care in {time}",
+    "get_daily_care": "Get Daily Care"
+},
+
+"subscribe_channels_card": {
+    "title": "Subscribe to Channels",
+    "reward_text": "+ 300",
+    "description": "Earn Fem Coin and exchange it for other tokens or get discounts on consultations and much more",
+    "completed": "Completed"
+},
+
+"farming": {
+    "subscribe_card": {
+      "reward": "+300 HC",
+      "description": "Subscribe to channels"
+    },
+    "share_card": {
+      "reward": "+600 HC",
+      "description": "Share about yourself (coming soon!)"
+    },
+    "invite_card": {
+      "reward": "+600 HC",
+      "description": "Invite a user (coming soon!)"
+    }
+  },
+
+  "navigation": {
+    "home": "Home",
+    "calendar": "Calendar",
+    "earn": "Earn"
+  },
+
+"calendar": {
+    "week_days": {
+      "0": "M",
+      "1": "T",
+      "2": "W",
+      "3": "T",
+      "4": "F",
+      "5": "S",
+      "6": "S"
+    },
+    "month_names": {
+      "0": "January",
+      "1": "February",
+      "2": "March",
+      "3": "April",
+      "4": "May",
+      "5": "June",
+      "6": "July",
+      "7": "August",
+      "8": "September",
+      "9": "October",
+      "10": "November",
+      "11": "December"
+    },
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving_to_blockchain": "Saving data to blockchain (up to 30 seconds)",
+    "saving_data": "Saving data",
+    "edit_period_dates": "Edit Period Dates"
+  },
+
+"earn": {
+    "connect_wallet": "Connect your wallet",
+    "init_blockchain": "Create your account in Blockchain TON (about 30 seconds)",
+    "account_blockchain": "Your account in Blockchain TON",
+    "token_balance": "+ 1 000 FHC",
+    "copy_key": "Copy private key:",
+    "copy_success": "Copied!",
+    "copy": "Copy",
+    "copy_failed": "Failed to copy!",
+    "data_storage": "Where to store data?",
+    "server": "Server",
+    "ton": "TON",
+    "private_key_info": "The private key is used to encrypt your data in the TON blockchain. Only you have access to the key. Later we will add the possibility of key import."
+},
+
+"challenges": {
+    "challenge1": {
+      "name": "Subscribe to FemaleTon",
+      "description": "Telegram channel with product updates and news in the Femtech sphere"
+    },
+    "challenge2": {
+      "name": "Subscribe to Women’s HealthQlub",
+      "description": "Natalia Molchanova — Author of the channel for women on managing health capital and quality of life"
+    },
+    "challenge3": {
+      "name": "Subscribe to Burning Anna",
+      "description": "Co-founder of the Female TON project, product manager, talks about AI and web3"
+    }
+  },
+
+   "challenge_modal": {
+    "check_reward": "Check Reward",
+    "subscribe": "Subscribe",
+    "reward_received": "✓ Reward Received",
+    "go_to_channel": "Go to Channel",
+    "reward_failed": "Failed to get reward"
+  },
+
+  "telegram": {
+    "start_message": "Dear,\n\n💡 Convenient: no need for a separate app\n🔒 Secure: data is encrypted with a smart contract\n🌿 Smart: Personalized well-being recommendations based on your cycle via the bot\n\nWith love, your @femaleton team",
+    "button_text": "🌀 Open Tracker"
+  }
+
+
+
+}
