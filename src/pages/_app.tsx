@@ -51,7 +51,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     if (process.env.NODE_ENV === 'production') {
       // Extract language_code from Telegram WebApp and set locale
       const initData = Object.fromEntries(new URLSearchParams(window.Telegram.WebApp.initDataRaw));
-      const user = JSON.parse(initData.user);
+      const userJSON = decodeURIComponent(initData.user);
+      const user = JSON.parse(userJSON);
       const lC = user.language_code;
 
       setLanguageCode(lC);
