@@ -48,16 +48,18 @@ function MyApp({ Component, pageProps }: AppProps) {
       setIsHashValid(true);
     }
 
-    // Extract language_code from Telegram WebApp and set locale
-    const initData = window.Telegram.WebApp.initDataRaw || {};
-    const user = initData.user || {};
-    const lC = user.language_code;
+    if (process.env.NODE_ENV === 'production') {
+      // Extract language_code from Telegram WebApp and set locale
+      const initData = Object.fromEntries(new URLSearchParams(window.Telegram.WebApp.initDataRaw));
+      const user = JSON.parse(initData.user);
+      const lC = user.language_code;
 
-    setLanguageCode(lC);
-    setLocale(lC || 'en');
+      setLanguageCode(lC);
+      setLocale(lC || 'en');
+    }
 
     // Fetch the appropriate messages based on the determined languageCode
-    import(`../locales/${lC || 'en'}/common.json`)
+    import(`../locales/${locale}/common.json`)
       .then((msgs) => {
         setMessages(msgs.default);
         setLoading(false);
