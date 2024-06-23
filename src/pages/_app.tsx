@@ -27,9 +27,10 @@ const ROBOTO_MONO_TTF = Roboto_Mono({
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [isHashValid, setIsHashValid] = useState(false);
-  const [locale, setLocale] = useState('ru');
+  const [locale, setLocale] = useState('en'); // Default to 'en' if not set
   const [messages, setMessages] = useState({});
   const [loading, setLoading] = useState(true);
+  const [languageCode, setLanguageCode] = useState('');
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
@@ -37,7 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
 
     if (process.env.NODE_ENV === 'production') {
-      // telegram hook for production
+      // Telegram hook for production
       axios
         .post('/api/validate-hash', { hash: window.Telegram.WebApp.initData })
         .then((response) => setIsHashValid(response.status === 200))
@@ -48,14 +49,24 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
 
     // Extract language_code from Telegram WebApp and set locale
-    const languageCode = window.Telegram.WebApp.initDataUnsafe.user?.language_code || 'en';
-    setLocale(languageCode);
+    const initData = window.Telegram.WebApp.initData || {};
+    const user = initData.user || {};
+    const lC = user.language_code;
+    console.log('USER DATA: ', window.Telegram.WebApp.initDataRaw); // Log for mock data
+
+    setLanguageCode(lC);
+    setLocale(lC || 'en');
 
     // Fetch the appropriate messages based on the determined languageCode
-    import(`../locales/${languageCode}/common.json`).then((msgs) => {
-      setMessages(msgs.default);
-      setLoading(false);
-    });
+    import(`../locales/${lC || 'en'}/common.json`)
+      .then((msgs) => {
+        setMessages(msgs.default);
+        setLoading(false);
+      })
+      .catch(() => {
+        // Handle error in case locale file is not found
+        setLoading(false);
+      });
   }, []);
 
   if (!isHashValid) {
@@ -79,6 +90,8 @@ function MyApp({ Component, pageProps }: AppProps) {
             <UserProvider>
               <ModalProvider>
                 <Toaster />
+                <p>{`LC: ${languageCode}`}</p>
+                <p>{`Data: ${window.Telegram.WebApp.initData}`}</p>
                 <Component {...pageProps} />
               </ModalProvider>
             </UserProvider>

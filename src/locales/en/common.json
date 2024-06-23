@@ -166,6 +166,14 @@
       "name": "Subscribe to Burning Anna",
       "description": "Co-founder of the Female TON project, product manager, talks about AI and web3"
     }
+  },
+
+   "challenge_modal": {
+    "check_reward": "Check Reward",
+    "subscribe": "Subscribe",
+    "reward_received": "✓ Reward Received",
+    "go_to_channel": "Go to Channel",
+    "reward_failed": "Failed to get reward"
   }
 
 

@@ -1,11 +1,8 @@
-// components/ChallengeModal.tsx
-// components/ChallengeModal.tsx
+import { useTranslations } from 'next-intl';
 import React, { useState } from 'react';
 
 import Button from '@/components/ui/Button';
 import Coin from '@/components/ui/Coin';
-import RewardText from '@/components/ui/RewardText';
-import { useModal } from '@/contexts/ModalContext';
 
 interface ChallengeModalProps {
   title: string;
@@ -32,6 +29,7 @@ const ChallengeModal: React.FC<ChallengeModalProps> = ({
 }) => {
   const [rewardChecked, setRewardChecked] = useState(isCompleted);
   const [rewardStatus, setRewardStatus] = useState(isCompleted ? 'success' : '');
+  const t = useTranslations('challenge_modal');
 
   const handleCheckReward = async () => {
     if (rewardStatus === 'success') {
@@ -76,23 +74,23 @@ const ChallengeModal: React.FC<ChallengeModalProps> = ({
         {!rewardChecked ? (
           <>
             <Button type="blue" subtype="secondary" onClick={handleCheckReward}>
-              Проверить награду
+              {t('check_reward')}
             </Button>
             <Button type="blue" subtype="primary" onClick={() => window.open(refLink, '_blank')}>
-              Подписаться
+              {t('subscribe')}
             </Button>
           </>
         ) : rewardStatus === 'success' ? (
           <>
             <Button type="blue" subtype="secondary">
-              &#10003; Награда получена
+              {t('reward_received')}
             </Button>
             <Button type="blue" subtype="primary" onClick={() => window.open(refLink, '_blank')}>
-              Перейти в канал
+              {t('go_to_channel')}
             </Button>
           </>
         ) : (
-          <div className="text-2xl text-red-500">Не удалось получить награду</div>
+          <div className="text-2xl text-red-500">{t('reward_failed')}</div>
         )}
       </div>
     </div>
