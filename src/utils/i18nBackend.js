@@ -3,7 +3,7 @@ import HttpBackend from 'i18next-http-backend';
 
 i18n.use(HttpBackend).init({
   backend: {
-    loadPath: './locales/{{lng}}/{{ns}}.json',
+    loadPath: '@/locales/{{lng}}/{{ns}}.json',
   },
   fallbackLng: 'en',
   ns: ['common'],

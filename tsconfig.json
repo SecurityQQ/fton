@@ -28,7 +28,8 @@
       "@/components/*": ["src/components/*"],
       "@/components/ui/*": ["src/components/ui/*"],
       "@/contexts/*": ["src/contexts/*"],
-      "@/types/*": ["src/types/*"]
+      "@/types/*": ["src/types/*"],
+      "@/locales/*": ["src/locales/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
