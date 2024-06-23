@@ -1,4 +1,4 @@
-// examples/SubscribeChannelsCard.tsx
+import { useTranslations } from 'next-intl';
 import React, { useEffect, useState } from 'react';
 
 import ChallengeModal from '@/components/ChallengeModal';
@@ -12,6 +12,7 @@ const SubscribeChannelsCard: React.FC = () => {
   const { user } = useUser();
   const { openModal } = useModal();
   const [challenges, setChallenges] = useState<ChallengeWithStatus[]>([]);
+  const t = useTranslations('');
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -44,8 +45,8 @@ const SubscribeChannelsCard: React.FC = () => {
   const handleOpenModal = (challenge: ChallengeWithStatus) => {
     openModal(
       <ChallengeModal
-        title={challenge.name}
-        description={challenge.description}
+        title={t(challenge.name)}
+        description={t(challenge.description)}
         reward={challenge.reward}
         refLink={challenge.refLink}
         userId={user!.id}
@@ -60,18 +61,20 @@ const SubscribeChannelsCard: React.FC = () => {
   const menuItems = challenges.map((challenge) => ({
     image: challenge.image,
     title: challenge.description,
-    reward: challenge.isCompleted ? 'Выполнено' : `+${challenge.reward}`,
+    reward: challenge.isCompleted ? t('subscribe_channels_card.completed') : `+${challenge.reward}`,
     onClick: () => handleOpenModal(challenge),
   }));
 
   const renderContent = () => (
     <>
-      <span className="text-lg font-semibold">Подписаться на каналы</span>
-      <RewardText value="+ 300" label="F" type="white" gradient="green" />
-      <span className="px-2 text-sm">
-        Зарабатывайте Fem Coin и обменивайте его на другие токены или получайте скидку на
-        консультации и многое другое
-      </span>
+      <span className="text-lg font-semibold">{t('subscribe_channels_card.title')}</span>
+      <RewardText
+        value={t('subscribe_channels_card.reward_text')}
+        label="F"
+        type="white"
+        gradient="green"
+      />
+      <span className="px-2 text-sm">{t('subscribe_channels_card.description')}</span>
     </>
   );
 
