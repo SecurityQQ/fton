@@ -164,6 +164,14 @@
       "name": "Подпишись на Burning Anna",
       "description": "Сооснователь проекта Female TON, продакт-менеджер, рассказывает про AI и web3"
     }
+  },
+
+   "challenge_modal": {
+    "check_reward": "Проверить награду",
+    "subscribe": "Подписаться",
+    "reward_received": "✓ Награда получена",
+    "go_to_channel": "Перейти в канал",
+    "reward_failed": "Не удалось получить награду"
   }
 
 }

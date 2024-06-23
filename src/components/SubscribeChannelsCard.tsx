@@ -12,7 +12,7 @@ const SubscribeChannelsCard: React.FC = () => {
   const { user } = useUser();
   const { openModal } = useModal();
   const [challenges, setChallenges] = useState<ChallengeWithStatus[]>([]);
-  const t = useTranslations('');
+  const t = useTranslations();
 
   useEffect(() => {
     const fetchChallenges = async () => {
@@ -60,7 +60,7 @@ const SubscribeChannelsCard: React.FC = () => {
 
   const menuItems = challenges.map((challenge) => ({
     image: challenge.image,
-    title: challenge.description,
+    title: t(challenge.description),
     reward: challenge.isCompleted ? t('subscribe_channels_card.completed') : `+${challenge.reward}`,
     onClick: () => handleOpenModal(challenge),
   }));
