@@ -177,7 +177,8 @@
   },
 
   "telegram": {
-    "start_message": "Dear,\n\n💡 Convenient: no need for a separate app\n🔒 Secure: data is encrypted with a smart contract\n🌿 Smart: Personalized well-being recommendations based on your cycle via the bot\n\nWith love, your @femaleton team"
+    "start_message": "Dear,\n\n💡 Convenient: no need for a separate app\n🔒 Secure: data is encrypted with a smart contract\n🌿 Smart: Personalized well-being recommendations based on your cycle via the bot\n\nWith love, your @femaleton team",
+    "button_text": "🌀 Open Tracker"
   }
 
 
