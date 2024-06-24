@@ -8,7 +8,6 @@ import Toaster from '@/components/ui/Toaster';
 import { getUserTonPrivateKey, isUseApi, isUseTon } from '@/hooks/useTelegramStorage';
 import { initBlockchainLogic } from '@/lib/contract/blockchain';
 import { getMonthPeriodData, updateMonthPeriodData } from '@/lib/contract/data';
-import { waitForAction } from '@/lib/contract/utils';
 import { derivePublicKey } from '@/lib/encryption';
 import { getFirstDayOfLastPeriod } from '@/utils/periodDates';
 
@@ -63,7 +62,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [farmingSessionLoading, setFarmingSessionLoading] = useState(true);
 
   const initData = useInitData();
-  const { address, connected, wallet } = useTonConnect();
+  const { send, address, connected, wallet } = useTonConnect();
 
   const fetchUser = async (telegramId: string): Promise<User | null> => {
     try {
@@ -152,7 +151,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         }
 
         const publicKey = derivePublicKey(tonPrivateKey);
-        await initBlockchainLogic(storedAddress!, publicKey);
+        await initBlockchainLogic(send, storedAddress!, publicKey);
         dates = await getMonthPeriodData(storedAddress!, tonPrivateKey!);
       }
       const sortedMenstruationData = dates.sort((a: Date, b: Date) => a.getTime() - b.getTime());
@@ -236,8 +235,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         }
 
         const publicKey = derivePublicKey(tonPrivateKey);
-        await initBlockchainLogic(storedAddress!, publicKey);
-        const result = await updateMonthPeriodData(storedAddress!, changes, tonPrivateKey!);
+        await initBlockchainLogic(send, storedAddress!, publicKey);
+        const result = await updateMonthPeriodData(send, storedAddress!, changes, tonPrivateKey!);
 
         if (result.success) {
           setMenstruations(result.data!);

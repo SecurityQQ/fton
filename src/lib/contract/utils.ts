@@ -5,7 +5,7 @@ export interface OneMonthDataUpdate {
 
 export async function waitForAction(
   checkCondition: () => Promise<boolean>,
-  attempts = 50,
+  attempts = 120,
   sleepDuration = 500
 ) {
   if (attempts <= 0) {
