@@ -1,17 +1,19 @@
-import { Address, Dictionary, toNano } from '@ton/ton';
+import { Address, Dictionary, beginCell, toNano } from '@ton/ton';
+import { SendTransactionResponse } from '@tonconnect/ui-react';
 import assert from 'assert';
 import axios from 'axios';
 
-import { decryptData, encryptData, derivePublicKey } from '@/lib/encryption';
-import { Account, PeriodDataItem } from 'src/ton_client/tact_Account';
+import { UserTransaction } from '@/hooks/useTonConnect';
+import { decryptData, derivePublicKey, encryptData } from '@/lib/encryption';
+import { Account, PeriodDataItem, storeUpdateMonthPeriodData } from 'src/ton_client/tact_Account';
 import { MonthPeriodData } from 'src/ton_client/tact_MonthPeriodData';
 
 import { isContractDeployed } from './blockchain';
-import { getBotSender } from './bot';
 import { tonClient } from './tonClient';
 import { getMonthDataUpdates, waitForAction } from './utils';
 
 export async function updateMonthPeriodData(
+  send: (transactions: UserTransaction[]) => Promise<SendTransactionResponse>,
   userAddress: string,
   changes: { date: Date; action: 'add' | 'delete' }[],
   privateKey: string
@@ -38,7 +40,7 @@ export async function updateMonthPeriodData(
     }
     expectedDateArray.push(...toAdd);
     const publicKey = derivePublicKey(privateKey);
-    const result = await runUpdateMonthPeriodData(userAddress, toAdd, toDelete, privateKey);
+    const result = await runUpdateMonthPeriodData(send, userAddress, toAdd, toDelete, privateKey);
     if (!result.success) {
       return { success: false, error: result.error, statusCode: result.statusCode };
     }
@@ -66,6 +68,7 @@ export async function updateMonthPeriodData(
 }
 
 export async function runUpdateMonthPeriodData(
+  send: (transactions: UserTransaction[]) => Promise<SendTransactionResponse>,
   userAddress: string,
   toAdd: Date[],
   toDelete: Date[],
@@ -78,7 +81,6 @@ export async function runUpdateMonthPeriodData(
   const publicKey = derivePublicKey(privateKey);
   const dataOwnerAddress = Address.parse(userAddress);
   console.log('Saving users health data');
-  const sender = await getBotSender();
   const contract = await Account.fromInit(userAddress);
   const openedContract = tonClient.open(contract);
   const months = getMonthDataUpdates(toAdd, toDelete);
@@ -115,17 +117,23 @@ export async function runUpdateMonthPeriodData(
       });
     }
     try {
-      await openedContract.send(
-        sender,
-        { value: toNano('0.04') },
+      await send([
         {
-          $$type: 'UpdateMonthPeriodData',
-          accessedAddress: dataOwnerAddress,
-          monthIndex: BigInt(monthIndex),
-          toAdd: toAddDict,
-          toDelete: toDeleteDict,
-        }
-      );
+          contract,
+          amount: toNano('0.03'),
+          payload: beginCell()
+            .store(
+              storeUpdateMonthPeriodData({
+                $$type: 'UpdateMonthPeriodData',
+                accessedAddress: dataOwnerAddress,
+                monthIndex: BigInt(monthIndex),
+                toAdd: toAddDict,
+                toDelete: toDeleteDict,
+              })
+            )
+            .endCell(),
+        },
+      ]);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Error sending update month period data:', error);

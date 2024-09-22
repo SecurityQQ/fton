@@ -14,13 +14,12 @@ import { useUser } from '../contexts/UserContext';
 import { useTonConnect } from '../hooks/useTonConnect';
 
 const EarnPage: React.FC = () => {
-  const { network, wallet, address } = useTonConnect();
-  const { user } = useUser();
+  const { send, address } = useTonConnect();
+  const { user, refetchMenstruations } = useUser();
   const [isBlockchainInited, setIsBlockchainInited] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tokenBalance, setTokenBalance] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
-  const [copySuccess, setCopySuccess] = useState<string>('');
   const selectedLoadingStarted = useRef(false);
   const privateLoadingStarted = useRef(false);
   const privateKey = useRef<string | null>(null);
@@ -82,7 +81,7 @@ const EarnPage: React.FC = () => {
         await generateAndSaveNewPrivateKey();
       }
       const publicKey = derivePublicKey(privateKey.current!);
-      await initBlockchainLogic(address!, publicKey);
+      await initBlockchainLogic(send, address!, publicKey);
       setIsBlockchainInited(true);
       await updateTokenBalance(1000, 'TON Connect'); // Award 1000 tokens
     } catch (error) {
@@ -118,23 +117,7 @@ const EarnPage: React.FC = () => {
     await saveToTelegramStorage(window, 'privateKey', key);
   }
 
-  const copyToPrivateKey = () => {
-    if (privateKey.current != null) {
-      navigator.clipboard.writeText(privateKey.current!).then(
-        () => {
-          setCopySuccess(t('copy_success'));
-          setTimeout(() => {
-            setCopySuccess(t('copy'));
-          }, 2000);
-        },
-        () => {
-          setCopySuccess(t('copy_failed'));
-        }
-      );
-    }
-  };
-
-  const handleSelect = (index: number) => {
+  const handleSelect = async (index: number) => {
     setSelected(index);
     let selectedValue = 'backend';
     switch (index) {
@@ -145,7 +128,8 @@ const EarnPage: React.FC = () => {
         selectedValue = 'ton';
         break;
     }
-    saveToTelegramStorage(window, 'dataStorageType', selectedValue);
+    await saveToTelegramStorage(window, 'dataStorageType', selectedValue);
+    refetchMenstruations();
   };
 
   return (
@@ -234,11 +218,6 @@ const EarnPage: React.FC = () => {
                 </SegmentedControl>
               </AppRoot>
             </div>
-            <div>
-              <div>{t('copy_key')}</div>
-              <button onClick={copyToPrivateKey}>{copySuccess || t('copy')}</button>
-            </div>
-            <span className="text-xs text-gray-500">{t('private_key_info')}</span>
           </div>
         )}
       </main>
@@ -248,22 +227,3 @@ const EarnPage: React.FC = () => {
 };
 
 export default EarnPage;
-
-// <SegmentedControl.Item
-//                    className={`relative z-10 text-center ${
-//                      selected === 1 ? 'bg-blue-500 text-white' : ''
-//                    }`}
-//                    selected={selected === 1}
-//                    onClick={() => handleSelect(1)}
-//                    style={{ borderRadius: '8px' }}>
-//                    <label
-//                      className={`block cursor-pointer p-2 font-semibold transition-colors duration-200 ${
-//                        selected === 1 ? 'text-white' : ''
-//                      }`}>
-//                      Her+TON
-//                    </label>
-//                    <input
-//                      className="absolute inset-0 size-full cursor-pointer opacity-0"
-//                      type="radio"
-//                    />
-//                  </SegmentedControl.Item>

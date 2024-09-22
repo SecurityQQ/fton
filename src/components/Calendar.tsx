@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 
 import Loader from '@/components/Loader';
 import Button from '@/components/ui/Button';
@@ -7,14 +7,7 @@ import CalendarNumber from '@/components/ui/CalendarNumber';
 import HorizontalButton from '@/components/ui/HorizontalButton';
 import { useUser } from '@/contexts/UserContext';
 import { isUseTon } from '@/hooks/useTelegramStorage';
-import {
-  daysInMonth,
-  generateDates,
-  isFutureDate,
-  getFirstDayOfLastPeriod,
-  predictOvulationAndPeriod,
-  getCalendarNumberType,
-} from '@/utils/periodDates';
+import { generateDates, getCalendarNumberType, getFirstDayOfLastPeriod } from '@/utils/periodDates';
 
 type CalendarProps = {
   periodDays: Date[];
@@ -125,6 +118,13 @@ const Calendar: React.FC<CalendarProps> = ({
     t('month_names.11'),
   ];
 
+  const getFirstDayOfWeekOfMonth = (date: Date) => {
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    let dayOfWeek = firstDay.getDay() - 1;
+    if (dayOfWeek === -1) dayOfWeek = 6;
+    return dayOfWeek;
+  };
+
   const renderCalendar = () => {
     return months.map((month, index) => (
       <div key={index} id={`month-${index}`} className="w-full px-4">
@@ -135,6 +135,17 @@ const Calendar: React.FC<CalendarProps> = ({
         </header>
 
         <div className="grid w-full grid-cols-7 gap-1">
+          {Array.from({
+            length: getFirstDayOfWeekOfMonth(month),
+          }).map((_, index) => (
+            <div key={`empty-${index}`} className="relative flex flex-col items-center">
+              {}
+              <div className="flex size-8 items-center justify-center rounded-full text-transparent">
+                {}
+                <span>-</span>
+              </div>
+            </div>
+          ))}
           {generateDates(month).map((date, index) => {
             const type = getCalendarNumberType(
               date,
